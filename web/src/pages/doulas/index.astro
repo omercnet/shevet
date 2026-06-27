@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getDoulas} from '../../lib/queries'
+import {SUPPORT_STYLES, BUDGET_BANDS} from '../../../shared/searchOptions'
+
+const doulas = await getDoulas()
+const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].sort()
+---
+<Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה, סגנון ליווי ותקציב.">
+  <section class="wrap">
+    <h1>חיפוש דולות</h1>
+    <p>סננו לפי מה שחשוב לכן. החיפוש מיידי.</p>
+
+    <form class="filters" id="doula-filters">
+      <label>בית חולים
+        <select name="hospital"><option value="">הכול</option>
+          {hospitals.map((h: string) => <option value={h}>{h}</option>)}
+        </select>
+      </label>
+      <label>תאריך לידה משוער
+        <input type="date" name="dueDate" />
+      </label>
+      <label>סגנון ליווי
+        <select name="style"><option value="">הכול</option>
+          {SUPPORT_STYLES.map((s) => <option value={s}>{s}</option>)}
+        </select>
+      </label>
+      <label>תקציב
+        <select name="budget"><option value="">הכול</option>
+          {BUDGET_BANDS.map((b) => <option value={b.value}>{b.title}</option>)}
+        </select>
+      </label>
+      <button type="button" id="reset">ניקוי</button>
+    </form>
+
+    <p id="count"></p>
+    <div class="grid" id="results"></div>
+  </section>
+
+  <script type="application/json" id="data" set:html={JSON.stringify(doulas)}></script>
+  <script>
+    const data = JSON.parse(document.getElementById('data').textContent || '[]');
+    const form = document.getElementById('doula-filters');
+    const out = document.getElementById('results');
+    const count = document.getElementById('count');
+
+    function card(d) {
+      const tags = [...(d.hospitals||[]), ...(d.supportStyle||[])].slice(0,4)
+        .map(t => `<span class="chip">${t}</span>`).join('');
+      const wa = d.whatsapp ? `<a class="btn btn-wa" href="https://wa.me/${d.whatsapp.replace(/\\D/g,'')}">וואטסאפ</a>` : '';
+      return `<article class="card">
+        ${d.photo ? `<img src="${d.photo}?w=320&h=200&fit=crop" alt="${d.name}">` : ''}
+        <h3><a href="/doulas/${d.slug}/">${d.name}</a></h3>
+        <div class="tags">${tags}</div>
+        ${wa}
+      </article>`;
+    }
+
+    function apply() {
+      const f = new FormData(form);
+      const hospital = f.get('hospital'), style = f.get('style'), budget = f.get('budget');
+      const res = data.filter(d =>
+        (!hospital || (d.hospitals||[]).includes(hospital)) &&
+        (!style || (d.supportStyle||[]).includes(style)) &&
+        (!budget || d.budget === budget)
+      );
+      // dueDate currently informational — matching rule TBD with Keren
+      out.innerHTML = res.map(card).join('');
+      count.textContent = `${res.length} דולות`;
+    }
+    form.addEventListener('input', apply);
+    document.getElementById('reset').addEventListener('click', () => { form.reset(); apply(); });
+    apply();
+  </script>
+
+  <style>
+    .filters { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; background:var(--peach-soft); padding:1.2rem; border-radius:14px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.85rem; gap:.3rem; color:var(--ink); font-weight:600; }
+    .filters select, .filters input { padding:.5rem; border:1px solid var(--line); border-radius:8px; font-family:inherit; }
+    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:8px; padding:.55rem 1rem; cursor:pointer; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem; }
+    .card img { border-radius:10px; width:100%; object-fit:cover; aspect-ratio:16/10; }
+    .card h3 { margin:.6rem 0 .4rem; font-size:1.2rem; }
+    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem; }
+  </style>
+</Base>

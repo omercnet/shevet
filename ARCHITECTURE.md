@@ -27,7 +27,7 @@ Ship Oron Yad as a self-hosted `@font-face` (woff2 + woff fallback) — it is a 
 | Layer | Choice | Why |
 |---|---|---|
 | **Frontend** | **Astro** (static + islands) | Ships ~zero JS by default → fast; first-class **RTL/Hebrew**; renders CMS content at build, hydrates only the search/interactive bits. |
-| **CMS** | **Sanity** (hosted) | Best non-technical editor UX; structured docs fit the practitioner directory + facets exactly; free tier covers this scale; hosted (no server). |
+| **CMS** | **Sanity** (hosted, **Free plan confirmed**) | Best non-technical editor UX; structured docs fit the practitioner directory + facets exactly. Free plan = **20 seats, 2 roles, 2 public datasets, hosted real-time DB + live preview** — covers this project with no fixed cost. Public-dataset-only is fine (content is public; secrets/PII never stored here — forms → Responder). |
 | **Hosting** | **Netlify** or **Vercel** | Git push → deploy. Free/cheap tier. CDN + redirects built in. |
 | **Search** | **Client-side over a build-time JSON index** | Two engines (below). ~155 records — no search service needed; instant in-browser filtering. |
 | **Forms** | **Rav-Messer (Responder) embedded forms** | Keren embeds Responder forms today and prefers embedding (links often break). Matchmaking + contact = embedded Responder. |
@@ -222,6 +222,7 @@ No cart, no accounts, no `/thank-you` plumbing — Meshulam owns the transaction
 - **No** weekly track, **no** courses catalog, **no** WooCommerce/cart, **no** members-only content.
 - Payments = **Meshulam** sale-page button. Forms = **Responder** embedded. Email = **Responder**.
 - Analytics connected, compliant with Israeli promotion/privacy law.
+- Stack locked: **Astro + Sanity (Free) + Netlify + Responder + Meshulam** — $0 fixed monthly cost.
 
 **Still need from Keren (small, blocks search build):**
 1. **Support-style** values for doula search (e.g. natural / emotional / medical / VBAC…?).

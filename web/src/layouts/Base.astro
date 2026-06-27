@@ -1,0 +1,40 @@
+---
+import '../styles/brand.css'
+const {title = 'שבט אמהות', description = ''} = Astro.props
+const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment; consent-gated in production
+---
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+  </head>
+  <body>
+    <header class="wrap site-head">
+      <a href="/" class="logo">שבט אמהות</a>
+      <nav>
+        <a href="/doulas/">דולות</a>
+        <a href="/professionals/">נשות מקצוע</a>
+        <a href="/articles/">מאמרים</a>
+        <a href="/benefits/">הטבות</a>
+        <a href="/community/">קהילה</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="wrap site-foot">
+      <span>© שבט אמהות</span>
+    </footer>
+    {/* TODO: consent banner gates GTM ({gtm}) per Israeli privacy law */}
+    <style>
+      .site-head { display:flex; align-items:center; justify-content:space-between; padding-block:1.2rem; gap:1rem; flex-wrap:wrap; }
+      .logo { font-family: var(--display); font-size: 1.8rem; color: var(--brand); text-decoration:none; }
+      .site-head nav { display:flex; gap:1.2rem; flex-wrap:wrap; }
+      .site-head nav a { text-decoration:none; color: var(--ink); font-weight:600; }
+      .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; }
+    </style>
+  </body>
+</html>

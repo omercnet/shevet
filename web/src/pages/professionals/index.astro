@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getProfessionals} from '../../lib/queries'
+
+const pros = await getProfessionals()
+const fields = [...new Set(pros.flatMap((p: any) => p.fields || []))].sort()
+const regions = [...new Set(pros.flatMap((p: any) => p.regions || []))].sort()
+const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
+---
+<Base title="חיפוש נשות מקצוע — שבט אמהות" description="יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.">
+  <section class="wrap">
+    <h1>חיפוש נשות מקצוע</h1>
+    <p>למשל רפלקסולוגית באזורך — סינון לפי תחום ומיקום.</p>
+
+    <form class="filters" id="pro-filters">
+      <label>תחום טיפול
+        <select name="field"><option value="">הכול</option>{fields.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <label>אזור
+        <select name="region"><option value="">הכול</option>{regions.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <label>שפה
+        <select name="lang"><option value="">הכול</option>{langs.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <button type="button" id="reset">ניקוי</button>
+    </form>
+
+    <p id="count"></p>
+    <div class="grid" id="results"></div>
+  </section>
+
+  <script type="application/json" id="data" set:html={JSON.stringify(pros)}></script>
+  <script>
+    const data = JSON.parse(document.getElementById('data').textContent || '[]');
+    const form = document.getElementById('pro-filters');
+    const out = document.getElementById('results');
+    const count = document.getElementById('count');
+    function card(p) {
+      const tags = [...(p.fields||[]), ...(p.regions||[])].slice(0,4).map(t => `<span class="chip">${t}</span>`).join('');
+      const wa = p.whatsapp ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\\D/g,'')}">וואטסאפ</a>` : '';
+      return `<article class="card">${p.photo ? `<img src="${p.photo}?w=320&h=200&fit=crop" alt="${p.name}">`:''}
+        <h3><a href="/professionals/${p.slug}/">${p.name}</a></h3><div class="tags">${tags}</div>${wa}</article>`;
+    }
+    function apply() {
+      const f = new FormData(form);
+      const fld=f.get('field'), reg=f.get('region'), lang=f.get('lang');
+      const res = data.filter(p =>
+        (!fld || (p.fields||[]).includes(fld)) &&
+        (!reg || (p.regions||[]).includes(reg)) &&
+        (!lang || (p.languages||[]).includes(lang)));
+      out.innerHTML = res.map(card).join('');
+      count.textContent = `${res.length} נשות מקצוע`;
+    }
+    form.addEventListener('input', apply);
+    document.getElementById('reset').addEventListener('click', () => { form.reset(); apply(); });
+    apply();
+  </script>
+
+  <style>
+    .filters { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; background:var(--peach-soft); padding:1.2rem; border-radius:14px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.85rem; gap:.3rem; color:var(--ink); font-weight:600; }
+    .filters select { padding:.5rem; border:1px solid var(--line); border-radius:8px; font-family:inherit; }
+    .filters button { background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:8px; padding:.55rem 1rem; cursor:pointer; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem; }
+    .card img { border-radius:10px; width:100%; aspect-ratio:16/10; object-fit:cover; }
+    .card h3 { margin:.6rem 0 .4rem; font-size:1.2rem; }
+    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem; }
+  </style>
+</Base>

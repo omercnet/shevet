@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro'
+---
+<Base title="שבט אמהות" description="הקהילה שלך להריון וללידה — דולות, נשות מקצוע, תוכן והטבות.">
+  <section class="hero">
+    <div class="wrap">
+      <h1>השבט שלך<br />להריון וללידה</h1>
+      <p>מצאי את הדולה או אשת המקצוע שמתאימה לך — חיפוש מדויק לפי מה שחשוב לך.</p>
+      <div class="cta-row">
+        <a class="btn" href="/doulas/">חיפוש דולות</a>
+        <a class="btn" href="/professionals/">חיפוש נשות מקצוע</a>
+      </div>
+    </div>
+  </section>
+  <style>
+    .hero { background:linear-gradient(155deg,var(--brand-deep),var(--brand)); color:#fff; padding-block:5rem; }
+    .hero h1 { color:#fff; font-size:clamp(2.5rem,8vw,5rem); }
+    .hero p { font-size:1.25rem; max-width:40ch; color:var(--peach-soft); }
+    .cta-row { display:flex; gap:1rem; flex-wrap:wrap; margin-top:2rem; }
+    .hero .btn { background:var(--peach); color:var(--brand-deep); }
+  </style>
+</Base>
