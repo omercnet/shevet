@@ -20,10 +20,10 @@ const CATEGORIES = [
     <h1>מאמרים</h1>
 
     {articles.length === 0 ? (
-      <p class="empty">אין מאמרים עדיין</p>
+      <p class="empty-state">אין מאמרים עדיין</p>
     ) : (
       <>
-        <form class="filters" id="article-filters">
+        <form class="filter-panel" id="article-filters">
           <label>קטגוריה
             <select name="category"><option value="">הכול</option>
               {CATEGORIES.map((c) => <option value={c.value}>{c.label}</option>)}
@@ -71,7 +71,7 @@ const CATEGORIES = [
           ? `<img src="${encodeURI(a.cover)}?w=320&h=200&fit=crop" alt="${escapeHtml(a.title)}">`
           : "";
         const excerpt = a.excerpt ? `<p class="excerpt">${escapeHtml(a.excerpt)}</p>` : "";
-        return `<article class="card">${img}<div class="tags">${chip}</div><h3><a href="/articles/${encodeURIComponent(a.slug)}/">${escapeHtml(a.title)}</a></h3>${excerpt}</article>`;
+        return `<article class="card article-card">${img}<div class="tags">${chip}</div><h3><a href="/articles/${encodeURIComponent(a.slug)}/">${escapeHtml(a.title)}</a></h3>${excerpt}</article>`;
       };
       const apply = (): void => {
         const f = new FormData(form);
@@ -82,7 +82,7 @@ const CATEGORIES = [
       };
       form.addEventListener("input", apply);
       reset?.addEventListener("click", () => {
-        form.reset();
+        HTMLFormElement.prototype.reset.call(form);
         apply();
       });
       apply();
@@ -90,20 +90,6 @@ const CATEGORIES = [
   </script>
 
   <style>
-    .filters { display:flex; gap:1rem 1.2rem; flex-wrap:wrap; align-items:end; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); padding:1.5rem; border-radius:18px; margin:1.5rem 0; }
-    .filters label { display:flex; flex-direction:column; font-size:.8rem; gap:.35rem; color:var(--brand); font-weight:700; }
-    .filters select { padding:.6rem .7rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; min-width:11ch; }
-    .filters select:focus { outline:2px solid var(--brand); outline-offset:1px; }
-    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:999px; padding:.6rem 1.2rem; cursor:pointer; font-weight:700; }
-    .filters button:hover { background:var(--brand); color:#fff; }
     #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
-    .card { padding:1.2rem 1.3rem 1.4rem; }
-    .card img { border-radius:12px; width:100%; object-fit:cover; aspect-ratio:16/10; margin-bottom:.8rem; }
-    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin:0 0 .5rem; }
-    .card h3 { margin:.2rem 0 .4rem; font-size:1.3rem; }
-    .card h3 a { text-decoration:none; }
-    .card h3 a:hover { text-decoration:underline; }
-    .card .excerpt { color:var(--muted); font-size:.92rem; margin:0; }
-    .empty { color:var(--muted); margin:2rem 0; }
   </style>
 </Base>
