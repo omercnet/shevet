@@ -366,6 +366,20 @@ img {
 	color: var(--muted);
 	font-style: italic;
 }
+.legacy-content {
+	margin-top: 1.5rem;
+	line-height: 1.8;
+}
+.legacy-content p {
+	margin: 0 0 1.2rem;
+}
+.legacy-content img,
+.legacy-content iframe {
+	max-width: 100%;
+}
+.legacy-content a {
+	font-weight: 700;
+}
 .benefit-card,
 .community-card,
 .form-block {

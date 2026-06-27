@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import LegacyContent from '../../components/LegacyContent.astro'
 import {getArticle, getArticleSlugs} from '../../lib/queries'
 
 export async function getStaticPaths() {
@@ -10,28 +11,7 @@ export async function getStaticPaths() {
 const {slug} = Astro.params
 const a = await getArticle(slug!)
 
-// YouTube/Vimeo → embeddable url (copied from doulas/[slug].astro)
-function embed(url?: string) {
-  if (!url) return null
-  const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`
-  const vm = url.match(/vimeo\.com\/(\d+)/)
-  if (vm) return `https://player.vimeo.com/video/${vm[1]}`
-  return null
-}
-const video = embed(a?.videoUrl)
-
-// Minimal Portable Text renderer: each block → its concatenated span text.
-interface PTSpan {_type?: string; text?: string}
-interface PTBlock {_type?: string; style?: string; children?: PTSpan[]}
-function blockText(block: PTBlock): string {
-  return (block.children ?? []).map((c) => c.text ?? '').join('')
-}
-const blocks: PTBlock[] = Array.isArray(a?.body) ? (a!.body as PTBlock[]) : []
-const paragraphs = blocks
-  .filter((b) => b._type === 'block')
-  .map((b) => ({style: b.style ?? 'normal', text: blockText(b)}))
-  .filter((p) => p.text.trim().length > 0)
+const blocks = Array.isArray(a?.body) ? a!.body : []
 ---
 <Base title={a ? `${a.title} — שבט אמהות` : 'מאמר — שבט אמהות'} description={a?.excerpt}>
   <article class="article-shell wrap">
@@ -42,20 +22,9 @@ const paragraphs = blocks
         )}
         <h1>{a.title}</h1>
 
-        {video && (
-          <div class="media-frame"><iframe src={video} title="וידאו" loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe></div>
-        )}
+        {a.videoUrl && <a class="btn btn-outline" href={a.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
-        <div class="article-body">
-          {paragraphs.map((p) =>
-            p.style === 'h2' ? <h2>{p.text}</h2>
-            : p.style === 'h3' ? <h3>{p.text}</h3>
-            : p.style === 'blockquote' ? <blockquote>{p.text}</blockquote>
-            : <p>{p.text}</p>,
-          )}
-        </div>
+        <LegacyContent html={a.sourceHtml} blocks={blocks} />
       </>
     ) : (
       <p class="empty-state">אין מאמרים עדיין</p>

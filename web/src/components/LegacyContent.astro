@@ -1,0 +1,25 @@
+---
+interface PTSpan { text?: string }
+interface PTBlock { _type?: string; style?: string; children?: PTSpan[] }
+
+const { html, blocks = [] } = Astro.props as { html?: string; blocks?: PTBlock[] };
+const blockText = (block: PTBlock) => (block.children ?? []).map((child) => child.text ?? "").join("");
+const paragraphs = Array.isArray(blocks)
+	? blocks
+			.filter((block) => block._type === "block")
+			.map((block) => ({ style: block.style ?? "normal", text: blockText(block) }))
+			.filter((block) => block.text.trim().length > 0)
+	: [];
+---
+{html ? (
+	<div class="legacy-content" set:html={html}></div>
+) : (
+	<div class="legacy-content">
+		{paragraphs.map((p) =>
+			p.style === "h2" ? <h2>{p.text}</h2>
+			: p.style === "h3" ? <h3>{p.text}</h3>
+			: p.style === "blockquote" ? <blockquote>{p.text}</blockquote>
+			: <p>{p.text}</p>,
+		)}
+	</div>
+)}

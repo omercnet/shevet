@@ -74,6 +74,10 @@ export interface PractitionerDetail {
 	fields?: string[];
 	regions?: string[];
 	supportStyle?: string[];
+	bio?: unknown[];
+	services?: unknown[];
+	credentials?: string[];
+	gallery?: { asset?: { url?: string } }[];
 	testimonials?: Testimonial[];
 }
 
@@ -123,6 +127,7 @@ export interface ArticleCard {
 export interface ArticleDetail extends ArticleCard {
 	videoUrl?: string;
 	body?: unknown[];
+	sourceHtml?: string;
 	publishedAt?: string;
 }
 
@@ -140,7 +145,7 @@ export function getArticle(slug: string): Promise<ArticleDetail | null> {
 	return sanityFetch<ArticleDetail | null>(
 		`*[_type == "article" && slug.current == $slug][0]{
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
-			videoUrl, body, publishedAt
+			videoUrl, body, sourceHtml, publishedAt
 		}`,
 		{ slug },
 		null,
@@ -163,6 +168,11 @@ export interface BenefitCard {
 	redeemUrl?: string;
 }
 
+export interface BenefitDetail extends BenefitCard {
+	body?: unknown[];
+	sourceHtml?: string;
+}
+
 export function getBenefits(): Promise<BenefitCard[]> {
 	return sanityFetch<BenefitCard[]>(
 		`*[_type == "benefit"] | order(partner asc){
@@ -171,6 +181,20 @@ export function getBenefits(): Promise<BenefitCard[]> {
 		{},
 		[],
 	);
+}
+
+export function getBenefit(slug: string): Promise<BenefitDetail | null> {
+	return sanityFetch<BenefitDetail | null>(
+		`*[_type == "benefit" && slug.current == $slug][0]{
+			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl, body, sourceHtml
+		}`,
+		{ slug },
+		null,
+	);
+}
+
+export function getBenefitSlugs(): Promise<string[]> {
+	return sanityFetch<string[]>(`array::unique(*[_type == "benefit" && defined(slug.current)].slug.current)`, {}, []);
 }
 
 // ---------- Community (WhatsApp groups) ----------
@@ -190,6 +214,44 @@ export function getWhatsappGroups(): Promise<WhatsappGroup[]> {
 	);
 }
 
+export interface CommunityPage {
+	slug: string;
+	title: string;
+	image?: string;
+	excerpt?: string;
+	presenter?: string;
+	dateText?: string;
+	location?: string;
+	cost?: string;
+	linkUrl?: string;
+	body?: unknown[];
+	sourceHtml?: string;
+}
+
+export function getCommunityPages(): Promise<CommunityPage[]> {
+	return sanityFetch<CommunityPage[]>(
+		`*[_type == "communityPage"] | order(publishedAt desc){
+			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl
+		}`,
+		{},
+		[],
+	);
+}
+
+export function getCommunityPage(slug: string): Promise<CommunityPage | null> {
+	return sanityFetch<CommunityPage | null>(
+		`*[_type == "communityPage" && slug.current == $slug][0]{
+			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl, body, sourceHtml
+		}`,
+		{ slug },
+		null,
+	);
+}
+
+export function getCommunityPageSlugs(): Promise<string[]> {
+	return sanityFetch<string[]>(`*[_type == "communityPage" && defined(slug.current)].slug.current`, {}, []);
+}
+
 // ---------- Professionals (profile detail reuses getPractitioner) ----------
 export function getProfessionalSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(
@@ -205,13 +267,19 @@ export interface SalePage {
 	title: string;
 	image?: string;
 	blurb?: unknown[];
+	sourceHtml?: string;
+	presenter?: string;
+	dateText?: string;
+	location?: string;
+	cost?: string;
+	formEmbedHtml?: string;
 	ctaLabel?: string;
 	meshulamUrl?: string;
 }
 
 export function getSalePages(): Promise<SalePage[]> {
 	return sanityFetch<SalePage[]>(
-		`*[_type == "salePage"]{ "slug": slug.current, title, "image": image.asset->url, blurb, ctaLabel, meshulamUrl }`,
+		`*[_type == "salePage"]{ "slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl }`,
 		{},
 		[],
 	);
@@ -220,7 +288,7 @@ export function getSalePages(): Promise<SalePage[]> {
 export function getSalePage(slug: string): Promise<SalePage | null> {
 	return sanityFetch<SalePage | null>(
 		`*[_type == "salePage" && slug.current == $slug][0]{
-			"slug": slug.current, title, "image": image.asset->url, blurb, ctaLabel, meshulamUrl
+			"slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl
 		}`,
 		{ slug },
 		null,

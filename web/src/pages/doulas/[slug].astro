@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import LegacyContent from '../../components/LegacyContent.astro'
 import {getPremiumDoulaSlugs, getPractitioner} from '../../lib/queries'
 
 export async function getStaticPaths() {
@@ -10,25 +11,12 @@ export async function getStaticPaths() {
 const {slug} = Astro.params
 const d = await getPractitioner(slug!)
 
-// YouTube/Vimeo → embeddable url
-function embed(url?: string) {
-  if (!url) return null
-  const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`
-  const vm = url.match(/vimeo\.com\/(\d+)/)
-  if (vm) return `https://player.vimeo.com/video/${vm[1]}`
-  return null
-}
-const video = embed(d?.videoUrl)
 const wa = d?.whatsapp ? `https://wa.me/${String(d.whatsapp).replace(/\D/g, '')}` : null
+const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
+const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
 ---
 <Base title={`${d?.name} — דולה | שבט אמהות`} description={d?.title}>
   <article class="profile-shell wrap">
-    {video && (
-      <div class="media-frame"><iframe src={video} title="וידאו" loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen></iframe></div>
-    )}
     <header class="profile-head">
       {d?.photoUrl && <img class="avatar" src={`${d.photoUrl}?w=160&h=160&fit=crop`} alt={d.name} />}
       <div>
@@ -49,6 +37,12 @@ const wa = d?.whatsapp ? `https://wa.me/${String(d.whatsapp).replace(/\D/g, '')}
       </section>
     )}
 
+    {bioBlocks.length > 0 && <section class="article-body"><h2>נעים להכיר</h2><LegacyContent blocks={bioBlocks} /></section>}
+    {serviceBlocks.length > 0 && <section class="article-body"><h2>מה כולל הליווי</h2><LegacyContent blocks={serviceBlocks} /></section>}
+    {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
+
+    {d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
+
     {/* TODO: embed Rav-Messer (Responder) contact form here via siteSettings */}
   </article>
 
@@ -56,7 +50,7 @@ const wa = d?.whatsapp ? `https://wa.me/${String(d.whatsapp).replace(/\D/g, '')}
 
   <style>
     .title { color:var(--muted); margin:.2rem 0; }
-    .sticky-cta { position:fixed; inset-inline:1rem; bottom:1rem; text-align:center; z-index:40; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
-    @media(min-width:700px){ .sticky-cta{ inset-inline:auto; inset-inline-end:2rem; } }
+    .sticky-cta { display:block; margin:1.5rem 1rem; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
+    @media(min-width:700px){ .sticky-cta{ position:fixed; inset-inline:auto 2rem; bottom:1rem; z-index:40; margin:0; } }
   </style>
 </Base>

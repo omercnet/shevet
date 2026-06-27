@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import LegacyContent from "../../components/LegacyContent.astro";
 import { getSalePage, getSalePageSlugs } from "../../lib/queries";
 
 export async function getStaticPaths() {
@@ -7,21 +8,8 @@ export async function getStaticPaths() {
 	return slugs.map((slug) => ({ params: { slug } }));
 }
 
-interface PortableBlock {
-	_type?: string;
-	style?: string;
-	children?: { text?: string }[];
-}
-
 const { slug } = Astro.params;
 const page = await getSalePage(slug!);
-
-// Minimal portable-text → paragraphs: join the text spans of each block.
-const blocks = (page?.blurb ?? []) as PortableBlock[];
-const paragraphs = blocks
-	.filter((b) => b?._type === "block")
-	.map((b) => (b.children ?? []).map((c) => c?.text ?? "").join(""))
-	.filter((text) => text.trim().length > 0);
 
 const ctaLabel = page?.ctaLabel ?? "לרכישה";
 const meshulamUrl = page?.meshulamUrl;
@@ -30,11 +18,13 @@ const meshulamUrl = page?.meshulamUrl;
 	<article class="sale-hero wrap">
 		<h1>{page?.title}</h1>
 		{page?.image && <img class="cover" src={page.image} alt={page?.title ?? ""} />}
-		{paragraphs.length > 0 && (
-			<div class="sale-copy">
-				{paragraphs.map((text) => (
-					<p>{text}</p>
-				))}
+		<LegacyContent html={page?.sourceHtml} blocks={page?.blurb ?? []} />
+		{(page?.dateText || page?.location || page?.cost || page?.presenter) && (
+			<div class="tags">
+				{page?.presenter && <span class="chip">{page.presenter}</span>}
+				{page?.dateText && <span class="chip">{page.dateText}</span>}
+				{page?.location && <span class="chip">{page.location}</span>}
+				{page?.cost && <span class="chip">{page.cost}</span>}
 			</div>
 		)}
 		{meshulamUrl && (
@@ -42,12 +32,14 @@ const meshulamUrl = page?.meshulamUrl;
 				{ctaLabel}
 			</a>
 		)}
+		{!meshulamUrl && page?.formEmbedHtml && (
+			<a class="btn cta" href={page.formEmbedHtml} target="_blank" rel="noopener noreferrer">{ctaLabel}</a>
+		)}
 	</article>
 
 	<style>
 		.sale-hero { max-width: 900px; }
 		.cover { width: 100%; border-radius: 16px; margin-block: 1rem 1.5rem; }
-		.sale-copy { display: grid; gap: 1rem; }
 		.cta { margin-top: 2rem; font-size: 1.1rem; padding: 0.9rem 2rem; }
 	</style>
 </Base>

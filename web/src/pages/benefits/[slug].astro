@@ -1,0 +1,34 @@
+---
+import LegacyContent from "../../components/LegacyContent.astro";
+import Base from "../../layouts/Base.astro";
+import { getBenefit, getBenefitSlugs } from "../../lib/queries";
+
+export async function getStaticPaths() {
+	const slugs = await getBenefitSlugs();
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const benefit = await getBenefit(slug!);
+---
+<Base title={`${benefit?.partner ?? "הטבה"} — שבט אמהות`} description={benefit?.description}>
+	<article class="article-shell wrap">
+		{benefit ? (
+			<>
+				{benefit.logo && <img class="cover" src={benefit.logo} alt={benefit.partner} />}
+				<h1>{benefit.partner}</h1>
+				<div class="tags">
+					{benefit.discount && <span class="chip">{benefit.discount}</span>}
+					{benefit.couponCode && <span class="chip">קוד: {benefit.couponCode}</span>}
+				</div>
+				<LegacyContent html={benefit.sourceHtml} blocks={benefit.body ?? []} />
+				{benefit.redeemUrl && <a class="btn" href={benefit.redeemUrl} target="_blank" rel="noopener noreferrer">למימוש ההטבה</a>}
+			</>
+		) : (
+			<p class="empty-state">אין הטבה כזו</p>
+		)}
+	</article>
+	<style>
+		.cover { max-height: 22rem; object-fit: contain; background: var(--surface); padding: 1rem; }
+	</style>
+</Base>
