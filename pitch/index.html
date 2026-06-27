@@ -448,13 +448,14 @@
   .dot:hover::after{opacity:1}
   @media(max-width:720px){.rail{display:none}}
 
-  /* ---------- reveal ---------- */
-  .reveal,.slide .wrap>*{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
-  .in,.in .wrap>*{opacity:1;transform:none}
-  .slide .wrap>*:nth-child(2){transition-delay:.06s}
-  .slide .wrap>*:nth-child(3){transition-delay:.12s}
-  .slide .wrap>*:nth-child(4){transition-delay:.18s}
-  .slide .wrap>*:nth-child(5){transition-delay:.24s}
+  /* ---------- reveal (enhancement only — content is visible without JS) ---------- */
+  .reveal,.slide .wrap>*{transition:opacity .7s ease,transform .7s ease}
+  .deck.anim .reveal,.deck.anim .slide .wrap>*{opacity:0;transform:translateY(18px)}
+  .deck.anim .reveal.in,.deck.anim .wrap.in>*{opacity:1;transform:none}
+  .deck.anim .wrap.in>*:nth-child(2){transition-delay:.06s}
+  .deck.anim .wrap.in>*:nth-child(3){transition-delay:.12s}
+  .deck.anim .wrap.in>*:nth-child(4){transition-delay:.18s}
+  .deck.anim .wrap.in>*:nth-child(5){transition-delay:.24s}
 
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -470,12 +471,23 @@
 <script>
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var deck = document.querySelector('.deck');
 
-  /* reveal on scroll */
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
-  },{threshold:.18});
-  document.querySelectorAll('.slide .wrap, .reveal').forEach(function(el){ io.observe(el); });
+  /* reveal on scroll — only arm the hidden state once JS is confirmed running,
+     so content stays visible if the script is blocked or fails */
+  if(!reduce){
+    deck.classList.add('anim');
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+    },{threshold:.12});
+    document.querySelectorAll('.slide .wrap, .reveal').forEach(function(el){ io.observe(el); });
+    /* safety net: reveal everything after load in case the observer misses */
+    window.addEventListener('load', function(){
+      setTimeout(function(){
+        document.querySelectorAll('.slide .wrap, .reveal').forEach(function(el){ el.classList.add('in'); });
+      }, 1500);
+    });
+  }
 
   /* active dot */
   var dots = Array.prototype.slice.call(document.querySelectorAll('.rail .dot'));
