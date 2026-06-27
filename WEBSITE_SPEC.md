@@ -26,54 +26,76 @@ There is also a **B2B side**: a paid membership program recruiting birth profess
 
 ---
 
-## 2. Current tech stack (inferred)
+## 2. Current tech stack (verified via admin)
 
-- **WordPress** CMS.
-- **Elementor** page builder + **Crocoblock JetEngine / JetPopup / JetThemeCore** — evidenced by `jet-popup-sitemap.xml`, `jet-theme-core-sitemap.xml`, and the custom-post-type + taxonomy + listing-grid + filter architecture.
-- **WooCommerce** — `/shop/`, `/cart/`, `/checkout/`, `/my-account/`, `product` post type, `/thank-you/`, `/badpayment/`.
-- **Yoast SEO** — sitemap index structure.
-- Accessibility toolbar widget (font sizing, contrast, high-contrast, readable fonts) — Israeli accessibility-law compliance.
+**Confirmed active plugins** (read from `plugins.php`, 2026-06-27):
 
-**Takeaway for rebuild**: the heavy lifting is JetEngine custom post types + taxonomy filters + WooCommerce. A simpler stack must replicate: directory listings with faceted filters, a matching/lead form, content collections, a member club, and payments.
+| Role | Plugins | Rebuild maps to |
+|---|---|---|
+| Page builder | **Elementor** + **Elementor Pro** | Astro templates |
+| Content model / listings | **JetEngine**, **JetThemeCore**, **JetWooBuilder**, **JetPlugins Dynamic Data**, **Dynamic Visibility for Elementor** | Sanity schemas + Astro pages |
+| Directory filters | **JetSmartFilters**, **JetSearch** | Client-side filter over build-time JSON |
+| Forms / leads | **JetFormBuilder** (3 forms) | Netlify Forms |
+| Testimonials | **JetReviews** + `recommandation-*` meta | `testimonials[]` field |
+| Popups / tabs / gallery | **JetPopup**, **JetTabs**, **JetElements**, **JetProductGallery** | Native components |
+| E-commerce | **WooCommerce** (+ Variation Swatches, Checkout Field Editor, Update Manager) | Hosted payment links (light commerce) |
+| **Payments** | **grow payment gateway** (Grow / משולם-Meshulam), **ravpage** (רב-פייג landing/checkout) | Keep gateway, link out |
+| **Email marketing** | **Responder** (רב-מסר) | Keep or migrate list |
+| Accessibility | **Ally – Web Accessibility** | A11y widget (legal requirement) |
+| Performance/cache | **WP Rocket**, **LiteSpeed Cache**, **Docket Cache**, **Asset CleanUp Pro** | Unneeded — static is fast by default |
+| SEO / analytics | **Yoast SEO**, **Site Kit by Google**, **GTM4WP** | Keep GTM/analytics tags |
+| Redirects | **301 Redirects** | Harvest its map for the new `_redirects` |
+| Backups / security / misc | **UpdraftPlus**, **Wordfence**, **Code Snippets**, **WPCode**, **Classic Editor**, **Advanced Editor Tools**, **Duplicate Page**, **Post Type Switcher**, **WP Consent API**, **MayaWidgets** (agency) | — |
+
+**Takeaway for rebuild**: four overlapping caching plugins are a symptom — the site is fighting WordPress's weight. The real custom logic is JetEngine (CPTs+fields) + JetSmartFilters (facets) + JetFormBuilder (3 forms) + WooCommerce/Grow (payments) + Responder (email). A simpler stack must replicate exactly those five.
+
+### 2.1 Forms & integrations (verified)
+- **JetFormBuilder forms (3 total)**: `טופס לידים דולות` (Doula leads / matchmaking — the main lead capture), `Review Form`, `Review Form Therapist` (testimonial submission → JetReviews).
+- **Email/CRM**: **Responder (רב-מסר)** — this is what powers the free-guide lead magnets and the `/unsubscribe/` flow.
+- **Payments**: **Grow / Meshulam (משולם)** via the grow gateway, plus **ravpage (רב-פייג)** for landing-page checkouts. `/badpayment/` and `/thank-you/` are the gateway return pages.
+- **Analytics**: Google Tag Manager (GTM4WP) + Site Kit.
 
 ---
 
 ## 3. Content model (custom post types & taxonomies)
 
-From the sitemap index. Counts are sitemap entry counts (incl. the archive page).
+> **Verified against the WordPress admin (2026-06-27, full-admin login).** Counts below are live published-item counts from each `edit.php` screen — they supersede the earlier sitemap estimates. Field keys and taxonomies are read from the JetEngine post editor.
 
-| Post type / collection | URL base | Count | Purpose |
+| Post type (slug) | URL base | Published | Purpose |
 |---|---|---|---|
-| **Doulas (premium)** | `/doulas-premium/` | ~120 | Vetted doula profiles, paying members |
-| **Therapists (premium)** | `/therapist-premium/` | ~18 | Vetted counselor/therapist profiles |
-| **Other doulas** | `/other_doula/` | ~47 | Additional/non-premium doula listings |
-| **Pregnancy blog** | `/pregnancy-blog/` | ~102 | Articles + workshop (VOD) recordings |
-| **Benefits / coupons** | `/benefits/` | ~25 | Partner discount cards |
-| **Courses** | `/courses/` | ~7 | Course offerings |
-| **Lead-to-birth** | `/lead-to-birth/` | ~26 | Week-by-week pregnancy content (week13–week40) |
-| **Birth preparation** | `/birth-preperation/` | ~19 | Birth-prep topics/modules |
-| **Community** | `/community/` | ~9 | Community meetup/event recaps |
-| **Products** | `/product/` | 15 | WooCommerce paid items |
+| **Doulas — premium** (`doulas-premium`) | `/doulas-premium/` | **87** | Full doula profiles (rich fields) |
+| **Other doulas** (`other_doula`) | `/other_doula/` | **51** | Lighter doula listings (separate CPT) |
+| **Therapists — premium** (`therapist-premium`) | `/therapist-premium/` | **17** | Counselor/therapist profiles |
+| **Pregnancy blog** (`pregnancy-blog`) | `/pregnancy-blog/` | **114** | Articles + workshop (VOD) recordings |
+| **Benefits / coupons** (`benefits`) | `/benefits/` | **30** | Partner discount cards |
+| **Lead-to-birth** (`lead-to-birth`) | `/lead-to-birth/` | **27** | Week-by-week pregnancy content (week13–40) |
+| **Courses** (`courses`) | `/courses/` | **10** | Course offerings |
+| **Community** (`community`) | `/community/` | **9** | Meetup/event recaps (low migration value) |
+| **Products** (`product`) | `/product/` | **26** | WooCommerce items (incl. test junk) |
+| **Birth-preparation** | — | taxonomy | See below — it is a taxonomy, not a CPT |
 
-**Taxonomies used as directory filters** (these sitemaps are term archives, not content):
-- `additional-trainings` (~33) — practitioner trainings/specializations (registered nurse, equilibrio, hand biomechanics, NLP…)
-- `additional-tools` (~21) — service attributes: **languages spoken** (English/Spanish/Russian native), acupuncture, guided imagery…
-- `area_68` — geographic regions (online, home visit, south, Haifa, center, north…)
+### Taxonomies (used as JetSmartFilters facets on practitioners)
+Verified term counts and **corrected meanings** (the earlier sitemap-based guess had `area_68` wrong):
 
-### 3.1 Professional profile fields (doula/therapist)
-From `/doulas-premium/keren-eitan/`:
-- Name + professional title
-- Profile photo
-- Contact: phone, **WhatsApp** button, email, Instagram
-- Credentials/certifications (e.g. Spinning Babies, reflexology, shiatsu, essential oils)
-- **Service locations** — list of hospitals (Ichilov, Asuta Ashdod, Assaf Harofeh, Beilinson, Hadassah Ein Karem, Wolfson…)
-- Region / coverage area
-- Bio / philosophy (long text)
-- Service components (e.g. Zoom intro, prep course, in-person labor support, postpartum WhatsApp)
-- Testimonials (multiple, "verified")
-- FAQ section
-- Payment terms (split payment, insurance documentation)
-- Contact / lead form
+| Taxonomy (slug) | Terms | What it actually is | Examples |
+|---|---|---|---|
+| `hospitals` | 26 | Hospitals the doula attends | איכילוב, אסותא אשדוד, אסף הרופא, בלינסון, הדסה עין כרם, וולפסון… |
+| `area` | 8 | **Region / coverage** | אונליין, בית הלקוחה, דרום, חיפה, קליניקה, מרכז, צפון, שרון |
+| `area_68` | 13 | **Practitioner type / specialization** | דולה מוסמכת, דולה לאחר לידה, מדריכת הכנה ללידה, יועצת הנקה, דיאטנית, אוסטאופתית, צלמת לידות… |
+| `additional-trainings` | 34 | Certifications | אחות מוסמכת, NLP, איקוויליבריו, ביו-מכניקה של הלידה, יועצת שינה, היפנוברית'ינג, ליווי לאחר אובדן… |
+| `additional-tools` | 25 | Methods **+ spoken languages** | דוברת אנגלית/ספרדית/רוסית כשפת אם, דיקור, הומאופתיה, מיינדפולנס, דמיון מודרך… |
+| `birth-preperation` | 20 | Specific services offered | עיסוי תינוקות, FEMMA, רפלקסולוגיה, פרחי באך, רייקי, מטפלת לילה, מעגלי לידה… |
+
+### 3.1 Professional profile — verified JetEngine meta fields
+Real meta keys on the `doulas-premium` editor (English keys, Hebrew values):
+- **Contact/social**: `adress`, `email`, `whatsapp` (+`whatsapp_copy`), `facebook`, `instagram`, `insta-1`, `insta-2`
+- **Content blocks**: `introduction-meeting` (intro Zoom), `i-believe` (philosophy), `during-birth`, `after-birth`, `birth-support` (+`birth-support_photo`), `birthing-course`, `marketing-description`
+- **FAQ**: `question` / `answer` (+`qampa`), via `repeater-template-1`
+- **Testimonials**: `recommandation-1/2/3` + `recommandation-name-1/2/3` (also JetReviews plugin)
+- **Media**: `banner`, `image-gallery`, `video`, `whatsapp-gallary`
+- **Community link**: `whatsapp-group`
+- **Ordering**: `order-team`, `position`
+- Plus Yoast SEO meta per record.
 
 ### 3.2 Directory listing + filters (doulas & therapists archives)
 - Faceted filter bar:

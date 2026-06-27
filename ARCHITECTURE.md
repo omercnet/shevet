@@ -167,7 +167,7 @@ No cart, no on-site accounts initially. If gated content/members area is needed 
 ## 7. Migration plan
 
 1. **Model in Sanity** — define schemas above.
-2. **Scrape + import** — script reads the WP sitemap (already enumerated in `WEBSITE_SPEC.md`), pulls each page's content + fields, transforms to Sanity docs. ~200 practitioners, ~100 articles, ~25 benefits.
+2. **Export + import** — with admin access confirmed, use a native **WXR export** (Tools → Export) per post type + a JetEngine field/meta dump, transform to Sanity docs. Volumes verified: 87 premium doulas, 51 other doulas, 17 therapists, 114 articles/workshops, 30 benefits, 27 weekly items, 10 courses. Far more reliable than HTML scraping.
    - Drop test junk products (`temp`, `test`, `19-2`, `99`, `49`, `199-2`).
    - Decide premium vs other doula tiers; merge or tag.
    - Archive dated `community/` event recaps (low value).
@@ -194,12 +194,23 @@ No cart, no on-site accounts initially. If gated content/members area is needed 
 
 ## 9. Open questions before build
 
-1. **Doula tiers** — is `premium` vs `other` a paid/visibility split? Drives whether they merge.
-2. **Gated content** — are any articles/workshops members-only today? If yes, need light auth + role from payment.
-3. **Week-by-week** — currently drip email, on-site pages, or both? Sets whether email automation is in scope.
-4. **Existing email provider** — what's behind `/unsubscribe/` and the free-guide lead magnets? Reuse or migrate.
-5. **Payment gateway** — which Israeli gateway is in use now (for continuity + payouts)?
-6. **Languages** — Hebrew only, or any English content to preserve?
+Some were answered by the admin review (2026-06-27); remaining ones still need the customer.
+
+**Answered from admin:**
+- ~~Payment gateway~~ → **Grow / Meshulam (משולם)** via the grow gateway, plus **ravpage** for landing-page checkouts.
+- ~~Email provider~~ → **Responder (רב-מסר)** powers lead magnets + `/unsubscribe/`.
+- ~~Languages~~ → **Hebrew only**; "languages" are a practitioner facet (English/Spanish/Russian-speaking), not a multilingual site.
+- ~~Doula tiers~~ → `doulas-premium` (87) and `other_doula` (51) are **two separate post types** with different field richness — a real structural split, not just a tag.
+
+**Still open — need the customer:**
+1. **Premium vs other doulas** — confirmed separate types; is the split **paid membership** vs free listing, and should the rebuild keep two tiers or unify with a "premium" flag?
+2. **Gated content** — are any of the 114 articles/workshops members-only? If yes → light auth + role granted on payment.
+3. **Week-by-week (27 `lead-to-birth` items)** — delivered as on-site pages, Responder drip email, or both? Sets email-automation scope.
+4. **Responder** — keep it as the email platform (connect forms via webhook) or migrate the list elsewhere?
+5. **Grow/ravpage** — keep Grow for continuity (payout account already set up), or move to payment links on a different provider?
+6. **Test products** — confirm the ~6 real products to keep out of the 26 (`temp`, `test`, `19-2`, `99`, `49`, `199-2` are junk).
+7. **301 Redirects plugin** — export its existing map so we don't lose redirects already in place.
+8. **Brand assets, analytics (GTM container ID), editor accounts, timeline/budget** — as before.
 
 ---
 
