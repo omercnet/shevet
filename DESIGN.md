@@ -14,6 +14,7 @@ Shevet Imahot feels intimate, warm, and handmade: a trusted pregnancy-and-birth 
 | Peach soft | `--peach-soft` | `#f8e1ce` | Soft panels and hover states |
 | Cream | `--cream` | `#f4ece1` | Page background |
 | Cream alt | `--cream-2` | `#f4f3f1` | Secondary background |
+| Surface | `--surface` | `#ffffff` | Cards, forms, panels |
 | Beige | `--beige` | `#cda88b` | Subtle separators |
 | Apricot | `--apricot` | `#ffbc7d` | Logo-derived accent |
 | Mint | `--mint` | `#cde9ca` | Logo-derived chip accent |
@@ -58,6 +59,14 @@ Spacing follows a 4px base through rems. Use existing fluid clamps for section r
 ### Cards and Buttons
 - Reuse `.card`, `.btn`, `.btn-outline`, `.chip` from `brand.css`.
 - Interactive states use transform/opacity/color only.
+
+### Filters and Directories
+- Structure: `.filter-panel` above a `.grid` of `.directory-card` or `.article-card` items.
+- States: focus rings on every form control; empty results use `.empty-state`.
+
+### Profile and Content Pages
+- Structure: `.profile-shell`, `.media-frame`, `.article-shell`, or `.sale-hero` according to page type.
+- WhatsApp and purchase CTAs keep `.btn` variants and must remain real links.
 
 ## 6. Motion & Interaction
 
