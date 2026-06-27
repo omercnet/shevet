@@ -1,0 +1,26 @@
+---
+// Pastel tribal zigzag band — echoes the logo's triangle border.
+// Tiles a 4-triangle multicolor pattern across the full width.
+const { flip = false } = Astro.props;
+---
+<svg class:list={["zigzag", { flip }]} width="100%" height="18" aria-hidden="true" role="presentation">
+	<defs>
+		<pattern id="zz" patternUnits="userSpaceOnUse" width="80" height="18">
+			<path d="M0,18 L10,0 L20,18 Z" fill="var(--peach)"></path>
+			<path d="M20,18 L30,0 L40,18 Z" fill="var(--mint)"></path>
+			<path d="M40,18 L50,0 L60,18 Z" fill="var(--sky)"></path>
+			<path d="M60,18 L70,0 L80,18 Z" fill="var(--gold)"></path>
+		</pattern>
+	</defs>
+	<rect width="100%" height="18" fill="url(#zz)"></rect>
+</svg>
+<style>
+	.zigzag {
+		display: block;
+		width: 100%;
+		height: 18px;
+	}
+	.zigzag.flip {
+		transform: scaleY(-1);
+	}
+</style>

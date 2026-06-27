@@ -15,6 +15,11 @@
 	--cream: #f4ece1;
 	--cream-2: #f4f3f1;
 	--beige: #cda88b;
+	--apricot: #ffbc7d;
+	/* pastel tribal accents (from the logo's zigzag border) */
+	--mint: #cde9ca;
+	--sky: #bfe6f3;
+	--gold: #f2c84b;
 	--ink: #3f2230;
 	--text: #565656;
 	--muted: #7a7a7a;
@@ -97,6 +102,26 @@ img {
 	font-size: 0.8rem;
 	font-weight: 600;
 }
+/* pastel tribal chip tints — rotate across categories */
+.chip.t-peach {
+	background: var(--peach-soft);
+}
+.chip.t-mint {
+	background: var(--mint);
+	color: #2f6b4e;
+}
+.chip.t-sky {
+	background: var(--sky);
+	color: #1f5d77;
+}
+.chip.t-gold {
+	background: #fbe7b0;
+	color: #8a6a12;
+}
+.chip.t-apricot {
+	background: #ffe2c4;
+	color: #9a5a1e;
+}
 
 /* ---- shared components ---- */
 .section {
@@ -137,6 +162,15 @@ img {
 .card:hover {
 	transform: translateY(-4px);
 	box-shadow: 0 18px 38px -20px rgba(146, 0, 59, 0.45);
+}
+/* card internals — global so they also style cards injected by client-side JS
+   (Astro scopes per-page <style>, which would not reach innerHTML content). */
+.card h3 a {
+	color: var(--brand);
+	text-decoration: none;
+}
+.card h3 a:hover {
+	text-decoration: underline;
 }
 .grid {
 	display: grid;

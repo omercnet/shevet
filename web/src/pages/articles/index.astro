@@ -90,16 +90,20 @@ const CATEGORIES = [
   </script>
 
   <style>
-    .filters { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; background:var(--peach-soft); padding:1.2rem; border-radius:14px; margin:1.5rem 0; }
-    .filters label { display:flex; flex-direction:column; font-size:.85rem; gap:.3rem; color:var(--ink); font-weight:600; }
-    .filters select { padding:.5rem; border:1px solid var(--line); border-radius:8px; font-family:inherit; }
-    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:8px; padding:.55rem 1rem; cursor:pointer; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
-    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem; }
-    .card img { border-radius:10px; width:100%; object-fit:cover; aspect-ratio:16/10; }
-    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin:.6rem 0 .2rem; }
-    .card h3 { margin:.4rem 0; font-size:1.2rem; }
-    .card .excerpt { color:var(--muted); font-size:.9rem; margin:.4rem 0 0; }
+    .filters { display:flex; gap:1rem 1.2rem; flex-wrap:wrap; align-items:end; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); padding:1.5rem; border-radius:18px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.8rem; gap:.35rem; color:var(--brand); font-weight:700; }
+    .filters select { padding:.6rem .7rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; min-width:11ch; }
+    .filters select:focus { outline:2px solid var(--brand); outline-offset:1px; }
+    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:999px; padding:.6rem 1.2rem; cursor:pointer; font-weight:700; }
+    .filters button:hover { background:var(--brand); color:#fff; }
+    #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
+    .card { padding:1.2rem 1.3rem 1.4rem; }
+    .card img { border-radius:12px; width:100%; object-fit:cover; aspect-ratio:16/10; margin-bottom:.8rem; }
+    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin:0 0 .5rem; }
+    .card h3 { margin:.2rem 0 .4rem; font-size:1.3rem; }
+    .card h3 a { text-decoration:none; }
+    .card h3 a:hover { text-decoration:underline; }
+    .card .excerpt { color:var(--muted); font-size:.92rem; margin:0; }
     .empty { color:var(--muted); margin:2rem 0; }
   </style>
 </Base>
