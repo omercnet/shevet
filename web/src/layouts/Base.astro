@@ -14,12 +14,21 @@ const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="icon" href="/brand/mark.png" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site).href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:image" content="/brand/logo.png" />
+    <meta property="og:locale" content="he_IL" />
+    <meta name="twitter:card" content="summary_large_image" />
     {/* TODO: gate behind cookie consent per Israeli privacy law before loading */}
     {gtm && (
       <script is:inline set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`} />
     )}
   </head>
   <body>
+    <a href="#main" class="skip-link">דלגו לתוכן</a>
     <header class="wrap site-head">
       <a href="/" class="logo"><img src="/brand/logo.png" alt="שבט אמהות" width="160" height="99" /></a>
       <nav>
@@ -31,7 +40,7 @@ const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, 
       </nav>
     </header>
     <ZigZag />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <footer class="wrap site-foot">

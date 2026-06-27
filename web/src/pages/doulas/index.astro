@@ -64,9 +64,10 @@ const settings = await getSiteSettings()
         s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
       const card = (d: Row): string => {
         const name = esc(d.name);
+        const tints = ["t-peach", "t-mint", "t-sky", "t-gold"];
         const tags = [...(d.hospitals ?? []), ...(d.supportStyle ?? [])]
           .slice(0, 3)
-          .map((t) => `<span class="chip">${esc(t)}</span>`)
+          .map((t, i) => `<span class="chip ${tints[i % tints.length]}">${esc(t)}</span>`)
           .join("");
         const href = `/doulas/${encodeURIComponent(d.slug)}/`;
         const wa = d.whatsapp

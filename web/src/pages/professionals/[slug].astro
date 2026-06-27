@@ -1,14 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro'
-import {getProfessionalSlugs, getPractitioner} from '../../lib/queries'
+import {getProfessionalDetails, type PractitionerDetailWithSlug} from '../../lib/queries'
 
 export async function getStaticPaths() {
-  const slugs: string[] = await getProfessionalSlugs()
-  return slugs.map((slug) => ({params: {slug}}))
+  const pros = await getProfessionalDetails()
+  return pros.map((doc) => ({params: {slug: doc.slug}, props: {doc}}))
 }
 
-const {slug} = Astro.params
-const d = await getPractitioner(slug!)
+const {doc} = Astro.props as {doc: PractitionerDetailWithSlug}
+const d = doc
 
 // YouTube/Vimeo → embeddable url
 function embed(url?: string) {

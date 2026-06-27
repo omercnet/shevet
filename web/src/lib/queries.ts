@@ -96,6 +96,26 @@ export function getPremiumDoulaSlugs(): Promise<string[]> {
 	);
 }
 
+export interface PractitionerDetailWithSlug extends PractitionerDetail {
+	slug: string;
+}
+
+// Fetch ALL premium practitioner details once — used by getStaticPaths so detail
+// pages render from props instead of one live query per page (much faster builds).
+function practitionerDetails(filter: string): Promise<PractitionerDetailWithSlug[]> {
+	return sanityFetch<PractitionerDetailWithSlug[]>(
+		`*[_type == "practitioner" && ${filter} && tier == "premium" && published == true]{
+			"slug": slug.current, name, title, videoUrl, whatsapp, supportStyle, testimonials,
+			"photoUrl": photo.asset->url,
+			"hospitals": hospitals[]->name, "fields": fields[]->name, "regions": regions[]->name
+		}`,
+		{},
+		[],
+	);
+}
+export const getDoulaDetails = () => practitionerDetails("isDoula == true");
+export const getProfessionalDetails = () => practitionerDetails("isProfessional == true");
+
 export interface SiteSettings {
 	title?: string;
 	email?: string;
@@ -229,4 +249,16 @@ export function getSalePage(slug: string): Promise<SalePage | null> {
 
 export function getSalePageSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(`*[_type == "salePage" && defined(slug.current)].slug.current`, {}, []);
+}
+
+// All article details for getStaticPaths (one fetch instead of per-slug).
+export function getArticleDetails(): Promise<ArticleDetail[]> {
+	return sanityFetch<ArticleDetail[]>(
+		`*[_type == "article" && defined(slug.current)]{
+			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
+			videoUrl, body, publishedAt
+		}`,
+		{},
+		[],
+	);
 }

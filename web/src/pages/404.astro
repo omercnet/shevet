@@ -1,0 +1,35 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="הדף לא נמצא — שבט אמהות" description="העמוד שחיפשת לא נמצא.">
+	<section class="wrap notfound">
+		<h1>אופס… הדף לא נמצא</h1>
+		<p>אולי הקישור השתנה. אפשר לחזור לעמוד הבית או להמשיך לאחד מאלה:</p>
+		<div class="links">
+			<a class="btn" href="/">לעמוד הבית</a>
+			<a class="btn btn-outline" href="/doulas/">חיפוש דולות</a>
+			<a class="btn btn-outline" href="/professionals/">נשות מקצוע</a>
+		</div>
+	</section>
+	<style>
+		.notfound {
+			text-align: center;
+			padding-block: clamp(3rem, 10vw, 6rem);
+		}
+		.notfound h1 {
+			font-size: clamp(2rem, 6vw, 3.5rem);
+		}
+		.notfound p {
+			color: var(--muted);
+			max-width: 40ch;
+			margin-inline: auto;
+		}
+		.links {
+			display: flex;
+			gap: 1rem;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-top: 2rem;
+		}
+	</style>
+</Base>

@@ -47,9 +47,10 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
         s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
       const card = (p: Row): string => {
         const name = esc(p.name);
+        const tints = ["t-peach", "t-mint", "t-sky", "t-gold"];
         const tags = [...(p.fields ?? []), ...(p.regions ?? [])]
           .slice(0, 3)
-          .map((t) => `<span class="chip">${esc(t)}</span>`)
+          .map((t, i) => `<span class="chip ${tints[i % tints.length]}">${esc(t)}</span>`)
           .join("");
         const href = `/professionals/${encodeURIComponent(p.slug)}/`;
         const wa = p.whatsapp

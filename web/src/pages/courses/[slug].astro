@@ -1,10 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { getSalePage, getSalePageSlugs } from "../../lib/queries";
+import { getSalePages, type SalePage } from "../../lib/queries";
 
 export async function getStaticPaths() {
-	const slugs = await getSalePageSlugs();
-	return slugs.map((slug) => ({ params: { slug } }));
+	const pages = await getSalePages();
+	return pages.map((doc) => ({ params: { slug: doc.slug }, props: { doc } }));
 }
 
 interface PortableBlock {
@@ -13,8 +13,7 @@ interface PortableBlock {
 	children?: { text?: string }[];
 }
 
-const { slug } = Astro.params;
-const page = await getSalePage(slug!);
+const page = Astro.props.doc as SalePage;
 
 // Minimal portable-text → paragraphs: join the text spans of each block.
 const blocks = (page?.blurb ?? []) as PortableBlock[];

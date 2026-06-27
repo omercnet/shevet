@@ -1,14 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro'
-import {getArticle, getArticleSlugs} from '../../lib/queries'
+import {getArticleDetails, type ArticleDetail} from '../../lib/queries'
 
 export async function getStaticPaths() {
-  const slugs: string[] = await getArticleSlugs()
-  return slugs.map((slug) => ({params: {slug}}))
+  const articles = await getArticleDetails()
+  return articles.map((doc) => ({params: {slug: doc.slug}, props: {doc}}))
 }
 
-const {slug} = Astro.params
-const a = await getArticle(slug!)
+const a = Astro.props.doc as ArticleDetail
 
 // YouTube/Vimeo → embeddable url (copied from doulas/[slug].astro)
 function embed(url?: string) {
