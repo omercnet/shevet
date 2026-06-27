@@ -1,5 +1,6 @@
 ---
 import '../styles/brand.css'
+import ZigZag from '../components/ZigZag.astro'
 import { getSiteSettings } from '../lib/queries'
 const {title = 'שבט אמהות', description = ''} = Astro.props
 const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
@@ -29,6 +30,7 @@ const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, 
         <a href="/community/">קהילה</a>
       </nav>
     </header>
+    <ZigZag />
     <main>
       <slot />
     </main>

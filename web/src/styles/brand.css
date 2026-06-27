@@ -163,6 +163,15 @@ img {
 	transform: translateY(-4px);
 	box-shadow: 0 18px 38px -20px rgba(146, 0, 59, 0.45);
 }
+/* card internals — global so they also style cards injected by client-side JS
+   (Astro scopes per-page <style>, which would not reach innerHTML content). */
+.card h3 a {
+	color: var(--brand);
+	text-decoration: none;
+}
+.card h3 a:hover {
+	text-decoration: underline;
+}
 .grid {
 	display: grid;
 	gap: 1.5rem;
