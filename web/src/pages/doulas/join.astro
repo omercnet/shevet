@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getSiteSettings} from '../../lib/queries'
+
+const settings = await getSiteSettings()
+---
+<Base title="הצטרפות דולות — שבט אמהות" description="דולות, הצטרפו בחינם למאגר שבט אמהות: ממלאות טופס, אנחנו מאשרות, ומופיעות במאגר.">
+  <section class="wrap join">
+    <h1>הצטרפו למאגר הדולות</h1>
+    <p class="lead">רוצות להופיע במאגר הדולות של שבט אמהות? ההצטרפות חינמית ופשוטה.</p>
+
+    <ol class="flow">
+      <li><span class="num">1</span> ממלאות את טופס ההרשמה</li>
+      <li><span class="num">2</span> אנחנו מאשרות את הפרטים</li>
+      <li><span class="num">3</span> מופיעות במאגר</li>
+    </ol>
+
+    <div class="form-block">
+      {settings?.matchmakingFormEmbed ? (
+        <div class="embed" set:html={settings.matchmakingFormEmbed}></div>
+      ) : (
+        <p class="placeholder">טופס ההרשמה יתווסף בקרוב.</p>
+      )}
+    </div>
+  </section>
+
+  <style>
+    .join { max-width:760px; }
+    .lead { color:var(--muted); font-size:1.1rem; }
+    .flow { list-style:none; padding:0; margin:2rem 0; display:flex; flex-wrap:wrap; gap:1rem; }
+    .flow li { flex:1 1 200px; display:flex; align-items:center; gap:.7rem; background:var(--peach-soft); border-radius:14px; padding:1rem 1.2rem; font-weight:600; color:var(--ink); }
+    .flow .num { display:flex; align-items:center; justify-content:center; width:2rem; height:2rem; flex:0 0 auto; border-radius:50%; background:var(--brand); color:#fff; font-weight:700; }
+    .form-block { margin-top:2.5rem; background:#fff; border:1px solid var(--line); border-radius:16px; padding:2rem; }
+    .placeholder { margin:0; color:var(--muted); text-align:center; }
+    .embed { width:100%; }
+  </style>
+</Base>
