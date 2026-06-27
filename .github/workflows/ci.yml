@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  # Public Sanity project id (safe to expose — not a secret).
+  SANITY_PROJECT_ID: cuxqs66c
+  SANITY_DATASET: production
+
+jobs:
+  check:
+    name: ${{ matrix.pkg.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkg:
+          - { name: web, dir: web, extra: "npm run check && npm run build" }
+          - { name: studio, dir: studio, extra: "npm run typecheck && npm run build" }
+    defaults:
+      run:
+        working-directory: ${{ matrix.pkg.dir }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.pkg.dir }}/package-lock.json
+      - run: npm ci
+      - name: Lint & format (Biome)
+        run: npm run lint
+      - name: Typecheck & build
+        run: ${{ matrix.pkg.extra }}

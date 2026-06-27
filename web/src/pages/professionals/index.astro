@@ -29,31 +29,52 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
     <div class="grid" id="results"></div>
   </section>
 
-  <script type="application/json" id="data" set:html={JSON.stringify(pros)}></script>
+  <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
   <script>
-    const data = JSON.parse(document.getElementById('data').textContent || '[]');
-    const form = document.getElementById('pro-filters');
-    const out = document.getElementById('results');
-    const count = document.getElementById('count');
-    function card(p) {
-      const tags = [...(p.fields||[]), ...(p.regions||[])].slice(0,4).map(t => `<span class="chip">${t}</span>`).join('');
-      const wa = p.whatsapp ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\\D/g,'')}">וואטסאפ</a>` : '';
-      return `<article class="card">${p.photo ? `<img src="${p.photo}?w=320&h=200&fit=crop" alt="${p.name}">`:''}
-        <h3><a href="/professionals/${p.slug}/">${p.name}</a></h3><div class="tags">${tags}</div>${wa}</article>`;
+    interface Row {
+      slug: string; name: string; photo?: string; whatsapp?: string;
+      fields?: string[]; regions?: string[]; languages?: string[];
     }
-    function apply() {
-      const f = new FormData(form);
-      const fld=f.get('field'), reg=f.get('region'), lang=f.get('lang');
-      const res = data.filter(p =>
-        (!fld || (p.fields||[]).includes(fld)) &&
-        (!reg || (p.regions||[]).includes(reg)) &&
-        (!lang || (p.languages||[]).includes(lang)));
-      out.innerHTML = res.map(card).join('');
-      count.textContent = `${res.length} נשות מקצוע`;
+    const dataEl = document.getElementById("data");
+    const form = document.getElementById("pro-filters") as HTMLFormElement | null;
+    const out = document.getElementById("results");
+    const count = document.getElementById("count");
+    const reset = document.getElementById("reset");
+
+    if (dataEl && form && out && count) {
+      const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const card = (p: Row): string => {
+        const tags = [...(p.fields ?? []), ...(p.regions ?? [])]
+          .slice(0, 4)
+          .map((t) => `<span class="chip">${t}</span>`)
+          .join("");
+        const wa = p.whatsapp
+          ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+          : "";
+        const img = p.photo ? `<img src="${p.photo}?w=320&h=200&fit=crop" alt="${p.name}">` : "";
+        return `<article class="card">${img}<h3><a href="/professionals/${p.slug}/">${p.name}</a></h3><div class="tags">${tags}</div>${wa}</article>`;
+      };
+      const apply = (): void => {
+        const f = new FormData(form);
+        const fld = f.get("field");
+        const reg = f.get("region");
+        const lang = f.get("lang");
+        const res = data.filter(
+          (p) =>
+            (!fld || (p.fields ?? []).includes(fld as string)) &&
+            (!reg || (p.regions ?? []).includes(reg as string)) &&
+            (!lang || (p.languages ?? []).includes(lang as string)),
+        );
+        out.innerHTML = res.map(card).join("");
+        count.textContent = `${res.length} נשות מקצוע`;
+      };
+      form.addEventListener("input", apply);
+      reset?.addEventListener("click", () => {
+        form.reset();
+        apply();
+      });
+      apply();
     }
-    form.addEventListener('input', apply);
-    document.getElementById('reset').addEventListener('click', () => { form.reset(); apply(); });
-    apply();
   </script>
 
   <style>

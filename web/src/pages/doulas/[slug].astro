@@ -41,9 +41,9 @@ const wa = d?.whatsapp ? `https://wa.me/${String(d.whatsapp).replace(/\D/g, '')}
       </div>
     </header>
 
-    {d?.testimonials?.length > 0 && (
+    {(d?.testimonials?.length ?? 0) > 0 && (
       <section class="reviews">
-        {d.testimonials.map((t: any) => (
+        {d?.testimonials?.map((t) => (
           <blockquote>“{t.quote}” <cite>— {t.author}</cite></blockquote>
         ))}
       </section>

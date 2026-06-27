@@ -1,7 +1,7 @@
 ---
 import '../styles/brand.css'
 const {title = 'שבט אמהות', description = ''} = Astro.props
-const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment; consent-gated in production
+const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
 ---
 <!doctype html>
 <html lang="he" dir="rtl">
@@ -10,6 +10,10 @@ const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment; consent-gated 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {/* TODO: gate behind cookie consent per Israeli privacy law before loading */}
+    {gtm && (
+      <script is:inline set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`} />
+    )}
   </head>
   <body>
     <header class="wrap site-head">

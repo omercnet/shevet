@@ -37,40 +37,53 @@ const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].so
     <div class="grid" id="results"></div>
   </section>
 
-  <script type="application/json" id="data" set:html={JSON.stringify(doulas)}></script>
+  <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
   <script>
-    const data = JSON.parse(document.getElementById('data').textContent || '[]');
-    const form = document.getElementById('doula-filters');
-    const out = document.getElementById('results');
-    const count = document.getElementById('count');
-
-    function card(d) {
-      const tags = [...(d.hospitals||[]), ...(d.supportStyle||[])].slice(0,4)
-        .map(t => `<span class="chip">${t}</span>`).join('');
-      const wa = d.whatsapp ? `<a class="btn btn-wa" href="https://wa.me/${d.whatsapp.replace(/\\D/g,'')}">וואטסאפ</a>` : '';
-      return `<article class="card">
-        ${d.photo ? `<img src="${d.photo}?w=320&h=200&fit=crop" alt="${d.name}">` : ''}
-        <h3><a href="/doulas/${d.slug}/">${d.name}</a></h3>
-        <div class="tags">${tags}</div>
-        ${wa}
-      </article>`;
+    interface Row {
+      slug: string; name: string; photo?: string; whatsapp?: string;
+      hospitals?: string[]; supportStyle?: string[]; budget?: string;
     }
+    const dataEl = document.getElementById("data");
+    const form = document.getElementById("doula-filters") as HTMLFormElement | null;
+    const out = document.getElementById("results");
+    const count = document.getElementById("count");
+    const reset = document.getElementById("reset");
 
-    function apply() {
-      const f = new FormData(form);
-      const hospital = f.get('hospital'), style = f.get('style'), budget = f.get('budget');
-      const res = data.filter(d =>
-        (!hospital || (d.hospitals||[]).includes(hospital)) &&
-        (!style || (d.supportStyle||[]).includes(style)) &&
-        (!budget || d.budget === budget)
-      );
-      // dueDate currently informational — matching rule TBD with Keren
-      out.innerHTML = res.map(card).join('');
-      count.textContent = `${res.length} דולות`;
+    if (dataEl && form && out && count) {
+      const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const card = (d: Row): string => {
+        const tags = [...(d.hospitals ?? []), ...(d.supportStyle ?? [])]
+          .slice(0, 4)
+          .map((t) => `<span class="chip">${t}</span>`)
+          .join("");
+        const wa = d.whatsapp
+          ? `<a class="btn btn-wa" href="https://wa.me/${d.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+          : "";
+        const img = d.photo ? `<img src="${d.photo}?w=320&h=200&fit=crop" alt="${d.name}">` : "";
+        return `<article class="card">${img}<h3><a href="/doulas/${d.slug}/">${d.name}</a></h3><div class="tags">${tags}</div>${wa}</article>`;
+      };
+      const apply = (): void => {
+        const f = new FormData(form);
+        const hospital = f.get("hospital");
+        const style = f.get("style");
+        const budget = f.get("budget");
+        const res = data.filter(
+          (d) =>
+            (!hospital || (d.hospitals ?? []).includes(hospital as string)) &&
+            (!style || (d.supportStyle ?? []).includes(style as string)) &&
+            (!budget || d.budget === budget),
+        );
+        // dueDate currently informational — matching rule TBD with Keren
+        out.innerHTML = res.map(card).join("");
+        count.textContent = `${res.length} דולות`;
+      };
+      form.addEventListener("input", apply);
+      reset?.addEventListener("click", () => {
+        form.reset();
+        apply();
+      });
+      apply();
     }
-    form.addEventListener('input', apply);
-    document.getElementById('reset').addEventListener('click', () => { form.reset(); apply(); });
-    apply();
   </script>
 
   <style>
