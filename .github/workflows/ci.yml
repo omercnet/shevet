@@ -16,6 +16,10 @@ env:
   # Public Sanity project id (safe to expose — not a secret).
   SANITY_PROJECT_ID: cuxqs66c
   SANITY_DATASET: production
+  # Build-time READ token for the private dataset. Add it in GitHub:
+  # Settings → Secrets and variables → Actions → New secret → SANITY_TOKEN.
+  # If absent, the web build still passes — it renders empty (no data).
+  SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
 jobs:
   check:

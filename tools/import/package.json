@@ -1,0 +1,15 @@
+{
+  "name": "shevet-import",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Import the WordPress WXR export into the Sanity dataset.",
+  "scripts": {
+    "import": "node import.mjs",
+    "dry-run": "node import.mjs --dry-run"
+  },
+  "dependencies": {
+    "@sanity/client": "^7.23.0",
+    "fast-xml-parser": "^4.5.0"
+  }
+}

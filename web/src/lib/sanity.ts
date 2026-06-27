@@ -3,6 +3,10 @@ import { createImageUrlBuilder } from "@sanity/image-url";
 
 const projectId = import.meta.env.SANITY_PROJECT_ID;
 const dataset = import.meta.env.SANITY_DATASET ?? "production";
+// Build-time read token. The dataset is private (holds practitioner contact
+// details), so reads need auth. This is NOT `PUBLIC_`-prefixed, so Astro never
+// exposes it to the browser — it is used only during the static build in Node.
+const token = import.meta.env.SANITY_TOKEN || undefined;
 
 // `false` until a real Sanity project is wired up. Lets the site build with no
 // secrets: queries short-circuit to empty and pages render their empty state.
@@ -14,7 +18,8 @@ export const client: SanityClient | null = isConfigured
 			projectId: projectId as string,
 			dataset,
 			apiVersion: "2024-01-01",
-			useCdn: true, // content fetched at build time; CDN is fine
+			useCdn: false, // build-time fetch — read live API so content is always fresh
+			token,
 		})
 	: null;
 
