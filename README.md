@@ -11,6 +11,15 @@ Rebuild of shevet-imahot.co.il off WordPress onto a lean, low-cost stack.
 ## Stack
 Astro (static) · Sanity (Free) · Netlify · Responder (forms/email) · Meshulam (payments). $0 fixed/mo.
 
+## Hosting (Netlify)
+Config in `netlify.toml` (base `web/`, publish `dist`). One-time setup:
+1. Netlify → **Add new site → Import from Git** → pick this repo (private is fine).
+2. **Site settings → Environment variables** → add `SANITY_TOKEN` = a Sanity **read** token (dataset is private). `SANITY_PROJECT_ID`/`DATASET` come from `netlify.toml`.
+3. **Domain** → add `shevet-imahot.co.il`; point DNS at Netlify (their apex/ALIAS records) — auto-HTTPS.
+4. **Auto-rebuild on content publish:** Netlify → **Build hooks** → create one → copy the URL. In Sanity (manage.sanity.io → API → Webhooks) add a webhook to that URL, **POST, no headers, no body** (uncheck drafts). Publishing in Studio then redeploys the site (~1-2 min).
+
+No PAT, no GitHub Pages, repo stays private.
+
 ## Setup
 
 ### 1. Sanity (CMS)

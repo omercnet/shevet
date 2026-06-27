@@ -1,0 +1,12 @@
+# Netlify build config. The Astro app lives in web/.
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Public Sanity project id (not a secret). The private dataset READ token
+  # (SANITY_TOKEN) is set in the Netlify UI → Site settings → Environment variables.
+  SANITY_PROJECT_ID = "cuxqs66c"
+  SANITY_DATASET = "production"
