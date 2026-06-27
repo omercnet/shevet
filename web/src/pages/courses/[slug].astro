@@ -1,0 +1,53 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getSalePage, getSalePageSlugs } from "../../lib/queries";
+
+export async function getStaticPaths() {
+	const slugs = await getSalePageSlugs();
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+interface PortableBlock {
+	_type?: string;
+	style?: string;
+	children?: { text?: string }[];
+}
+
+const { slug } = Astro.params;
+const page = await getSalePage(slug!);
+
+// Minimal portable-text → paragraphs: join the text spans of each block.
+const blocks = (page?.blurb ?? []) as PortableBlock[];
+const paragraphs = blocks
+	.filter((b) => b?._type === "block")
+	.map((b) => (b.children ?? []).map((c) => c?.text ?? "").join(""))
+	.filter((text) => text.trim().length > 0);
+
+const ctaLabel = page?.ctaLabel ?? "לרכישה";
+const meshulamUrl = page?.meshulamUrl;
+---
+<Base title={`${page?.title ?? ""} | שבט אמהות`} description={page?.title}>
+	<article class="sale wrap">
+		<h1>{page?.title}</h1>
+		{page?.image && <img class="cover" src={page.image} alt={page?.title ?? ""} />}
+		{paragraphs.length > 0 && (
+			<div class="blurb">
+				{paragraphs.map((text) => (
+					<p>{text}</p>
+				))}
+			</div>
+		)}
+		{meshulamUrl && (
+			<a class="btn cta" href={meshulamUrl} target="_blank" rel="noopener noreferrer">
+				{ctaLabel}
+			</a>
+		)}
+	</article>
+
+	<style>
+		.sale { padding-block: 1.5rem 4rem; }
+		.cover { width: 100%; border-radius: 16px; margin-block: 1rem 1.5rem; }
+		.blurb { display: grid; gap: 1rem; line-height: 1.7; }
+		.cta { margin-top: 2rem; font-size: 1.1rem; padding: 0.9rem 2rem; }
+	</style>
+</Base>
