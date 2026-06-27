@@ -1,7 +1,10 @@
 ---
 import '../styles/brand.css'
+import { getSiteSettings } from '../lib/queries'
 const {title = 'שבט אמהות', description = ''} = Astro.props
 const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
+const settings = await getSiteSettings()
+const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, '')}` : null
 ---
 <!doctype html>
 <html lang="he" dir="rtl">
@@ -31,6 +34,11 @@ const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
     </main>
     <footer class="wrap site-foot">
       <span>© שבט אמהות</span>
+      <div class="foot-contact">
+        {settings?.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}
+        {settings?.phone && <a href={waLink ?? `tel:${settings.phone}`}>{settings.phone}</a>}
+        {settings?.instagram && <a href={settings.instagram}>Instagram</a>}
+      </div>
     </footer>
     {/* TODO: consent banner gates GTM ({gtm}) per Israeli privacy law */}
     <style>
@@ -38,7 +46,9 @@ const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
       .logo { font-family: var(--display); font-size: 1.8rem; color: var(--brand); text-decoration:none; }
       .site-head nav { display:flex; gap:1.2rem; flex-wrap:wrap; }
       .site-head nav a { text-decoration:none; color: var(--ink); font-weight:600; }
-      .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; }
+      .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+      .foot-contact { display:flex; gap:1.2rem; flex-wrap:wrap; }
+      .foot-contact a { color: var(--brand); text-decoration:none; }
     </style>
   </body>
 </html>

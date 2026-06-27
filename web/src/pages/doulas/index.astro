@@ -1,10 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro'
-import {getDoulas} from '../../lib/queries'
+import {getDoulas, getSiteSettings} from '../../lib/queries'
 import {SUPPORT_STYLES, BUDGET_BANDS} from '../../../shared/searchOptions'
 
 const doulas = await getDoulas()
 const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].sort()
+const settings = await getSiteSettings()
 ---
 <Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה, סגנון ליווי ותקציב.">
   <section class="wrap">
@@ -35,6 +36,14 @@ const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].so
 
     <p id="count"></p>
     <div class="grid" id="results"></div>
+
+    {settings?.matchmakingFormEmbed && (
+      <aside class="matchmaking">
+        <h2>לא בטוחות? נעזור לכן למצוא</h2>
+        <p>מלאו את הטופס ונשלח אתכן לדולה שמתאימה לכן.</p>
+        <div class="embed" set:html={settings.matchmakingFormEmbed}></div>
+      </aside>
+    )}
   </section>
 
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
@@ -96,5 +105,8 @@ const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].so
     .card img { border-radius:10px; width:100%; object-fit:cover; aspect-ratio:16/10; }
     .card h3 { margin:.6rem 0 .4rem; font-size:1.2rem; }
     .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem; }
+    .matchmaking { margin-top:3rem; background:var(--peach-soft); border-radius:16px; padding:2rem; }
+    .matchmaking h2 { margin-top:0; }
+    .matchmaking .embed { margin-top:1rem; }
   </style>
 </Base>

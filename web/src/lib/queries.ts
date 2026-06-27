@@ -96,6 +96,137 @@ export function getPremiumDoulaSlugs(): Promise<string[]> {
 	);
 }
 
-export function getSiteSettings(): Promise<Record<string, unknown> | null> {
-	return sanityFetch<Record<string, unknown> | null>(`*[_type == "siteSettings"][0]`, {}, null);
+export interface SiteSettings {
+	title?: string;
+	email?: string;
+	phone?: string;
+	instagram?: string;
+	facebook?: string;
+	gtmId?: string;
+	matchmakingFormEmbed?: string;
+}
+
+export function getSiteSettings(): Promise<SiteSettings | null> {
+	return sanityFetch<SiteSettings | null>(`*[_type == "siteSettings"][0]`, {}, null);
+}
+
+// ---------- Articles ----------
+export interface ArticleCard {
+	slug: string;
+	title: string;
+	type?: string;
+	category?: string;
+	excerpt?: string;
+	cover?: string;
+}
+
+export interface ArticleDetail extends ArticleCard {
+	videoUrl?: string;
+	body?: unknown[];
+	publishedAt?: string;
+}
+
+export function getArticles(): Promise<ArticleCard[]> {
+	return sanityFetch<ArticleCard[]>(
+		`*[_type == "article"] | order(publishedAt desc){
+			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url
+		}`,
+		{},
+		[],
+	);
+}
+
+export function getArticle(slug: string): Promise<ArticleDetail | null> {
+	return sanityFetch<ArticleDetail | null>(
+		`*[_type == "article" && slug.current == $slug][0]{
+			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
+			videoUrl, body, publishedAt
+		}`,
+		{ slug },
+		null,
+	);
+}
+
+export function getArticleSlugs(): Promise<string[]> {
+	return sanityFetch<string[]>(`*[_type == "article" && defined(slug.current)].slug.current`, {}, []);
+}
+
+// ---------- Benefits ----------
+export interface BenefitCard {
+	slug?: string;
+	partner: string;
+	logo?: string;
+	category?: string;
+	discount?: string;
+	description?: string;
+	couponCode?: string;
+	redeemUrl?: string;
+}
+
+export function getBenefits(): Promise<BenefitCard[]> {
+	return sanityFetch<BenefitCard[]>(
+		`*[_type == "benefit"] | order(partner asc){
+			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl
+		}`,
+		{},
+		[],
+	);
+}
+
+// ---------- Community (WhatsApp groups) ----------
+export interface WhatsappGroup {
+	name: string;
+	cohort?: string;
+	inviteUrl?: string;
+	moderator?: string;
+	guidelines?: string;
+}
+
+export function getWhatsappGroups(): Promise<WhatsappGroup[]> {
+	return sanityFetch<WhatsappGroup[]>(
+		`*[_type == "whatsappGroup"]{ name, cohort, inviteUrl, moderator, guidelines }`,
+		{},
+		[],
+	);
+}
+
+// ---------- Professionals (profile detail reuses getPractitioner) ----------
+export function getProfessionalSlugs(): Promise<string[]> {
+	return sanityFetch<string[]>(
+		`*[_type == "practitioner" && isProfessional == true && tier == "premium" && published == true].slug.current`,
+		{},
+		[],
+	);
+}
+
+// ---------- Sale pages (Meshulam) ----------
+export interface SalePage {
+	slug: string;
+	title: string;
+	image?: string;
+	blurb?: unknown[];
+	ctaLabel?: string;
+	meshulamUrl?: string;
+}
+
+export function getSalePages(): Promise<SalePage[]> {
+	return sanityFetch<SalePage[]>(
+		`*[_type == "salePage"]{ "slug": slug.current, title, "image": image.asset->url, blurb, ctaLabel, meshulamUrl }`,
+		{},
+		[],
+	);
+}
+
+export function getSalePage(slug: string): Promise<SalePage | null> {
+	return sanityFetch<SalePage | null>(
+		`*[_type == "salePage" && slug.current == $slug][0]{
+			"slug": slug.current, title, "image": image.asset->url, blurb, ctaLabel, meshulamUrl
+		}`,
+		{ slug },
+		null,
+	);
+}
+
+export function getSalePageSlugs(): Promise<string[]> {
+	return sanityFetch<string[]>(`*[_type == "salePage" && defined(slug.current)].slug.current`, {}, []);
 }
