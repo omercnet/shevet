@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Import the WordPress WXR export into the Sanity dataset.",
   "scripts": {
+    "contract": "node import-contract.mjs",
     "import": "node import.mjs",
     "dry-run": "node import.mjs --dry-run"
   },

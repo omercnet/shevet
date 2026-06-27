@@ -8,6 +8,8 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"check": "astro check",
+		"content:contract": "node scripts/content-contract.mjs",
+		"parity:samples": "node scripts/parity-samples.mjs",
 		"lint": "biome ci .",
 		"format": "biome format --write ."
 	},
