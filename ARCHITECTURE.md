@@ -1,6 +1,24 @@
 # Shevet Imahot — Target Architecture (Rebuild)
 
-> Proposed architecture for rebuilding **shevet-imahot.co.il** off WordPress onto a simpler, cheaper, faster stack. Decisions baked in: content edited by **non-technical admins via a CMS**, **light commerce** (hosted-checkout redirects, no on-site cart), stack **recommended below**. Companion to `WEBSITE_SPEC.md`.
+> Proposed architecture for rebuilding **shevet-imahot.co.il** off WordPress onto a simpler, cheaper, faster stack. Scope reflects **Keren's decisions (2026-06-27)**: keep the existing visual identity (font + colors), make the **search engine the centerpiece**, build **converting doula profile pages**, drop the weekly track / courses catalog / on-site checkout, embed **Rav-Messer (Responder)** forms, sell via **Meshulam** sale-page buttons, and wire **compliant analytics**. Companion to `WEBSITE_SPEC.md`.
+
+---
+
+## 0. Brand & design tokens (locked — pulled from the live site)
+
+Keren: *"keep the design language, colors, and my font Oron Yad."* Extracted from the production CSS:
+
+| Token | Value | Use |
+|---|---|---|
+| Display font | **Oron Yad** (`OronYad_MFW.woff/.ttf`, on the site since 2020) | Headings, hero |
+| Body font | **Assistant** | Body text, UI |
+| `--brand` | **#92003b** (raspberry/fuchsia) | Headings, primary CTAs |
+| `--peach` | **#FBCFAC** / `#F3CFAC` | Accents, chips |
+| `--cream` | **#F4ECE1** / `#F4F3F1` | Page grounds |
+| `--beige` | **#CDA88B** | Secondary accent |
+| `--text` | **#565656** / `#7A7A7A` | Body text |
+
+Ship Oron Yad as a self-hosted `@font-face` (woff2 + woff fallback) — it is a licensed font already in the site's uploads.
 
 ---
 
@@ -8,113 +26,118 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| **Frontend** | **Astro** (static + islands) | Ships zero JS by default → fast; first-class **RTL/Hebrew**; renders Sanity content at build, hydrates only interactive bits (filters, forms). |
-| **CMS** | **Sanity** (hosted) | Best non-technical editor UX; structured documents fit the directory + facets exactly; free tier covers this scale; real-time preview; hosted (no server to run). |
-| **Hosting** | **Netlify** or **Vercel** | Git push → deploy. Free/cheap tier. CDN, forms, redirects built in. |
-| **Forms / leads** | Netlify Forms **or** Formspree → email + webhook | Matchmaking, contact, community signup, pro application. No backend. |
-| **Payments** | **Hosted payment links** (Cardcom / Tranzila / Meshulam-Grow) + **Calendly** for bookings | Israel-friendly gateways; redirect out, return to `/thank-you`. No cart code, no PCI surface. |
-| **Email/automation** | Existing provider (or **MailerLite / Brevo**) | Lead magnets, week-by-week drip, unsubscribe. CMS/forms push subscribers via webhook. |
-| **Community** | WhatsApp (unchanged) | Group invite links stored as CMS fields; signup form gates + emails the link. |
-| **Search/filter** | Client-side over a build-time JSON index | Directory is ~200 records — no search service needed; filter in-browser. |
+| **Frontend** | **Astro** (static + islands) | Ships ~zero JS by default → fast; first-class **RTL/Hebrew**; renders CMS content at build, hydrates only the search/interactive bits. |
+| **CMS** | **Sanity** (hosted) | Best non-technical editor UX; structured docs fit the practitioner directory + facets exactly; free tier covers this scale; hosted (no server). |
+| **Hosting** | **Netlify** or **Vercel** | Git push → deploy. Free/cheap tier. CDN + redirects built in. |
+| **Search** | **Client-side over a build-time JSON index** | Two engines (below). ~155 records — no search service needed; instant in-browser filtering. |
+| **Forms** | **Rav-Messer (Responder) embedded forms** | Keren embeds Responder forms today and prefers embedding (links often break). Matchmaking + contact = embedded Responder. |
+| **Payments** | **Meshulam sale-page button** | No cart, no checkout on-site. Anything paid = a button linking to a Meshulam sale page. Zero PCI surface. |
+| **Email/automation** | **Responder (רב-מסר)** | Existing list, lead magnets, unsubscribe. Forms feed it directly. |
+| **Community** | WhatsApp (unchanged) | Group invite links stored as CMS fields; signup form emails/returns the link. |
+| **Analytics** | **Google Tag Manager + Site Kit**, consent-gated | Reconnect existing GTM; cookie consent per Israeli privacy / advertising rules. |
 
 **Why not alternatives**
-- *Stay WordPress simplified*: keeps plugin sprawl, hosting cost, security patching, slowness — the things being escaped.
-- *Strapi/self-hosted CMS*: needs a server + DB to run. Sanity is hosted = less ops.
-- *Full Next.js app*: more than needed; site is mostly content + a few interactive widgets. Astro is lighter.
+- *Stay WordPress simplified*: keeps the plugin sprawl, cost, patching and slowness we're escaping.
+- *Strapi/self-hosted CMS*: needs a server + DB. Sanity is hosted = less ops.
+- *Full Next.js app*: heavier than needed; the site is content + two search widgets. Astro is lighter.
 
 ---
 
 ## 2. High-level diagram
 
 ```
-            ┌────────────────────────────────────────────┐
-            │                Sanity (CMS)                 │
-            │  practitioners · articles · weeks · benefits│
-            │  products · whatsappGroups · pages · team   │
-            └───────────────┬─────────────────────────────┘
-                            │  content API / webhook on publish
+            ┌───────────────────────────────────────────────┐
+            │                  Sanity (CMS)                  │
+            │  practitioner · article · benefit · whatsapp   │
+            │  salePage(button) · page · siteSettings        │
+            └───────────────┬───────────────────────────────┘
+                            │  webhook on publish
                             ▼
-   git push ───────►  Astro build  ──────►  static site + JSON indexes
-                            │                       │
-                            ▼                       ▼
-                   Netlify/Vercel CDN  ◄──── browser (RTL, filters, forms)
+   git push ───────►  Astro build  ──────►  static site + 2 search JSON indexes
+                            │                          │
+                            ▼                          ▼
+                   Netlify/Vercel CDN  ◄──── browser: 2 search engines, RTL
                             │
-       ┌────────────────────┼───────────────────────────┐
-       ▼                    ▼                            ▼
-  Netlify Forms       Payment link              Calendly / WhatsApp
-  (lead/contact)   (Cardcom/Tranzila)            (book / join group)
-       │                    │
-       ▼                    ▼
-  Email provider      /thank-you  /badpayment
-  (drip + lists)
+        ┌───────────────────┼────────────────────────────┐
+        ▼                   ▼                             ▼
+  Responder form       Meshulam button               WhatsApp link
+  (embedded)           (sale page)                   (join group)
+        │
+        ▼
+  Responder list / automations
 ```
 
-Publish in Sanity → webhook triggers a rebuild → CDN serves fresh static pages. Interactive pieces (directory filters, forms, payment buttons) run client-side or hand off to hosted services.
+Publish in Sanity → webhook rebuilds → CDN serves fresh static pages. The only dynamic pieces are the two client-side search engines; everything else hands off to Responder, Meshulam, or WhatsApp.
 
 ---
 
 ## 3. Content model (Sanity schemas)
 
-Mirrors the live site, collapsed to the essentials.
-
-### `practitioner`
+### `practitioner`  (doulas + professionals)
 ```
-type:           'doula' | 'therapist'
-tier:           'premium' | 'other'
+kind:           'doula' | 'professional'      // a doula can be both — see flags
+isDoula:        bool                           // appears in doula search
+isProfessional: bool                           // appears in professional search
+tier:           'premium' | 'index'            // premium = full page; index = self-serve listing
 name, slug, photo, title
+videoUrl:       url            // YouTube/Vimeo — TOP of the converting profile
 bio:            portable text
-credentials:    string[]            // certifications
-specializations: ref[] -> specialization   // facet
-regions:        ref[] -> region            // facet
-hospitals:      ref[] -> hospital          // facet (doulas)
-languages:      string[]                   // facet
+credentials:    string[]
+
+// doula-search facets
+hospitals:      ref[] -> hospital
+supportStyle:   string[]       // VALUES TBD with Keren (e.g. natural / emotional / medical)
+budget:         'low'|'mid'|'high'   // ₪ band — VALUES/ranges TBD with Keren
+availableAround: date?         // to match "due date" searches — mechanism TBD
+
+// professional-search facets
+fields:         ref[] -> field     // lactation, massage, reflexology, osteopathy…
+regions:        ref[] -> region    // location-first for professional search
+languages:      string[]           // English/Spanish/Russian native, etc.
+
 contact:        { phone, whatsapp, email, instagram }
-services:       portable text              // what's included
-testimonials:   [{ author, quote }]
+services:       portable text
+testimonials:   [{ author, quote, rating }]
 faq:            [{ q, a }]
-paymentNotes:   text
+gallery:        image[]
 published:      bool
 ```
+> `other_doula` (51) → imported as `tier:'index'`. New ones self-register via a form (see §5).
 
 ### `article`
 ```
 type:     'article' | 'workshop'   // workshop = VOD
 title, slug, cover, excerpt, body (portable text)
-category: 'pregnancy' | 'birth' | 'breastfeeding' | 'infant' | 'natural-birth' | 'parenting' | 'anxiety'
-videoUrl: url?      // for workshops
-gated:    bool      // members-only?
+category: 'pregnancy'|'birth'|'breastfeeding'|'infant'|'natural-birth'|'parenting'|'anxiety'
+videoUrl: url?
 ```
-
-### `pregnancyWeek`  (the `lead-to-birth` track, weeks 13–40)
-```
-week: number, title, body, articleRefs[]
-```
+> No `gated` flag — **no members-only content** (per Keren).
 
 ### `benefit`  (coupon)
 ```
 partner, logo, slug
-category: 'pregnancy' | 'postpartum' | 'baby'
-discount: string        // "20% off"
+category: 'pregnancy'|'postpartum'|'baby'
+discount: string
 description, redeemUrl / couponCode
-```
-
-### `product`  (light commerce — small fixed list)
-```
-title, slug, image, description, price
-checkoutUrl: url        // hosted payment link OR Calendly
-type: 'course' | 'retreat' | 'membership' | 'session'
 ```
 
 ### `whatsappGroup`
 ```
-name, cohort ('due-date' | 'topic'), inviteUrl, moderator, guidelines
+name, cohort ('due-date'|'topic'), inviteUrl, moderator, guidelines
 ```
 
-### Facet taxonomies (referenced by practitioner)
-`specialization`, `region`, `hospital` — each `{ name, slug }`.
+### `salePage`  (replaces the product catalog)
+```
+title, image, blurb, meshulamUrl    // just a button target; e.g. Keren's course
+```
+
+### Facet taxonomies
+`hospital`, `field` (professional specialization), `region`, plus inline string lists for `supportStyle` / `languages`.
 
 ### Singletons / pages
-`siteSettings` (contacts, socials, nav), `page` (Home, Welcome, Team, About, legal), `podcastEpisode`.
+`siteSettings` (contacts, socials, nav, GTM id), `page` (Home, Welcome, Team, legal).
+
+**Dropped from the old model:** `pregnancyWeek` (weekly track — not in use), `course`/`product` catalog (only Keren's single course remains → a `salePage`), members-only gating.
 
 ---
 
@@ -122,60 +145,58 @@ name, cohort ('due-date' | 'topic'), inviteUrl, moderator, guidelines
 
 | Route | Source | Notes |
 |---|---|---|
-| `/` | page + featured refs | Home |
-| `/doulas/` | practitioner (doula) | **Faceted directory**: filter region/hospital/specialization/language/name; client-side; "load more" |
-| `/doulas/[slug]/` | practitioner | Profile |
-| `/therapists/` | practitioner (therapist) | Faceted directory |
-| `/therapists/[slug]/` | practitioner | Profile |
-| `/articles/` | article | Filter by category; article + workshop |
-| `/articles/[slug]/` | article | Article / VOD player |
-| `/pregnancy/week/[n]/` | pregnancyWeek | Week-by-week track |
-| `/benefits/` | benefit | Filter by category; cards |
-| `/community/` | whatsappGroup + page | Signup form → email invite link |
-| `/courses/` `/shop/` | product | Cards → hosted checkout |
-| `/thank-you/` `/badpayment/` | page | Payment return pages |
-| `/for-professionals/` | page | B2B recruitment + application form |
-| `/podcast/` | podcastEpisode | |
+| `/` | page + featured | Home |
+| `/doulas/` | practitioner (isDoula) | **Doula search**: hospital · due date · support style · budget |
+| `/doulas/[slug]/` | practitioner (premium) | **Converting profile**: video, sticky WhatsApp CTA, reviews, embedded form |
+| `/professionals/` | practitioner (isProfessional) | **Professional search**: field · region (location-first) · language |
+| `/professionals/[slug]/` | practitioner | Profile (premium tiers) |
+| `/doulas/join/` | page + Responder form | Self-serve "other doula" registration |
+| `/articles/` , `/articles/[slug]/` | article | List + article/VOD |
+| `/benefits/` | benefit | Filter by category |
+| `/community/` | whatsappGroup + page | Signup → WhatsApp link |
+| `/[salePage]/` | salePage | Blurb + Meshulam button |
 | `/team/` `/welcome/` `/privacy/` `/terms/` `/accessibility/` | page | Static |
 
-URL changes from WP → add **301 redirects** (Netlify `_redirects`) from old slugs to preserve SEO. Critical for the ~200 directory + ~100 article URLs.
+URL changes → **301 redirects** (Netlify `_redirects`). Export the existing **301 Redirects** plugin map so nothing already in place is lost. Critical for the ~155 practitioner + ~114 article URLs.
+
+**Removed routes:** `/pregnancy/week/[n]/`, `/courses/`, `/shop/`, `/cart/`, `/checkout/`, `/thank-you/`, `/badpayment/`.
 
 ---
 
 ## 5. Interactive pieces (the only JS)
 
-1. **Directory filter** — Astro island (or vanilla) over a build-time `practitioners.json`; filters in-browser, no API. Instant, works at this scale.
-2. **Lead / matchmaking form** — Netlify Forms; on submit → email team + optional webhook to email provider. Honeypot + spam filter.
-3. **Community signup** — form → validates → emails the WhatsApp invite link; pushes subscriber to email list/cohort.
-4. **Payment buttons** — plain links to hosted checkout / Calendly. Return URL = `/thank-you`.
-5. **Accessibility toolbar** — keep (Israeli law). Use an off-the-shelf widget or a small custom island (font size, contrast).
+1. **Doula search engine** — Astro island over `doulas.json`. Facets: hospital, due date (matched to availability — mechanism TBD), support style, budget. Client-side, instant.
+2. **Professional search engine** — separate island over `professionals.json`. Facets: field/specialization, region (location-first), language. A practitioner flagged both appears in both, with the relevant criteria each.
+3. **Converting doula profile** — video player at top, **sticky WhatsApp CTA**, testimonials, gallery, **embedded Responder form**. This page is the conversion target — optimize for mobile.
+4. **Self-serve doula registration** — embedded Responder form on `/doulas/join/`; submission notifies the team → approve → add as `tier:'index'`. (Optional later: write a Sanity draft for one-click approval.)
+5. **Embedded Responder forms** — matchmaking ("help me find the right one") + contact, embedded inline.
+6. **Meshulam buttons** — plain links to sale pages.
+7. **Accessibility toolbar** — keep (Israeli law); off-the-shelf widget or small custom island.
+8. **Consent banner** — GTM/analytics gated behind consent per privacy law.
 
 ---
 
-## 6. Commerce flow (light)
+## 6. Payments (no commerce engine)
 
 ```
-product card → "buy"/"book" → hosted payment link (Cardcom/Tranzila)
-   ↳ success → redirect /thank-you  → (gateway webhook → email provider grants access/role)
-   ↳ failure → /badpayment
-course/retreat booking → Calendly → confirmation email
+salePage → "לרכישה" button → Meshulam sale page (off-site, handles payment + receipt)
 ```
-No cart, no on-site accounts initially. If gated content/members area is needed later, add a light auth (e.g. magic-link) — defer until proven necessary.
+No cart, no accounts, no `/thank-you` plumbing — Meshulam owns the transaction end to end. Revisit only if a real catalog reappears.
 
 ---
 
 ## 7. Migration plan
 
-1. **Model in Sanity** — define schemas above.
-2. **Export + import** — with admin access confirmed, use a native **WXR export** (Tools → Export) per post type + a JetEngine field/meta dump, transform to Sanity docs. Volumes verified: 87 premium doulas, 51 other doulas, 17 therapists, 114 articles/workshops, 30 benefits, 27 weekly items, 10 courses. Far more reliable than HTML scraping.
-   - Drop test junk products (`temp`, `test`, `19-2`, `99`, `49`, `199-2`).
-   - Decide premium vs other doula tiers; merge or tag.
-   - Archive dated `community/` event recaps (low value).
-3. **Build Astro** — layouts (RTL base), directory + filters, profile, article, week, benefits, product templates.
-4. **Forms + payments** — wire Netlify Forms + hosted payment links + Calendly.
-5. **Redirects** — map every old URL → new in `_redirects`.
-6. **QA** — RTL rendering, accessibility (a11y law), mobile, filter correctness, form delivery, payment round-trip, redirect coverage.
-7. **DNS cutover** — point domain to Netlify/Vercel; keep WP up read-only briefly as fallback.
+1. **Model in Sanity** — schemas above; define the two search indexes.
+2. **Import** — from the **WXR export already pulled** (full content + every JetEngine meta field): 87 premium doulas, 51 other doulas (→ `index`), 17 professionals, 114 articles/workshops, 30 benefits. Map meta keys (`i-believe`, `during-birth`, `whatsapp`, `video`, `recommandation-*`, etc.) to schema fields.
+   - Drop the weekly track, courses, and product catalog (keep only Keren's course as a `salePage`).
+   - Archive dated `community/` recaps.
+3. **Build Astro** — RTL base in the brand tokens (§0); two search engines; converting profile; benefits; community; sale pages.
+4. **Forms + payments** — embed Responder forms; wire Meshulam buttons.
+5. **Search data** — define `supportStyle` / `budget` / due-date matching with Keren, backfill onto practitioner records.
+6. **Redirects + analytics** — `_redirects` from the old URLs + the 301-plugin map; reconnect GTM with consent.
+7. **QA** — RTL, accessibility, mobile, both search engines, form delivery, WhatsApp/Meshulam links, redirect coverage.
+8. **DNS cutover** — point domain to Netlify/Vercel; keep WP read-only briefly as fallback.
 
 ---
 
@@ -184,34 +205,31 @@ No cart, no on-site accounts initially. If gated content/members area is needed 
 | Item | Cost |
 |---|---|
 | Hosting (Netlify/Vercel) | $0 free tier → ~$19 if needed |
-| Sanity | $0 free tier (well within limits) |
-| Forms (Netlify/Formspree) | $0 → ~$10 |
-| Email provider | existing / ~$10–20 |
-| Payment gateway | per-transaction only |
-| **Total fixed** | **~$0–50/mo** vs current WP hosting + plugin licenses (Crocoblock, etc.) |
+| Sanity | $0 free tier |
+| Responder | existing |
+| Meshulam | per-transaction only |
+| **Total fixed** | **~$0–50/mo** vs current WP hosting + Crocoblock/Elementor Pro licenses |
 
 ---
 
-## 9. Open questions before build
+## 9. Decisions & remaining questions
 
-Some were answered by the admin review (2026-06-27); remaining ones still need the customer.
+**Locked with Keren (2026-06-27):**
+- Keep the visual identity — **Oron Yad** font + raspberry/peach/cream palette.
+- **Search engine is the priority** — two distinct engines (doulas vs professionals).
+- **Converting doula pages** with video + sticky WhatsApp CTA.
+- **Other doulas** = self-serve form → approve → index listing.
+- **No** weekly track, **no** courses catalog, **no** WooCommerce/cart, **no** members-only content.
+- Payments = **Meshulam** sale-page button. Forms = **Responder** embedded. Email = **Responder**.
+- Analytics connected, compliant with Israeli promotion/privacy law.
 
-**Answered from admin:**
-- ~~Payment gateway~~ → **Grow / Meshulam (משולם)** via the grow gateway, plus **ravpage** for landing-page checkouts.
-- ~~Email provider~~ → **Responder (רב-מסר)** powers lead magnets + `/unsubscribe/`.
-- ~~Languages~~ → **Hebrew only**; "languages" are a practitioner facet (English/Spanish/Russian-speaking), not a multilingual site.
-- ~~Doula tiers~~ → `doulas-premium` (87) and `other_doula` (51) are **two separate post types** with different field richness — a real structural split, not just a tag.
-
-**Still open — need the customer:**
-1. **Premium vs other doulas** — confirmed separate types; is the split **paid membership** vs free listing, and should the rebuild keep two tiers or unify with a "premium" flag?
-2. **Gated content** — are any of the 114 articles/workshops members-only? If yes → light auth + role granted on payment.
-3. **Week-by-week (27 `lead-to-birth` items)** — delivered as on-site pages, Responder drip email, or both? Sets email-automation scope.
-4. **Responder** — keep it as the email platform (connect forms via webhook) or migrate the list elsewhere?
-5. **Grow/ravpage** — keep Grow for continuity (payout account already set up), or move to payment links on a different provider?
-6. **Test products** — confirm the ~6 real products to keep out of the 26 (`temp`, `test`, `19-2`, `99`, `49`, `199-2` are junk).
-7. **301 Redirects plugin** — export its existing map so we don't lose redirects already in place.
-8. **Brand assets, analytics (GTM container ID), editor accounts, timeline/budget** — as before.
+**Still need from Keren (small, blocks search build):**
+1. **Support-style** values for doula search (e.g. natural / emotional / medical / VBAC…?).
+2. **Budget** bands/ranges for doula search.
+3. How **"due date"** should filter — match a doula's availability window, or informational only?
+4. **GTM container ID** + which metrics matter.
+5. Timeline & budget for the build.
 
 ---
 
-*Pairs with `WEBSITE_SPEC.md` (current-state spec). This doc is the proposed target; adjust after the open questions above are answered.*
+*Pairs with `WEBSITE_SPEC.md` (current-state spec). Target reflects Keren's 2026-06-27 feedback.*

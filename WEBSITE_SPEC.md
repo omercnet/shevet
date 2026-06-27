@@ -1,6 +1,21 @@
 # Shevet Imahot — Website Specification
 
-> Reverse-engineered spec of the current production site at **www.shevet-imahot.co.il**, captured 2026-06-27 by crawling public pages and the XML sitemap. Intended as the baseline for rebuilding the site on a simpler stack.
+> Reverse-engineered spec of the current production site at **www.shevet-imahot.co.il**, captured 2026-06-27 by crawling public pages, the XML sitemap, and the WordPress admin. Intended as the baseline for rebuilding the site on a simpler stack. **This document describes the CURRENT site.** For what the rebuild keeps/drops, see the scope box below and `ARCHITECTURE.md`.
+
+---
+
+## 0. Rebuild scope — Keren's decisions (2026-06-27)
+
+| Keep & improve | Drop from scope |
+|---|---|
+| Visual identity: **Oron Yad** font + raspberry `#92003b` / peach / cream palette | Weekly pregnancy track (`lead-to-birth`) — not in use |
+| **Two search engines** (priority): doulas (hospital · due date · support style · budget) and professionals (field · location · language) | Courses catalog — only Keren's own course remains (→ Meshulam button) |
+| **Converting doula profiles** — video + sticky WhatsApp CTA + reviews | WooCommerce / cart / checkout — replaced by Meshulam sale-page buttons |
+| **Other doulas** = self-serve form → approve → index listing | Members-only / gated content — none needed |
+| Articles & workshops, community WhatsApp, benefits club | — |
+| Forms = **Responder (רב-מסר)** embedded; email = Responder; analytics = GTM, compliant | — |
+
+Open items blocking the search build: support-style values, budget bands, due-date matching rule, GTM id. See `ARCHITECTURE.md` §9.
 
 ---
 
