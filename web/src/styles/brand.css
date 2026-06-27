@@ -25,6 +25,8 @@
 	--text: #565656;
 	--muted: #7a7a7a;
 	--line: #e7d9cb;
+	--shadow-soft: 0 18px 48px -38px rgba(63, 34, 48, 0.55);
+	--shadow-lift: 0 28px 70px -46px rgba(146, 0, 59, 0.62);
 
 	--display: "Oron Yad", "Frank Ruhl Libre", serif;
 	--sans: "Assistant", "Heebo", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
@@ -42,6 +44,17 @@ html {
 }
 body {
 	margin: 0;
+}
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		radial-gradient(circle at 12% 12%, rgba(251, 207, 172, 0.38), transparent 26rem),
+		radial-gradient(circle at 88% 0%, rgba(191, 230, 243, 0.32), transparent 22rem),
+		linear-gradient(180deg, rgba(255, 255, 255, 0.36), transparent 26rem);
 }
 h1,
 h2,
@@ -64,6 +77,7 @@ img {
 	padding-inline: clamp(1rem, 4vw, 2rem);
 }
 .btn {
+	position: relative;
 	display: inline-block;
 	background: var(--brand);
 	color: #fff;
@@ -76,14 +90,21 @@ img {
 		transform 0.18s ease,
 		box-shadow 0.18s ease,
 		background 0.18s ease;
-	box-shadow: 0 6px 18px -10px rgba(146, 0, 59, 0.6);
+	box-shadow: var(--shadow-soft);
 }
 .btn:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 12px 26px -12px rgba(146, 0, 59, 0.6);
+	box-shadow: var(--shadow-lift);
+}
+.btn:active {
+	transform: translateY(0) scale(0.98);
+}
+.btn:focus-visible {
+	outline: 3px solid var(--peach);
+	outline-offset: 3px;
 }
 .btn-outline {
-	background: transparent;
+	background: rgba(255, 255, 255, 0.52);
 	color: var(--brand);
 }
 .btn-outline:hover {
@@ -96,13 +117,14 @@ img {
 }
 .chip {
 	display: inline-block;
-	background: var(--peach-soft);
+	background: color-mix(in srgb, var(--peach-soft) 82%, var(--surface));
 	color: var(--brand);
 	border-radius: 999px;
 	padding: 0.2rem 0.75rem;
 	font-size: 0.8rem;
 	line-height: 1.35;
 	font-weight: 600;
+	box-shadow: inset 0 0 0 1px rgba(146, 0, 59, 0.08);
 }
 /* pastel tribal chip tints — rotate across categories */
 .chip.t-peach {
@@ -152,18 +174,32 @@ img {
 	color: var(--brand);
 }
 .card {
+	position: relative;
 	background: #fff;
 	border: 1px solid var(--line);
-	border-radius: 18px;
+	border-radius: 24px;
 	overflow: hidden;
 	transition:
 		transform 0.22s ease,
 		box-shadow 0.22s ease;
-	box-shadow: 0 8px 24px -18px rgba(63, 34, 48, 0.5);
+	box-shadow: var(--shadow-soft);
+}
+.card::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(140deg, rgba(255, 255, 255, 0.52), transparent 42%);
+	mix-blend-mode: soft-light;
 }
 .card:hover {
 	transform: translateY(-4px);
-	box-shadow: 0 18px 38px -20px rgba(146, 0, 59, 0.45);
+	box-shadow: var(--shadow-lift);
+}
+.card:focus-within {
+	box-shadow: var(--shadow-lift);
+	outline: 2px solid var(--peach);
+	outline-offset: 3px;
 }
 /* card internals — global so they also style cards injected by client-side JS
    (Astro scopes per-page <style>, which would not reach innerHTML content). */
@@ -180,15 +216,26 @@ img {
 	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 .filter-panel {
+	position: relative;
+	overflow: hidden;
 	display: flex;
 	gap: 1rem 1.2rem;
 	flex-wrap: wrap;
 	align-items: end;
 	background: linear-gradient(160deg, var(--peach-soft), var(--peach));
 	padding: 1.5rem;
-	border-radius: 22px;
+	border: 1px solid rgba(146, 0, 59, 0.08);
+	border-radius: 26px;
 	margin: 1.5rem 0;
-	box-shadow: 0 18px 40px -34px rgba(146, 0, 59, 0.55);
+	box-shadow: var(--shadow-soft);
+}
+.filter-panel::before {
+	content: "";
+	position: absolute;
+	inset: auto -8% -40% 42%;
+	height: 7rem;
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.58), transparent 65%);
+	pointer-events: none;
 }
 .filter-panel label {
 	display: flex;
@@ -329,8 +376,9 @@ img {
 	flex-wrap: wrap;
 	background: var(--surface);
 	border: 1px solid var(--line);
-	border-radius: 22px;
+	border-radius: 26px;
 	padding: 1.2rem;
+	box-shadow: var(--shadow-soft);
 }
 .avatar {
 	width: 96px;
@@ -369,6 +417,11 @@ img {
 .legacy-content {
 	margin-top: 1.5rem;
 	line-height: 1.8;
+}
+.article-shell,
+.sale-hero {
+	background: rgba(255, 255, 255, 0.28);
+	border-radius: 30px;
 }
 .legacy-content p {
 	margin: 0 0 1.2rem;
