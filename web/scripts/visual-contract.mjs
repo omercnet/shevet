@@ -55,7 +55,7 @@ const requiredPageMarkers = new Map([
 	["web/src/pages/articles/index.astro", ["filter-panel", "article-card"]],
 	["web/src/pages/doulas/[slug].astro", ["profile-shell", "bioBlocks"]],
 	["web/src/pages/professionals/[slug].astro", ["profile-shell", "bioBlocks"]],
-	["web/src/pages/articles/[slug].astro", ["article-shell", "media-frame"]],
+	["web/src/pages/articles/[slug].astro", ["article-shell", "LegacyContent"]],
 	["web/src/pages/benefits/index.astro", ["benefit-card"]],
 	["web/src/pages/community/index.astro", ["community-card"]],
 	["web/src/pages/doulas/join.astro", ["join-flow"]],
