@@ -56,7 +56,7 @@ const CATEGORIES: { value: string; label: string }[] = [
         const redeem = b.redeemUrl
           ? `<a class="btn" href="${esc(b.redeemUrl)}" target="_blank" rel="noopener">למימוש</a>`
           : "";
-        return `<article class="card">${logo}<h3>${esc(b.partner)}</h3>${discount}${desc}${code}${redeem}</article>`;
+        return `<article class="card benefit-card">${logo}<h3>${esc(b.partner)}</h3>${discount}${desc}${code}${redeem}</article>`;
       };
       let active = "";
       const apply = (): void => {
@@ -80,17 +80,9 @@ const CATEGORIES: { value: string; label: string }[] = [
 
   <style>
     .cats { display:flex; gap:.5rem; flex-wrap:wrap; margin:1.5rem 0; }
-    .cats .chip { cursor:pointer; border:1px solid var(--line); background:#fff; }
-    .cats .chip.is-active { background:var(--brand); color:#fff; border-color:var(--brand); }
+    .cats .chip { cursor:pointer; border:1px solid var(--line); background:var(--surface); }
+    .cats .chip.is-active { background:var(--brand); color:var(--surface); border-color:var(--brand); }
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
-    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.2rem; display:flex; flex-direction:column; gap:.5rem; }
-    .card .logo { max-width:160px; max-height:80px; object-fit:contain; align-self:flex-start; }
-    .card h3 { margin:.2rem 0; font-size:1.2rem; }
-    .card .discount { font-weight:700; color:var(--brand); margin:0; }
-    .card .desc { margin:0; color:var(--ink); }
-    .card .code { margin:.2rem 0; font-size:.9rem; }
-    .card .code span { font-family:monospace; background:var(--peach-soft); padding:.1rem .4rem; border-radius:6px; }
-    .card .btn { margin-top:auto; align-self:flex-start; }
     .empty { color:var(--muted); padding:2rem 0; }
   </style>
 </Base>

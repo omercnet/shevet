@@ -34,7 +34,7 @@ const paragraphs = blocks
   .filter((p) => p.text.trim().length > 0)
 ---
 <Base title={a ? `${a.title} — שבט אמהות` : 'מאמר — שבט אמהות'} description={a?.excerpt}>
-  <article class="article wrap">
+  <article class="article-shell wrap">
     {a ? (
       <>
         {a.cover && (
@@ -43,12 +43,12 @@ const paragraphs = blocks
         <h1>{a.title}</h1>
 
         {video && (
-          <div class="video"><iframe src={video} title="וידאו" loading="lazy"
+          <div class="media-frame"><iframe src={video} title="וידאו" loading="lazy"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen></iframe></div>
         )}
 
-        <div class="body">
+        <div class="article-body">
           {paragraphs.map((p) =>
             p.style === 'h2' ? <h2>{p.text}</h2>
             : p.style === 'h3' ? <h3>{p.text}</h3>
@@ -58,18 +58,13 @@ const paragraphs = blocks
         </div>
       </>
     ) : (
-      <p class="empty">אין מאמרים עדיין</p>
+      <p class="empty-state">אין מאמרים עדיין</p>
     )}
   </article>
 
   <style>
-    .article { padding-block: 1.5rem 4rem; max-width: 760px; }
-    .cover { width:100%; border-radius:16px; object-fit:cover; aspect-ratio:2/1; margin-bottom:1.5rem; }
-    .video { position:relative; aspect-ratio:16/9; border-radius:16px; overflow:hidden; margin:1.5rem 0; }
-    .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
-    .body { margin-top:1.5rem; line-height:1.8; }
-    .body p { margin:0 0 1.2rem; }
-    .body blockquote { border-inline-start:3px solid var(--brand); margin:1.5rem 0; padding:.4rem 1rem; color:var(--muted); font-style:italic; }
-    .empty { color:var(--muted); margin:2rem 0; }
+    .article-shell { max-width: 760px; }
+    .cover { aspect-ratio:2/1; margin-bottom:1.5rem; }
+    .article-body { margin-top:1.5rem; }
   </style>
 </Base>

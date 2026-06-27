@@ -14,6 +14,7 @@
 	--peach-soft: #f8e1ce;
 	--cream: #f4ece1;
 	--cream-2: #f4f3f1;
+	--surface: #fff;
 	--beige: #cda88b;
 	--apricot: #ffbc7d;
 	/* pastel tribal accents (from the logo's zigzag border) */
@@ -100,6 +101,7 @@ img {
 	border-radius: 999px;
 	padding: 0.2rem 0.75rem;
 	font-size: 0.8rem;
+	line-height: 1.35;
 	font-weight: 600;
 }
 /* pastel tribal chip tints — rotate across categories */
@@ -176,6 +178,270 @@ img {
 	display: grid;
 	gap: 1.5rem;
 	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.filter-panel {
+	display: flex;
+	gap: 1rem 1.2rem;
+	flex-wrap: wrap;
+	align-items: end;
+	background: linear-gradient(160deg, var(--peach-soft), var(--peach));
+	padding: 1.5rem;
+	border-radius: 22px;
+	margin: 1.5rem 0;
+	box-shadow: 0 18px 40px -34px rgba(146, 0, 59, 0.55);
+}
+.filter-panel label {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.8rem;
+	gap: 0.35rem;
+	color: var(--brand);
+	font-weight: 700;
+}
+.filter-panel select,
+.filter-panel input {
+	padding: 0.6rem 0.7rem;
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	font-family: inherit;
+	background: var(--surface);
+	min-width: 11ch;
+}
+.filter-panel select:focus,
+.filter-panel input:focus,
+.filter-panel button:focus-visible {
+	outline: 2px solid var(--brand);
+	outline-offset: 2px;
+}
+.filter-panel button {
+	align-self: end;
+	background: var(--surface);
+	border: 1px solid var(--brand);
+	color: var(--brand);
+	border-radius: 999px;
+	padding: 0.6rem 1.2rem;
+	cursor: pointer;
+	font-weight: 700;
+}
+.filter-panel button:hover {
+	background: var(--brand);
+	color: var(--surface);
+}
+.directory-card .card-media {
+	display: block;
+	aspect-ratio: 4 / 3;
+}
+.directory-card .card-media img,
+.directory-card .ph {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.directory-card .ph {
+	background: linear-gradient(135deg, var(--peach-soft), var(--peach));
+}
+.tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+.directory-card .card-body,
+.article-card,
+.benefit-card,
+.community-card {
+	padding: 1.2rem 1.3rem 1.4rem;
+}
+.directory-card h3,
+.article-card h3,
+.benefit-card h3,
+.community-card h3 {
+	font-family: var(--sans);
+	font-weight: 700;
+	margin: 0 0 0.5rem;
+	font-size: 1.3rem;
+}
+.directory-card .tags,
+.article-card .tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin-bottom: 1rem;
+	min-height: 1.4rem;
+}
+.directory-card .card-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+}
+.directory-card .more {
+	color: var(--brand);
+	font-weight: 700;
+	text-decoration: none;
+}
+.directory-card .btn-wa {
+	padding: 0.45rem 0.9rem;
+	font-size: 0.9rem;
+}
+.article-card img,
+.article-shell .cover {
+	border-radius: 16px;
+	width: 100%;
+	object-fit: cover;
+}
+.article-card img {
+	aspect-ratio: 16 / 10;
+	margin-bottom: 0.8rem;
+}
+.article-card .excerpt,
+.empty-state {
+	color: var(--muted);
+}
+.profile-shell,
+.article-shell,
+.sale-hero {
+	padding-block: 1.5rem 4rem;
+}
+.profile-shell {
+	padding-bottom: 6rem;
+}
+.media-frame {
+	position: relative;
+	aspect-ratio: 16 / 9;
+	border-radius: 20px;
+	overflow: hidden;
+	margin-bottom: 1.5rem;
+	background: var(--peach-soft);
+}
+.media-frame iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+.profile-head {
+	display: flex;
+	gap: 1.2rem;
+	align-items: center;
+	flex-wrap: wrap;
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 22px;
+	padding: 1.2rem;
+}
+.avatar {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+.reviews {
+	margin-top: 2rem;
+	display: grid;
+	gap: 1rem;
+}
+.reviews blockquote {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	padding: 1rem 1.2rem;
+	margin: 0;
+	font-style: italic;
+}
+.article-body,
+.sale-copy {
+	line-height: 1.8;
+}
+.article-body p,
+.sale-copy p {
+	margin: 0 0 1.2rem;
+}
+.article-body blockquote {
+	border-inline-start: 3px solid var(--brand);
+	margin: 1.5rem 0;
+	padding: 0.4rem 1rem;
+	color: var(--muted);
+	font-style: italic;
+}
+.benefit-card,
+.community-card,
+.form-block {
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+.benefit-card .logo {
+	max-width: 160px;
+	max-height: 80px;
+	object-fit: contain;
+	align-self: flex-start;
+}
+.benefit-card .discount {
+	font-weight: 700;
+	color: var(--brand);
+	margin: 0;
+}
+.benefit-card .desc,
+.community-card .guidelines {
+	margin: 0;
+	color: var(--ink);
+}
+.benefit-card .code {
+	margin: 0.2rem 0;
+	font-size: 0.9rem;
+}
+.benefit-card .code span {
+	font-family: monospace;
+	background: var(--peach-soft);
+	padding: 0.1rem 0.4rem;
+	border-radius: 6px;
+}
+.benefit-card .btn,
+.community-card .btn {
+	margin-top: auto;
+	align-self: flex-start;
+}
+.community-card .mod {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.9rem;
+}
+.join-flow {
+	list-style: none;
+	padding: 0;
+	margin: 2rem 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+.join-flow li {
+	flex: 1 1 200px;
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	background: var(--peach-soft);
+	border-radius: 16px;
+	padding: 1rem 1.2rem;
+	font-weight: 600;
+	color: var(--ink);
+}
+.join-flow .num {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	flex: 0 0 auto;
+	border-radius: 50%;
+	background: var(--brand);
+	color: var(--surface);
+	font-weight: 700;
 }
 @media (prefers-reduced-motion: reduce) {
 	.btn,

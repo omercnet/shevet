@@ -12,7 +12,7 @@ const settings = await getSiteSettings()
     <h1>חיפוש דולות</h1>
     <p>סננו לפי מה שחשוב לכן. החיפוש מיידי.</p>
 
-    <form class="filters" id="doula-filters">
+    <form class="filter-panel" id="doula-filters">
       <label>בית חולים
         <select name="hospital"><option value="">הכול</option>
           {hospitals.map((h: string) => <option value={h}>{h}</option>)}
@@ -75,7 +75,7 @@ const settings = await getSiteSettings()
         const media = d.photo
           ? `<a class="card-media" href="${href}"><img src="${encodeURI(d.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
           : "";
-        return `<article class="card doula-card">
+        return `<article class="card directory-card doula-card">
           ${media}
           <div class="card-body">
             <h3><a href="${href}">${name}</a></h3>
@@ -101,7 +101,7 @@ const settings = await getSiteSettings()
       };
       form.addEventListener("input", apply);
       reset?.addEventListener("click", () => {
-        form.reset();
+        HTMLFormElement.prototype.reset.call(form);
         apply();
       });
       apply();
@@ -109,23 +109,7 @@ const settings = await getSiteSettings()
   </script>
 
   <style>
-    .filters { display:flex; gap:1rem 1.2rem; flex-wrap:wrap; align-items:end; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); padding:1.5rem; border-radius:18px; margin:1.5rem 0; }
-    .filters label { display:flex; flex-direction:column; font-size:.8rem; gap:.35rem; color:var(--brand); font-weight:700; }
-    .filters select, .filters input { padding:.6rem .7rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; min-width:11ch; }
-    .filters select:focus, .filters input:focus { outline:2px solid var(--brand); outline-offset:1px; }
-    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:999px; padding:.6rem 1.2rem; cursor:pointer; font-weight:700; }
-    .filters button:hover { background:var(--brand); color:#fff; }
     #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
-    .doula-card .card-media { display:block; aspect-ratio:4/3; }
-    .doula-card .card-media img, .doula-card .ph { width:100%; height:100%; object-fit:cover; display:block; }
-    .doula-card .ph { background:linear-gradient(135deg,var(--peach-soft),var(--peach)); }
-    .doula-card .card-body { padding:1.1rem 1.2rem 1.3rem; }
-    .doula-card h3 { margin:0 0 .5rem; font-size:1.35rem; }
-    .doula-card h3 a { text-decoration:none; }
-    .doula-card .tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1rem; min-height:1.4rem; }
-    .doula-card .card-actions { display:flex; align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
-    .doula-card .more { color:var(--brand); font-weight:700; text-decoration:none; }
-    .doula-card .btn-wa { padding:.45rem .9rem; font-size:.9rem; }
     .matchmaking { margin-top:3.5rem; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); border-radius:18px; padding:2rem; }
     .matchmaking h2 { margin-top:0; }
     .matchmaking .embed { margin-top:1rem; }
