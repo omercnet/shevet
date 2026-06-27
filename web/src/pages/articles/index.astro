@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getArticles} from '../../lib/queries'
+
+const articles = await getArticles()
+
+// Category filter — value matches Sanity `category`, label is Hebrew.
+const CATEGORIES = [
+  {value: 'pregnancy', label: 'הריון'},
+  {value: 'birth', label: 'לידה'},
+  {value: 'breastfeeding', label: 'הנקה'},
+  {value: 'infant', label: 'תינוקות'},
+  {value: 'natural-birth', label: 'לידה טבעית'},
+  {value: 'parenting', label: 'הורות'},
+  {value: 'anxiety', label: 'חרדה'},
+] as const
+---
+<Base title="מאמרים — שבט אמהות" description="מאמרים על הריון, לידה, הנקה, תינוקות, הורות ועוד.">
+  <section class="wrap">
+    <h1>מאמרים</h1>
+
+    {articles.length === 0 ? (
+      <p class="empty">אין מאמרים עדיין</p>
+    ) : (
+      <>
+        <form class="filters" id="article-filters">
+          <label>קטגוריה
+            <select name="category"><option value="">הכול</option>
+              {CATEGORIES.map((c) => <option value={c.value}>{c.label}</option>)}
+            </select>
+          </label>
+          <button type="button" id="reset">ניקוי</button>
+        </form>
+
+        <p id="count"></p>
+        <div class="grid" id="results"></div>
+      </>
+    )}
+  </section>
+
+  {articles.length > 0 && (
+    <script type="application/json" id="data" is:inline set:html={JSON.stringify(articles)}></script>
+  )}
+  {articles.length > 0 && (
+    <script type="application/json" id="labels" is:inline set:html={JSON.stringify(CATEGORIES)}></script>
+  )}
+  <script>
+    interface Row {
+      slug: string; title: string; type?: string; category?: string;
+      excerpt?: string; cover?: string;
+    }
+    interface Category { value: string; label: string; }
+    const dataEl = document.getElementById("data");
+    const labelsEl = document.getElementById("labels");
+    const form = document.getElementById("article-filters") as HTMLFormElement | null;
+    const out = document.getElementById("results");
+    const count = document.getElementById("count");
+    const reset = document.getElementById("reset");
+
+    if (dataEl && labelsEl && form && out && count) {
+      const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const labels: Category[] = JSON.parse(labelsEl.textContent ?? "[]");
+      const labelFor = (value?: string): string =>
+        labels.find((c) => c.value === value)?.label ?? "";
+      const escapeHtml = (s: string): string =>
+        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      const card = (a: Row): string => {
+        const cat = labelFor(a.category);
+        const chip = cat ? `<span class="chip">${escapeHtml(cat)}</span>` : "";
+        const img = a.cover
+          ? `<img src="${encodeURI(a.cover)}?w=320&h=200&fit=crop" alt="${escapeHtml(a.title)}">`
+          : "";
+        const excerpt = a.excerpt ? `<p class="excerpt">${escapeHtml(a.excerpt)}</p>` : "";
+        return `<article class="card">${img}<div class="tags">${chip}</div><h3><a href="/articles/${encodeURIComponent(a.slug)}/">${escapeHtml(a.title)}</a></h3>${excerpt}</article>`;
+      };
+      const apply = (): void => {
+        const f = new FormData(form);
+        const category = f.get("category");
+        const res = data.filter((a) => !category || a.category === (category as string));
+        out.innerHTML = res.map(card).join("");
+        count.textContent = `${res.length} מאמרים`;
+      };
+      form.addEventListener("input", apply);
+      reset?.addEventListener("click", () => {
+        form.reset();
+        apply();
+      });
+      apply();
+    }
+  </script>
+
+  <style>
+    .filters { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; background:var(--peach-soft); padding:1.2rem; border-radius:14px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.85rem; gap:.3rem; color:var(--ink); font-weight:600; }
+    .filters select { padding:.5rem; border:1px solid var(--line); border-radius:8px; font-family:inherit; }
+    .filters button { align-self:end; background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:8px; padding:.55rem 1rem; cursor:pointer; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem; }
+    .card img { border-radius:10px; width:100%; object-fit:cover; aspect-ratio:16/10; }
+    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin:.6rem 0 .2rem; }
+    .card h3 { margin:.4rem 0; font-size:1.2rem; }
+    .card .excerpt { color:var(--muted); font-size:.9rem; margin:.4rem 0 0; }
+    .empty { color:var(--muted); margin:2rem 0; }
+  </style>
+</Base>

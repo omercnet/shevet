@@ -1,0 +1,128 @@
+---
+import Base from "../layouts/Base.astro";
+
+const pillars = [
+	{ href: "/doulas/", title: "מאגר דולות", body: "חיפוש מדויק לפי בית חולים, סגנון ליווי ותקציב." },
+	{ href: "/professionals/", title: "נשות מקצוע", body: "יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום." },
+	{ href: "/articles/", title: "מאמרים וסדנאות", body: "ידע מקצועי להריון, ללידה ולתקופה שאחריה." },
+	{ href: "/benefits/", title: "מועדון הטבות", body: "קופונים והנחות מעשרות עסקים נבחרים." },
+];
+---
+<Base title="שבט אמהות" description="הקהילה שלך להריון וללידה — דולות, נשות מקצוע, תוכן והטבות.">
+	<section class="hero">
+		<div class="hero-rings" aria-hidden="true"></div>
+		<div class="wrap hero-inner">
+			<p class="hero-eyebrow">קהילת ההריון והלידה</p>
+			<h1>השבט שלך<br />בדרך ללידה שאת מובילה</h1>
+			<p class="hero-sub">מצאי את הדולה או אשת המקצוע שמתאימה לך — חיפוש מדויק לפי מה שחשוב לך.</p>
+			<div class="cta-row">
+				<a class="btn" href="/doulas/">חיפוש דולות</a>
+				<a class="btn btn-outline" href="/professionals/">חיפוש נשות מקצוע</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="section wrap">
+		<div class="section-head">
+			<p class="eyebrow">כל מה שצריך במקום אחד</p>
+			<h2>הכול בשבט</h2>
+		</div>
+		<div class="grid pillars">
+			{
+				pillars.map((p) => (
+					<a class="card pillar" href={p.href}>
+						<h3>{p.title}</h3>
+						<p>{p.body}</p>
+						<span class="pillar-go">לכניסה ←</span>
+					</a>
+				))
+			}
+		</div>
+	</section>
+
+	<style>
+		.hero {
+			position: relative;
+			overflow: hidden;
+			background: linear-gradient(155deg, var(--brand-deep), var(--brand) 60%, #b23a66);
+			color: #fff;
+			padding-block: clamp(4rem, 12vw, 7rem);
+			text-align: center;
+		}
+		.hero-rings {
+			position: absolute;
+			inset: 0;
+			background:
+				radial-gradient(circle at 50% 42%, transparent 0 16%, rgba(251, 207, 172, 0.16) 16% 16.4%, transparent 16.4%),
+				radial-gradient(circle at 50% 42%, transparent 0 28%, rgba(251, 207, 172, 0.13) 28% 28.4%, transparent 28.4%),
+				radial-gradient(circle at 50% 42%, transparent 0 40%, rgba(251, 207, 172, 0.1) 40% 40.4%, transparent 40.4%);
+		}
+		.hero-inner {
+			position: relative;
+			z-index: 1;
+		}
+		.hero-eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.24em;
+			font-size: 0.8rem;
+			font-weight: 700;
+			color: var(--peach);
+			margin: 0 0 1rem;
+		}
+		.hero h1 {
+			color: #fff;
+			font-size: clamp(2.6rem, 8vw, 5rem);
+			margin: 0;
+			text-wrap: balance;
+		}
+		.hero-sub {
+			font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+			max-width: 42ch;
+			margin: 1.2rem auto 0;
+			color: var(--peach-soft);
+		}
+		.cta-row {
+			display: flex;
+			gap: 1rem;
+			flex-wrap: wrap;
+			justify-content: center;
+			margin-top: 2.2rem;
+		}
+		.hero .btn {
+			background: var(--peach);
+			border-color: var(--peach);
+			color: var(--brand-deep);
+		}
+		.hero .btn-outline {
+			background: transparent;
+			border-color: rgba(255, 255, 255, 0.6);
+			color: #fff;
+		}
+		.hero .btn-outline:hover {
+			background: rgba(255, 255, 255, 0.12);
+		}
+		.pillars {
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		}
+		.pillar {
+			display: flex;
+			flex-direction: column;
+			padding: 1.6rem;
+			text-decoration: none;
+			color: var(--text);
+		}
+		.pillar h3 {
+			margin: 0 0 0.5rem;
+			font-size: 1.5rem;
+		}
+		.pillar p {
+			margin: 0 0 1rem;
+			color: var(--muted);
+			flex: 1;
+		}
+		.pillar-go {
+			color: var(--brand);
+			font-weight: 700;
+		}
+	</style>
+</Base>

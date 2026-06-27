@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getWhatsappGroups} from '../../lib/queries'
+import type {WhatsappGroup} from '../../lib/queries'
+
+const groups = await getWhatsappGroups()
+const dueDate = groups.filter((g: WhatsappGroup) => g.cohort === 'due-date')
+const topic = groups.filter((g: WhatsappGroup) => g.cohort === 'topic')
+const sections = [
+  {title: 'לפי תאריך לידה', groups: dueDate},
+  {title: 'לפי נושא', groups: topic},
+]
+const hasGroups = groups.length > 0
+---
+<Base title="קהילה — קבוצות וואטסאפ — שבט אמהות" description="קבוצות וואטסאפ לאמהות, לפי תאריך לידה ולפי נושא. קבוצות לנשים בלבד.">
+  <section class="wrap">
+    <h1>קהילה</h1>
+    <p>קבוצות וואטסאפ לתמיכה, שיתוף וליווי לאורך הדרך.</p>
+    <p class="note">קבוצות לנשים בלבד.</p>
+
+    {!hasGroups && <p class="empty">אין קבוצות עדיין</p>}
+
+    {hasGroups &&
+      sections.map((section) =>
+        section.groups.length > 0 ? (
+          <div class="section">
+            <h2>{section.title}</h2>
+            <div class="grid">
+              {section.groups.map((g: WhatsappGroup) => (
+                <article class="card">
+                  <h3>{g.name}</h3>
+                  {g.moderator && <p class="mod">מנחה: {g.moderator}</p>}
+                  {g.guidelines && <p class="guidelines">{g.guidelines}</p>}
+                  {g.inviteUrl && (
+                    <a class="btn btn-wa" href={g.inviteUrl} target="_blank" rel="noopener noreferrer">
+                      הצטרפו
+                    </a>
+                  )}
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : null,
+      )}
+  </section>
+
+  <style>
+    .note { display:inline-block; background:var(--peach-soft); color:var(--brand); border-radius:999px; padding:.2rem .9rem; font-weight:600; font-size:.9rem; }
+    .empty { margin-top:2rem; color:var(--muted); font-size:1.1rem; }
+    .section { margin-top:2.5rem; }
+    .section h2 { margin-bottom:1rem; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1.2rem; display:flex; flex-direction:column; gap:.5rem; }
+    .card h3 { margin:0; font-size:1.2rem; }
+    .card .mod { margin:0; color:var(--muted); font-size:.9rem; }
+    .card .guidelines { margin:0; font-size:.9rem; color:var(--ink); }
+    .card .btn { align-self:start; margin-top:.4rem; }
+  </style>
+</Base>

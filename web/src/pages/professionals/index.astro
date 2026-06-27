@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getProfessionals} from '../../lib/queries'
+
+const pros = await getProfessionals()
+const fields = [...new Set(pros.flatMap((p: any) => p.fields || []))].sort()
+const regions = [...new Set(pros.flatMap((p: any) => p.regions || []))].sort()
+const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
+---
+<Base title="חיפוש נשות מקצוע — שבט אמהות" description="יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.">
+  <section class="wrap">
+    <h1>חיפוש נשות מקצוע</h1>
+    <p>למשל רפלקסולוגית באזורך — סינון לפי תחום ומיקום.</p>
+
+    <form class="filters" id="pro-filters">
+      <label>תחום טיפול
+        <select name="field"><option value="">הכול</option>{fields.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <label>אזור
+        <select name="region"><option value="">הכול</option>{regions.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <label>שפה
+        <select name="lang"><option value="">הכול</option>{langs.map((x: string) => <option>{x}</option>)}</select>
+      </label>
+      <button type="button" id="reset">ניקוי</button>
+    </form>
+
+    <p id="count"></p>
+    <div class="grid" id="results"></div>
+  </section>
+
+  <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
+  <script>
+    interface Row {
+      slug: string; name: string; photo?: string; whatsapp?: string;
+      fields?: string[]; regions?: string[]; languages?: string[];
+    }
+    const dataEl = document.getElementById("data");
+    const form = document.getElementById("pro-filters") as HTMLFormElement | null;
+    const out = document.getElementById("results");
+    const count = document.getElementById("count");
+    const reset = document.getElementById("reset");
+
+    if (dataEl && form && out && count) {
+      const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const esc = (s: string): string =>
+        s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
+      const card = (p: Row): string => {
+        const name = esc(p.name);
+        const tags = [...(p.fields ?? []), ...(p.regions ?? [])]
+          .slice(0, 3)
+          .map((t) => `<span class="chip">${esc(t)}</span>`)
+          .join("");
+        const href = `/professionals/${encodeURIComponent(p.slug)}/`;
+        const wa = p.whatsapp
+          ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+          : "";
+        const media = p.photo
+          ? `<a class="card-media" href="${href}"><img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
+          : "";
+        return `<article class="card doula-card">
+          ${media}
+          <div class="card-body">
+            <h3><a href="${href}">${name}</a></h3>
+            <div class="tags">${tags}</div>
+            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a>${wa}</div>
+          </div>
+        </article>`;
+      };
+      const apply = (): void => {
+        const f = new FormData(form);
+        const fld = f.get("field");
+        const reg = f.get("region");
+        const lang = f.get("lang");
+        const res = data.filter(
+          (p) =>
+            (!fld || (p.fields ?? []).includes(fld as string)) &&
+            (!reg || (p.regions ?? []).includes(reg as string)) &&
+            (!lang || (p.languages ?? []).includes(lang as string)),
+        );
+        out.innerHTML = res.map(card).join("");
+        count.textContent = `${res.length} נשות מקצוע`;
+      };
+      form.addEventListener("input", apply);
+      reset?.addEventListener("click", () => {
+        form.reset();
+        apply();
+      });
+      apply();
+    }
+  </script>
+
+  <style>
+    .filters { display:flex; gap:1rem 1.2rem; flex-wrap:wrap; align-items:end; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); padding:1.5rem; border-radius:18px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.8rem; gap:.35rem; color:var(--brand); font-weight:700; }
+    .filters select { padding:.6rem .7rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; min-width:11ch; }
+    .filters select:focus { outline:2px solid var(--brand); outline-offset:1px; }
+    .filters button { background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:999px; padding:.6rem 1.2rem; cursor:pointer; font-weight:700; }
+    .filters button:hover { background:var(--brand); color:#fff; }
+    #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
+    .doula-card .card-media { display:block; aspect-ratio:4/3; }
+    .doula-card .card-media img, .doula-card .ph { width:100%; height:100%; object-fit:cover; display:block; }
+    .doula-card .ph { background:linear-gradient(135deg,var(--peach-soft),var(--peach)); }
+    .doula-card .card-body { padding:1.1rem 1.2rem 1.3rem; }
+    .doula-card h3 { margin:0 0 .5rem; font-size:1.35rem; }
+    .doula-card h3 a { text-decoration:none; }
+    .doula-card .tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1rem; min-height:1.4rem; }
+    .doula-card .card-actions { display:flex; align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
+    .doula-card .more { color:var(--brand); font-weight:700; text-decoration:none; }
+    .doula-card .btn-wa { padding:.45rem .9rem; font-size:.9rem; }
+  </style>
+</Base>

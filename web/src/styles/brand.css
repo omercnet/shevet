@@ -1,0 +1,155 @@
+/* Shevet Imahot brand tokens — pulled from the live site (locked with Keren) */
+@font-face {
+	font-family: "Oron Yad";
+	src: url("/fonts/OronYad.woff") format("woff");
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	--brand: #92003b; /* raspberry / fuchsia */
+	--brand-deep: #6e002d;
+	--peach: #fbcfac;
+	--peach-soft: #f8e1ce;
+	--cream: #f4ece1;
+	--cream-2: #f4f3f1;
+	--beige: #cda88b;
+	--ink: #3f2230;
+	--text: #565656;
+	--muted: #7a7a7a;
+	--line: #e7d9cb;
+
+	--display: "Oron Yad", "Frank Ruhl Libre", serif;
+	--sans: "Assistant", "Heebo", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+	--maxw: 1100px;
+}
+
+* {
+	box-sizing: border-box;
+}
+html {
+	font-family: var(--sans);
+	color: var(--text);
+	background: var(--cream);
+	line-height: 1.65;
+}
+body {
+	margin: 0;
+}
+h1,
+h2,
+h3 {
+	font-family: var(--display);
+	color: var(--brand);
+	font-weight: 400;
+	line-height: 1.1;
+}
+a {
+	color: var(--brand);
+}
+img {
+	max-width: 100%;
+	height: auto;
+}
+.wrap {
+	max-width: var(--maxw);
+	margin-inline: auto;
+	padding-inline: clamp(1rem, 4vw, 2rem);
+}
+.btn {
+	display: inline-block;
+	background: var(--brand);
+	color: #fff;
+	padding: 0.75rem 1.6rem;
+	border-radius: 999px;
+	text-decoration: none;
+	font-weight: 700;
+	border: 2px solid var(--brand);
+	transition:
+		transform 0.18s ease,
+		box-shadow 0.18s ease,
+		background 0.18s ease;
+	box-shadow: 0 6px 18px -10px rgba(146, 0, 59, 0.6);
+}
+.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 26px -12px rgba(146, 0, 59, 0.6);
+}
+.btn-outline {
+	background: transparent;
+	color: var(--brand);
+}
+.btn-outline:hover {
+	background: var(--peach-soft);
+}
+.btn-wa {
+	background: #25d366;
+	border-color: #25d366;
+	box-shadow: 0 6px 18px -10px rgba(37, 211, 102, 0.7);
+}
+.chip {
+	display: inline-block;
+	background: var(--peach-soft);
+	color: var(--brand);
+	border-radius: 999px;
+	padding: 0.2rem 0.75rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+/* ---- shared components ---- */
+.section {
+	padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+.section-head {
+	text-align: center;
+	max-width: 60ch;
+	margin-inline: auto;
+	margin-bottom: 2.5rem;
+}
+.section-head h2 {
+	font-size: clamp(2rem, 5vw, 3rem);
+	margin: 0 0 0.6rem;
+}
+.section-head p {
+	color: var(--muted);
+	font-size: 1.1rem;
+	margin: 0;
+}
+.eyebrow {
+	font-size: 0.78rem;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	font-weight: 700;
+	color: var(--brand);
+}
+.card {
+	background: #fff;
+	border: 1px solid var(--line);
+	border-radius: 18px;
+	overflow: hidden;
+	transition:
+		transform 0.22s ease,
+		box-shadow 0.22s ease;
+	box-shadow: 0 8px 24px -18px rgba(63, 34, 48, 0.5);
+}
+.card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 18px 38px -20px rgba(146, 0, 59, 0.45);
+}
+.grid {
+	display: grid;
+	gap: 1.5rem;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+@media (prefers-reduced-motion: reduce) {
+	.btn,
+	.card {
+		transition: none;
+	}
+	.btn:hover,
+	.card:hover {
+		transform: none;
+	}
+}
