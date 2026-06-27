@@ -43,16 +43,29 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
 
     if (dataEl && form && out && count) {
       const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const esc = (s: string): string =>
+        s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
       const card = (p: Row): string => {
+        const name = esc(p.name);
         const tags = [...(p.fields ?? []), ...(p.regions ?? [])]
-          .slice(0, 4)
-          .map((t) => `<span class="chip">${t}</span>`)
+          .slice(0, 3)
+          .map((t) => `<span class="chip">${esc(t)}</span>`)
           .join("");
+        const href = `/professionals/${encodeURIComponent(p.slug)}/`;
         const wa = p.whatsapp
           ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
           : "";
-        const img = p.photo ? `<img src="${p.photo}?w=320&h=200&fit=crop" alt="${p.name}">` : "";
-        return `<article class="card">${img}<h3><a href="/professionals/${p.slug}/">${p.name}</a></h3><div class="tags">${tags}</div>${wa}</article>`;
+        const media = p.photo
+          ? `<a class="card-media" href="${href}"><img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
+          : "";
+        return `<article class="card doula-card">
+          ${media}
+          <div class="card-body">
+            <h3><a href="${href}">${name}</a></h3>
+            <div class="tags">${tags}</div>
+            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a>${wa}</div>
+          </div>
+        </article>`;
       };
       const apply = (): void => {
         const f = new FormData(form);
@@ -78,14 +91,22 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
   </script>
 
   <style>
-    .filters { display:flex; gap:1rem; flex-wrap:wrap; align-items:end; background:var(--peach-soft); padding:1.2rem; border-radius:14px; margin:1.5rem 0; }
-    .filters label { display:flex; flex-direction:column; font-size:.85rem; gap:.3rem; color:var(--ink); font-weight:600; }
-    .filters select { padding:.5rem; border:1px solid var(--line); border-radius:8px; font-family:inherit; }
-    .filters button { background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:8px; padding:.55rem 1rem; cursor:pointer; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem; }
-    .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:1rem; }
-    .card img { border-radius:10px; width:100%; aspect-ratio:16/10; object-fit:cover; }
-    .card h3 { margin:.6rem 0 .4rem; font-size:1.2rem; }
-    .card .tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem; }
+    .filters { display:flex; gap:1rem 1.2rem; flex-wrap:wrap; align-items:end; background:linear-gradient(160deg,var(--peach-soft),var(--peach)); padding:1.5rem; border-radius:18px; margin:1.5rem 0; }
+    .filters label { display:flex; flex-direction:column; font-size:.8rem; gap:.35rem; color:var(--brand); font-weight:700; }
+    .filters select { padding:.6rem .7rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; background:#fff; min-width:11ch; }
+    .filters select:focus { outline:2px solid var(--brand); outline-offset:1px; }
+    .filters button { background:#fff; border:1px solid var(--brand); color:var(--brand); border-radius:999px; padding:.6rem 1.2rem; cursor:pointer; font-weight:700; }
+    .filters button:hover { background:var(--brand); color:#fff; }
+    #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
+    .doula-card .card-media { display:block; aspect-ratio:4/3; }
+    .doula-card .card-media img, .doula-card .ph { width:100%; height:100%; object-fit:cover; display:block; }
+    .doula-card .ph { background:linear-gradient(135deg,var(--peach-soft),var(--peach)); }
+    .doula-card .card-body { padding:1.1rem 1.2rem 1.3rem; }
+    .doula-card h3 { margin:0 0 .5rem; font-size:1.35rem; }
+    .doula-card h3 a { text-decoration:none; }
+    .doula-card .tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1rem; min-height:1.4rem; }
+    .doula-card .card-actions { display:flex; align-items:center; justify-content:space-between; gap:.6rem; flex-wrap:wrap; }
+    .doula-card .more { color:var(--brand); font-weight:700; text-decoration:none; }
+    .doula-card .btn-wa { padding:.45rem .9rem; font-size:.9rem; }
   </style>
 </Base>
