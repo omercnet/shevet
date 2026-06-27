@@ -1,74 +1,107 @@
 ---
-import Base from '../../layouts/Base.astro'
-import {getArticleDetails, type ArticleDetail} from '../../lib/queries'
+import PortableText from "../../components/PortableText.astro";
+import Base from "../../layouts/Base.astro";
+import { getArticleDetails, type ArticleDetail } from "../../lib/queries";
+
+const CATEGORY_LABELS: Record<string, string> = {
+	pregnancy: "הריון",
+	birth: "לידה",
+	breastfeeding: "הנקה",
+	infant: "טיפול בתינוק",
+	"natural-birth": "לידה טבעית",
+	parenting: "הורות",
+	anxiety: "חרדה ורגש",
+};
 
 export async function getStaticPaths() {
-  const articles = await getArticleDetails()
-  return articles.map((doc) => ({params: {slug: doc.slug}, props: {doc}}))
+	const articles = await getArticleDetails();
+	return articles.map((doc) => ({ params: { slug: doc.slug }, props: { doc } }));
 }
 
-const a = Astro.props.doc as ArticleDetail
+const a = Astro.props.doc as ArticleDetail;
 
-// YouTube/Vimeo → embeddable url (copied from doulas/[slug].astro)
-function embed(url?: string) {
-  if (!url) return null
-  const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{11})/)
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}`
-  const vm = url.match(/vimeo\.com\/(\d+)/)
-  if (vm) return `https://player.vimeo.com/video/${vm[1]}`
-  return null
+function embed(url?: string): string | null {
+	if (!url) return null;
+	const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{11})/);
+	if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+	const vm = url.match(/vimeo\.com\/(\d+)/);
+	if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+	return null;
 }
-const video = embed(a?.videoUrl)
-
-// Minimal Portable Text renderer: each block → its concatenated span text.
-interface PTSpan {_type?: string; text?: string}
-interface PTBlock {_type?: string; style?: string; children?: PTSpan[]}
-function blockText(block: PTBlock): string {
-  return (block.children ?? []).map((c) => c.text ?? '').join('')
-}
-const blocks: PTBlock[] = Array.isArray(a?.body) ? (a!.body as PTBlock[]) : []
-const paragraphs = blocks
-  .filter((b) => b._type === 'block')
-  .map((b) => ({style: b.style ?? 'normal', text: blockText(b)}))
-  .filter((p) => p.text.trim().length > 0)
+const video = embed(a.videoUrl);
+const catLabel = a.category ? (CATEGORY_LABELS[a.category] ?? "") : "";
+const hasBody = Array.isArray(a.body) && a.body.length > 0;
 ---
-<Base title={a ? `${a.title} — שבט אמהות` : 'מאמר — שבט אמהות'} description={a?.excerpt}>
-  <article class="article wrap">
-    {a ? (
-      <>
-        {a.cover && (
-          <img class="cover" src={`${a.cover}?w=1200&h=600&fit=crop`} alt={a.title} />
-        )}
-        <h1>{a.title}</h1>
+<Base title={`${a.title} — שבט אמהות`} description={a.excerpt ?? a.title}>
+	<article class="article wrap">
+		<a class="back" href="/articles/">→ חזרה למאמרים</a>
+		{catLabel && <span class="chip">{catLabel}</span>}
+		<h1>{a.title}</h1>
 
-        {video && (
-          <div class="video"><iframe src={video} title="וידאו" loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe></div>
-        )}
+		{a.cover && <img class="cover" src={`${a.cover}?w=1200&h=600&fit=crop`} alt={a.title} />}
 
-        <div class="body">
-          {paragraphs.map((p) =>
-            p.style === 'h2' ? <h2>{p.text}</h2>
-            : p.style === 'h3' ? <h3>{p.text}</h3>
-            : p.style === 'blockquote' ? <blockquote>{p.text}</blockquote>
-            : <p>{p.text}</p>,
-          )}
-        </div>
-      </>
-    ) : (
-      <p class="empty">אין מאמרים עדיין</p>
-    )}
-  </article>
+		{
+			video && (
+				<div class="video">
+					<iframe
+						src={video}
+						title="וידאו"
+						loading="lazy"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen
+					/>
+				</div>
+			)
+		}
 
-  <style>
-    .article { padding-block: 1.5rem 4rem; max-width: 760px; }
-    .cover { width:100%; border-radius:16px; object-fit:cover; aspect-ratio:2/1; margin-bottom:1.5rem; }
-    .video { position:relative; aspect-ratio:16/9; border-radius:16px; overflow:hidden; margin:1.5rem 0; }
-    .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
-    .body { margin-top:1.5rem; line-height:1.8; }
-    .body p { margin:0 0 1.2rem; }
-    .body blockquote { border-inline-start:3px solid var(--brand); margin:1.5rem 0; padding:.4rem 1rem; color:var(--muted); font-style:italic; }
-    .empty { color:var(--muted); margin:2rem 0; }
-  </style>
+		{hasBody ? <PortableText blocks={a.body} /> : a.excerpt && <p class="lead">{a.excerpt}</p>}
+	</article>
+
+	<style>
+		.article {
+			padding-block: 1.5rem 4rem;
+			max-width: 760px;
+		}
+		.back {
+			display: inline-block;
+			color: var(--brand);
+			font-weight: 700;
+			text-decoration: none;
+			margin-bottom: 1rem;
+		}
+		.article h1 {
+			font-family: var(--sans);
+			font-weight: 800;
+			font-size: clamp(1.7rem, 4vw, 2.6rem);
+			line-height: 1.2;
+			margin: 0.6rem 0 1.2rem;
+			color: var(--brand);
+		}
+		.cover {
+			width: 100%;
+			border-radius: 16px;
+			object-fit: cover;
+			aspect-ratio: 2/1;
+			margin-bottom: 1.5rem;
+		}
+		.video {
+			position: relative;
+			aspect-ratio: 16/9;
+			border-radius: 16px;
+			overflow: hidden;
+			margin: 1.5rem 0;
+		}
+		.video iframe {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+		.lead {
+			font-size: 1.2rem;
+			line-height: 1.7;
+			color: var(--text);
+		}
+	</style>
 </Base>

@@ -69,11 +69,21 @@ export interface PractitionerDetail {
 	title?: string;
 	photoUrl?: string;
 	videoUrl?: string;
+	phone?: string;
 	whatsapp?: string;
+	email?: string;
+	instagram?: string;
+	adress?: string;
 	hospitals?: string[];
 	fields?: string[];
 	regions?: string[];
+	languages?: string[];
 	supportStyle?: string[];
+	credentials?: string[];
+	bio?: unknown[];
+	services?: unknown[];
+	gallery?: string[];
+	faq?: { q?: string; a?: string }[];
 	testimonials?: Testimonial[];
 }
 
@@ -105,8 +115,9 @@ export interface PractitionerDetailWithSlug extends PractitionerDetail {
 function practitionerDetails(filter: string): Promise<PractitionerDetailWithSlug[]> {
 	return sanityFetch<PractitionerDetailWithSlug[]>(
 		`*[_type == "practitioner" && ${filter} && tier == "premium" && published == true]{
-			"slug": slug.current, name, title, videoUrl, whatsapp, supportStyle, testimonials,
-			"photoUrl": photo.asset->url,
+			"slug": slug.current, name, title, videoUrl, phone, whatsapp, email, instagram, adress,
+			supportStyle, languages, credentials, bio, services, faq, testimonials,
+			"photoUrl": photo.asset->url, "gallery": gallery[].asset->url,
 			"hospitals": hospitals[]->name, "fields": fields[]->name, "regions": regions[]->name
 		}`,
 		{},

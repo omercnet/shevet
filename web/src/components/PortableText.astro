@@ -1,0 +1,63 @@
+---
+// Minimal Portable Text renderer for Sanity block content.
+interface Span {
+	_type?: string;
+	text?: string;
+	marks?: string[];
+}
+interface Block {
+	_type?: string;
+	style?: string;
+	listItem?: string;
+	children?: Span[];
+}
+const { blocks = [] } = Astro.props as { blocks?: unknown[] };
+const items = (blocks as Block[]).filter((b) => b?._type === "block");
+
+function spans(b: Block): Span[] {
+	return b.children ?? [];
+}
+function isBold(s: Span): boolean {
+	return (s.marks ?? []).includes("strong");
+}
+function isItalic(s: Span): boolean {
+	return (s.marks ?? []).includes("em");
+}
+---
+<div class="prose">
+	{
+		items.map((b) => {
+			const inner = spans(b).map((s) =>
+				isBold(s) ? <strong>{s.text}</strong> : isItalic(s) ? <em>{s.text}</em> : <span>{s.text}</span>,
+			);
+			if (b.listItem === "bullet") return <ul><li>{inner}</li></ul>;
+			if (b.style === "h2") return <h2>{inner}</h2>;
+			if (b.style === "h3") return <h3>{inner}</h3>;
+			if (b.style === "blockquote") return <blockquote>{inner}</blockquote>;
+			return <p>{inner}</p>;
+		})
+	}
+</div>
+<style>
+	.prose {
+		line-height: 1.75;
+		color: var(--text);
+	}
+	.prose :global(p) {
+		margin: 0 0 1rem;
+	}
+	.prose :global(h2),
+	.prose :global(h3) {
+		margin: 1.6rem 0 0.6rem;
+	}
+	.prose :global(blockquote) {
+		border-inline-start: 3px solid var(--peach);
+		margin: 1rem 0;
+		padding-inline-start: 1rem;
+		color: var(--muted);
+	}
+	.prose :global(ul) {
+		margin: 0 0 1rem;
+		padding-inline-start: 1.2rem;
+	}
+</style>
