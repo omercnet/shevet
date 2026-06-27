@@ -49,7 +49,7 @@ const settings = await getSiteSettings()
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
   <script>
     interface Row {
-      slug: string; name: string; photo?: string; whatsapp?: string;
+      slug: string; name: string; title?: string; photo?: string; whatsapp?: string;
       hospitals?: string[]; supportStyle?: string[]; budget?: string;
     }
     const dataEl = document.getElementById("data");
@@ -62,24 +62,25 @@ const settings = await getSiteSettings()
       const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
       const esc = (s: string): string =>
         s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
-      const card = (d: Row): string => {
+      const avBg = ["bg-peach", "bg-mint", "bg-sky", "bg-gold"];
+      const tints = ["t-peach", "t-mint", "t-sky", "t-gold"];
+      const card = (d: Row, i: number): string => {
         const name = esc(d.name);
-        const tints = ["t-peach", "t-mint", "t-sky", "t-gold"];
         const tags = [...(d.hospitals ?? []), ...(d.supportStyle ?? [])]
-          .slice(0, 3)
-          .map((t, i) => `<span class="chip ${tints[i % tints.length]}">${esc(t)}</span>`)
+          .slice(0, 2)
+          .map((t, j) => `<span class="chip ${tints[j % tints.length]}">${esc(t)}</span>`)
           .join("");
         const href = `/doulas/${encodeURIComponent(d.slug)}/`;
         const wa = d.whatsapp
-          ? `<a class="btn btn-wa" href="https://wa.me/${d.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+          ? `<a class="wa-btn" href="https://wa.me/${d.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
           : "";
-        const media = d.photo
-          ? `<a class="card-media" href="${href}"><img src="${encodeURI(d.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
-          : "";
-        return `<article class="card doula-card">
-          ${media}
+        const avatar = d.photo
+          ? `<img class="avatar" src="${encodeURI(d.photo)}?w=120&h=120&fit=crop" alt="${name}" loading="lazy">`
+          : `<span class="avatar ${avBg[i % avBg.length]}">${name.charAt(0)}</span>`;
+        const role = d.title ? `<p class="p-title">${esc(d.title)}</p>` : "";
+        return `<article class="card p-card">
           <div class="card-body">
-            <h3><a href="${href}">${name}</a></h3>
+            <div class="p-head">${avatar}<div><h3><a href="${href}">${name}</a></h3>${role}</div></div>
             <div class="tags">${tags}</div>
             <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a>${wa}</div>
           </div>
