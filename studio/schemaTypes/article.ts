@@ -41,6 +41,7 @@ export default defineType({
 		defineField({ name: "excerpt", title: "תקציר", type: "text", rows: 3 }),
 		defineField({ name: "videoUrl", title: "קישור וידאו (לסדנה)", type: "url" }),
 		defineField({ name: "body", title: "תוכן", type: "array", of: [{ type: "block" }, { type: "image" }] }),
+		defineField({ name: "sourceHtml", title: "HTML מהאתר הישן", type: "text", rows: 8 }),
 		defineField({ name: "publishedAt", title: "תאריך פרסום", type: "datetime" }),
 	],
 	preview: { select: { title: "title", subtitle: "category", media: "cover" } },

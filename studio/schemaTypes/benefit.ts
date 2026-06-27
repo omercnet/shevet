@@ -22,6 +22,8 @@ export default defineType({
 		}),
 		defineField({ name: "discount", title: "ההטבה", type: "string", description: "לדוגמה: 20% הנחה" }),
 		defineField({ name: "description", title: "תיאור", type: "text", rows: 3 }),
+		defineField({ name: "body", title: "תוכן", type: "array", of: [{ type: "block" }] }),
+		defineField({ name: "sourceHtml", title: "HTML מהאתר הישן", type: "text", rows: 8 }),
 		defineField({ name: "couponCode", title: "קוד קופון", type: "string" }),
 		defineField({ name: "redeemUrl", title: "קישור למימוש", type: "url" }),
 	],

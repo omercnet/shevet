@@ -27,13 +27,15 @@ const DRY = flag("--dry-run");
 const WITH_IMAGES = !flag("--no-images") && !DRY;
 const WXR_DIR = opt("--dir", join(import.meta.dirname ?? ".", "wxr"));
 
-// ---------- which WXR file maps to which doc kind ----------
-const FILE_KIND = {
+// ---------- which WP post type maps to which doc kind ----------
+const POST_TYPE_KIND = {
 	"doulas-premium": { type: "practitioner", tier: "premium", isDoula: true },
 	other_doula: { type: "practitioner", tier: "index", isDoula: true },
 	"therapist-premium": { type: "practitioner", tier: "premium", isProfessional: true },
 	"pregnancy-blog": { type: "article" },
 	benefits: { type: "benefit" },
+	"community": { type: "communityPage" },
+	"courses": { type: "salePage" },
 };
 
 // Hebrew language terms seen in the `additional-tools` taxonomy.
@@ -104,6 +106,16 @@ function toBlocks(html) {
 	);
 }
 
+const legacyHtml = (item, m = metaMap(item)) => m._content || text(item["content:encoded"]);
+const stripHtml = (html) =>
+	String(html ?? "")
+		.replace(/<script[\s\S]*?<\/script>/gi, " ")
+		.replace(/<style[\s\S]*?<\/style>/gi, " ")
+		.replace(/<[^>]+>/g, " ")
+		.replace(/&nbsp;/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+
 const slugify = (s) =>
 	String(s)
 		.toLowerCase()
@@ -165,7 +177,8 @@ function mapPractitioner(item, cfg) {
 			.map((x) => ({ author: x.author || "", quote: x.quote })),
 	);
 
-	const bioHtml = [m["i-believe"], m["during-birth"], m["after-birth"], m["birth-support"]].filter(Boolean).join("\n\n");
+	const bioHtml = [m["i-believe"], m["marketing-description"]].filter(Boolean).join("\n\n");
+	const servicesHtml = [m["during-birth"], m["after-birth"], m["birth-support"]].filter(Boolean).join("\n\n");
 
 	return {
 		_id: `practitioner.${asciiId(slug)}`,
@@ -188,6 +201,7 @@ function mapPractitioner(item, cfg) {
 		languages: languages.length ? [...new Set(languages)] : undefined,
 		credentials: credentials.length ? credentials : undefined,
 		bio: toBlocks(bioHtml),
+		services: toBlocks(servicesHtml),
 		testimonials: testimonials.length ? testimonials : undefined,
 		published: text(item["wp:status"]) === "publish",
 		// NOTE: supportStyle + budget had no equivalent in WP — Keren sets these in Studio.
@@ -198,6 +212,8 @@ function mapPractitioner(item, cfg) {
 function mapArticle(item) {
 	const name = text(item.title);
 	const slug = slugify(text(item["wp:post_name"]) || name);
+	const m = metaMap(item);
+	const html = legacyHtml(item, m);
 	return {
 		_id: `article.${asciiId(slug)}`,
 		_type: "article",
@@ -205,9 +221,10 @@ function mapArticle(item) {
 		slug: { _type: "slug", current: slug },
 		type: "article",
 		excerpt: text(item["excerpt:encoded"]) || undefined,
-		body: toBlocks(text(item["content:encoded"])),
+		body: toBlocks(html),
+		sourceHtml: html || undefined,
 		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,
-		_thumbId: metaMap(item)._thumbnail_id || undefined,
+		_thumbId: m._thumbnail_id || undefined,
 	};
 }
 
@@ -215,15 +232,65 @@ function mapBenefit(item) {
 	const name = text(item.title);
 	const slug = slugify(text(item["wp:post_name"]) || name);
 	const m = metaMap(item);
+	const html = m["product-detail"] || legacyHtml(item, m);
 	return {
 		_id: `benefit.${asciiId(slug)}`,
 		_type: "benefit",
 		partner: name,
 		slug: { _type: "slug", current: slug },
-		description: text(item["content:encoded"]).replace(/<[^>]+>/g, "").trim() || undefined,
-		discount: m.discount || undefined,
-		couponCode: m.coupon || undefined,
+		description: stripHtml(html) || undefined,
+		body: toBlocks(html),
+		sourceHtml: html || undefined,
+		discount: m["the-benefit"] || m.discount || undefined,
+		couponCode: m["benefit-code"] || m.coupon || undefined,
 		redeemUrl: m.url || m.link || undefined,
+		_thumbId: m._thumbnail_id || undefined,
+	};
+}
+
+function mapCommunityPage(item) {
+	const title = text(item.title);
+	const slug = slugify(text(item["wp:post_name"]) || title);
+	const m = metaMap(item);
+	const html = legacyHtml(item, m);
+	return {
+		_id: `communityPage.${asciiId(slug)}`,
+		_type: "communityPage",
+		title,
+		slug: { _type: "slug", current: slug },
+		excerpt: text(item["excerpt:encoded"]) || undefined,
+		body: toBlocks(html),
+		sourceHtml: html || undefined,
+		presenter: m.presenter || m.name || undefined,
+		dateText: m.date || undefined,
+		location: m.location || undefined,
+		cost: m.cost || m.price || undefined,
+		linkUrl: m.link || undefined,
+		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,
+		_thumbId: m._thumbnail_id || undefined,
+	};
+}
+
+function mapSalePage(item) {
+	const title = text(item.title);
+	const slug = slugify(text(item["wp:post_name"]) || title);
+	const m = metaMap(item);
+	const html = legacyHtml(item, m);
+	return {
+		_id: `salePage.${asciiId(slug)}`,
+		_type: "salePage",
+		title,
+		slug: { _type: "slug", current: slug },
+		blurb: toBlocks(html),
+		sourceHtml: html || undefined,
+		presenter: m.presenter || m.name || undefined,
+		dateText: m.date || undefined,
+		location: m.location || undefined,
+		cost: m.cost || m.price || undefined,
+		formEmbedHtml: m.link || undefined,
+		ctaLabel: m.link ? "להרשמה" : "לרכישה",
+		meshulamUrl: m.meshulamUrl || m.url || undefined,
+		_thumbId: m._thumbnail_id || undefined,
 	};
 }
 
@@ -244,9 +311,6 @@ const docs = [];
 const thumbJobs = []; // {doc, url}
 
 for (const file of files) {
-	const base = basename(file, ".xml");
-	const cfg = FILE_KIND[base];
-	if (!cfg) continue;
 	const xml = parser.parse(readFileSync(join(WXR_DIR, file), "utf8"));
 	const items = arr(xml?.rss?.channel?.item);
 	const atts = attachmentUrls(items);
@@ -254,12 +318,15 @@ for (const file of files) {
 	for (const item of items) {
 		const ptype = text(item["wp:post_type"]);
 		if (ptype === "attachment" || ptype === "nav_menu_item" || ptype === "revision") continue;
-		if (ptype !== base) continue; // skip stray types in the file
+		const cfg = POST_TYPE_KIND[ptype];
+		if (!cfg) continue;
 
 		let doc;
 		if (cfg.type === "practitioner") doc = mapPractitioner(item, cfg);
 		else if (cfg.type === "article") doc = mapArticle(item);
 		else if (cfg.type === "benefit") doc = mapBenefit(item);
+		else if (cfg.type === "communityPage") doc = mapCommunityPage(item);
+		else if (cfg.type === "salePage") doc = mapSalePage(item);
 		if (!doc) continue;
 
 		const thumbUrl = doc._thumbId && atts.get(doc._thumbId);
@@ -310,6 +377,7 @@ if (WITH_IMAGES) {
 			const ref = { _type: "image", asset: { _type: "reference", _ref: asset._id } };
 			if (doc._type === "benefit") doc.logo = ref;
 			else if (doc._type === "article") doc.cover = ref;
+			else if (doc._type === "communityPage" || doc._type === "salePage") doc.image = ref;
 			else doc.photo = ref;
 		} catch (e) {
 			console.warn(`  image skip (${url}): ${e.message}`);
