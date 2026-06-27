@@ -1,0 +1,517 @@
+<title>שבט אמהות — הצעה לבנייה מחדש</title>
+<meta name="description" content="הצעה לבנייה מחדש של אתר שבט אמהות: מהיר יותר, פשוט לתחזוקה וזול יותר.">
+
+<div class="deck" dir="rtl" lang="he">
+
+<!-- ============ progress rail ============ -->
+<nav class="rail" aria-label="ניווט מצגת">
+  <a href="#cover" class="dot" data-label="פתיחה"></a>
+  <a href="#today" class="dot" data-label="היום"></a>
+  <a href="#problem" class="dot" data-label="הבעיה"></a>
+  <a href="#vision" class="dot" data-label="הגישה"></a>
+  <a href="#pillars" class="dot" data-label="מה נשמר"></a>
+  <a href="#cms" class="dot" data-label="ניהול"></a>
+  <a href="#stack" class="dot" data-label="הטכנולוגיה"></a>
+  <a href="#plan" class="dot" data-label="שלבים"></a>
+  <a href="#cost" class="dot" data-label="עלות"></a>
+  <a href="#questions" class="dot" data-label="שאלות"></a>
+  <a href="#next" class="dot" data-label="המשך"></a>
+</nav>
+
+<!-- ============ 1. COVER ============ -->
+<section class="slide cover" id="cover">
+  <canvas class="rings" aria-hidden="true"></canvas>
+  <div class="cover-inner reveal">
+    <p class="eyebrow">הצעה לבנייה מחדש של האתר · 2026</p>
+    <h1 class="cover-title">שבט&nbsp;אמהות,<br><em>מחדש.</em></h1>
+    <p class="cover-sub">אותו שבט, אותה קהילה — אתר מהיר יותר, פשוט לתחזוקה וזול יותר.</p>
+    <div class="cover-meta">
+      <span>הוכן עבור קרן ואירית</span>
+      <span class="sep">·</span>
+      <span>shevet-imahot.co.il</span>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">גללו למטה ↓</div>
+</section>
+
+<!-- ============ 2. TODAY ============ -->
+<section class="slide light" id="today">
+  <div class="wrap">
+    <p class="kicker">נקודת הפתיחה</p>
+    <h2>מה יש לכם היום</h2>
+    <p class="lead">האתר הנוכחי הוא הרבה יותר מאתר תוכן — הוא פלטפורמה שלמה לקהילת אמהות והריון בישראל. הבנו אותה לעומק לפני שהצענו לפרק.</p>
+    <div class="pillars">
+      <article class="pillar">
+        <span class="pill-num">01</span>
+        <h3>מאגר אנשי מקצוע</h3>
+        <p>דולות ויועצות מובחרות, עם סינון לפי אזור, בית חולים, התמחות ושפה — ועם טופס שידוך אישי.</p>
+      </article>
+      <article class="pillar">
+        <span class="pill-num">02</span>
+        <h3>ספריית תוכן</h3>
+        <p>מאמרים, הקלטות סדנאות (וידאו) ומסלול ליווי שבועי לאורך ההריון.</p>
+      </article>
+      <article class="pillar">
+        <span class="pill-num">03</span>
+        <h3>קהילת וואטסאפ</h3>
+        <p>קבוצות לפי תאריך לידה משוער ולפי נושא, בליווי אשת מקצוע — לנשים בלבד.</p>
+      </article>
+      <article class="pillar">
+        <span class="pill-num">04</span>
+        <h3>מועדון הטבות</h3>
+        <p>קופונים והנחות משותפים עם עשרות עסקים למוצרי הריון, לידה ותינוקות.</p>
+      </article>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="stat-num">~185</span><span class="stat-lbl">פרופילים של אנשי מקצוע</span></div>
+      <div class="stat"><span class="stat-num">~100</span><span class="stat-lbl">מאמרים וסדנאות</span></div>
+      <div class="stat"><span class="stat-num">28→40</span><span class="stat-lbl">שבועות ליווי במסלול</span></div>
+      <div class="stat"><span class="stat-num">~25</span><span class="stat-lbl">עסקים במועדון ההטבות</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. PROBLEM ============ -->
+<section class="slide wine" id="problem">
+  <div class="wrap">
+    <p class="kicker">למה לשנות</p>
+    <h2>הבעיה היא לא התוכן — אלא מה שמתחתיו</h2>
+    <p class="lead light-lead">האתר בנוי על וורדפרס עם שכבות של תוספים (Elementor, Crocoblock, WooCommerce). זה עובד, אבל המחיר מצטבר:</p>
+    <div class="probs">
+      <div class="prob"><h3>איטי</h3><p>תוספים כבדים מעמיסים על כל טעינת עמוד. אמהות גולשות מהנייד — ומחכות.</p></div>
+      <div class="prob"><h3>יקר</h3><p>אחסון + רישיונות תוספים בתשלום שנתי, גם כשרובם בקושי בשימוש.</p></div>
+      <div class="prob"><h3>שביר</h3><p>עדכון אחד יכול לשבור עמוד. אבטחה ותחזוקה דורשות תשומת לב מתמדת.</p></div>
+      <div class="prob"><h3>מסובך לעריכה</h3><p>הוספת דולה או מאמר דורשת התמצאות במערכת מורכבת, לא משימה של חמש דקות.</p></div>
+    </div>
+    <p class="aside">בקטלוג המוצרים מצאנו גם פריטי “בדיקה” שנשארו מאחור (temp, test) — סימן לכלי שגדל מהר יותר ממה שאפשר לתחזק.</p>
+  </div>
+</section>
+
+<!-- ============ 4. VISION ============ -->
+<section class="slide light" id="vision">
+  <div class="wrap">
+    <p class="kicker">הגישה החדשה</p>
+    <h2>קל, מהיר, ושלכם לתחזק</h2>
+    <p class="lead">אותו אתר בדיוק מבחוץ — חוויה חמה ומזמינה. מבפנים: שלושה חלקים פשוטים במקום עשרה תוספים.</p>
+    <div class="vision-grid">
+      <div class="vcard">
+        <div class="vmark" aria-hidden="true">◐</div>
+        <h3>אתר מהיר</h3>
+        <p>עמודים שנבנים מראש ונטענים כמעט מיידית — חוויה חלקה בנייד, ודירוג טוב יותר בגוגל.</p>
+      </div>
+      <div class="vcard">
+        <div class="vmark" aria-hidden="true">✎</div>
+        <h3>מערכת תוכן ידידותית</h3>
+        <p>ממשק ניהול נקי שבו את מוסיפה דולה, מאמר או הטבה כמו מילוי טופס — בלי מתכנת.</p>
+      </div>
+      <div class="vcard">
+        <div class="vmark" aria-hidden="true">↗</div>
+        <h3>תשלום דרך קישור</h3>
+        <p>קורסים ומפגשים נמכרים דרך עמוד תשלום מאובטח (קארדקום / טרנזילה) או יומן Calendly — בלי עגלת קניות מסובכת.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. PILLARS PRESERVED ============ -->
+<section class="slide paper" id="pillars">
+  <div class="wrap">
+    <p class="kicker">מה נשמר — ומשתפר</p>
+    <h2>כל מה שעובד היום, רק טוב יותר</h2>
+    <ul class="keep">
+      <li><strong>מאגר הדולות והיועצות</strong><span>סינון מהיר לפי אזור, בית חולים, התמחות ושפה — ישירות בדפדפן, בלי המתנה.</span></li>
+      <li><strong>טופס שידוך אישי</strong><span>“עזרו לי למצוא את המתאימה” — נשמר, מגיע ישר למייל ולמערכת הדיוור.</span></li>
+      <li><strong>ספריית מאמרים וסדנאות</strong><span>מאמרים והקלטות וידאו, מסודרים לפי קטגוריה ועם אפשרות לתוכן לחברות בלבד.</span></li>
+      <li><strong>מסלול ליווי שבועי</strong><span>שבוע 13 עד 40 — עמודים ו/או דיוור לפי תאריך הלידה המשוער.</span></li>
+      <li><strong>קהילת הוואטסאפ</strong><span>הרשמה לפי קבוצה, קישור הצטרפות נשלח אוטומטית במייל.</span></li>
+      <li><strong>מועדון ההטבות</strong><span>כרטיסי קופון מסוננים לפי קטגוריה, עם קישור מימוש לכל עסק.</span></li>
+      <li><strong>חנות קלה</strong><span>קורסים, ריטריטים וחברות — דרך קישור תשלום מאובטח.</span></li>
+      <li><strong>נגישות</strong><span>סרגל נגישות נשמר, בהתאם לחוק.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 6. CMS ============ -->
+<section class="slide wine" id="cms">
+  <div class="wrap narrow">
+    <p class="kicker">ניהול היומיום</p>
+    <h2>להוסיף דולה — כמו למלא טופס</h2>
+    <p class="lead light-lead">במקום לחפש בין תוספים, נכנסים למערכת ניהול אחת ונקייה. כל סוג תוכן הוא טופס מסודר:</p>
+    <div class="mock" aria-hidden="false">
+      <div class="mock-bar"><span class="mb-dot"></span><span class="mb-dot"></span><span class="mb-dot"></span><span class="mb-title">ניהול תוכן · דולה חדשה</span></div>
+      <div class="mock-body">
+        <div class="field"><label>שם</label><div class="inp">קרן איתן</div></div>
+        <div class="field"><label>סוג</label><div class="inp tag">דולה · מובחרת</div></div>
+        <div class="field"><label>אזורים</label><div class="inp"><span class="chip">מרכז</span><span class="chip">אונליין</span></div></div>
+        <div class="field"><label>בתי חולים</label><div class="inp"><span class="chip">איכילוב</span><span class="chip">אסותא אשדוד</span><span class="chip">בלינסון</span></div></div>
+        <div class="field"><label>שפות</label><div class="inp"><span class="chip">עברית</span><span class="chip">אנגלית</span></div></div>
+        <div class="field"><label>תמונה</label><div class="inp ghost">גרירת קובץ לכאן…</div></div>
+        <button class="mock-save">פרסום ←</button>
+      </div>
+    </div>
+    <p class="aside light-aside">פרסום שומר את השינוי, והאתר מתעדכן מעצמו תוך דקה. אין קוד, אין סיכון לשבור עמוד.</p>
+  </div>
+</section>
+
+<!-- ============ 7. STACK ============ -->
+<section class="slide light" id="stack">
+  <div class="wrap">
+    <p class="kicker">מתחת למכסה המנוע</p>
+    <h2>הטכנולוגיה, בקצרה</h2>
+    <p class="lead">אין צורך לזכור שמות — אבל אם תרצו לדעת על מה זה רץ:</p>
+    <div class="tech">
+      <div class="trow"><div class="tname">Astro</div><div class="tdesc">בונה את האתר כעמודים מהירים. שולח כמעט אפס קוד לדפדפן — ולכן נטען מהר.</div></div>
+      <div class="trow"><div class="tname">Sanity</div><div class="tdesc">מערכת התוכן הידידותית. ממשק ניהול מתארח בענן, בלי שרת לתחזק.</div></div>
+      <div class="trow"><div class="tname">Netlify</div><div class="tdesc">מארח את האתר ברשת מהירה (CDN), כולל טפסים. שכבה חינמית מספיקה בהתחלה.</div></div>
+      <div class="trow"><div class="tname">קישורי תשלום</div><div class="tdesc">קארדקום / טרנזילה / משולם לתשלומים, Calendly להזמנת מפגשים.</div></div>
+    </div>
+    <p class="aside">למה לא להישאר בוורדפרס? כי הוא מביא איתו בדיוק את העומס, העלות והשבריריות שאנחנו רוצים לעזוב.</p>
+  </div>
+</section>
+
+<!-- ============ 8. PLAN ============ -->
+<section class="slide paper" id="plan">
+  <div class="wrap">
+    <p class="kicker">איך מגיעים לשם</p>
+    <h2>תהליך בשבעה שלבים</h2>
+    <ol class="steps">
+      <li><span class="snum">1</span><div><h3>מבנה התוכן</h3><p>בניית סוגי התוכן במערכת החדשה — דולות, מאמרים, הטבות, מסלול שבועי.</p></div></li>
+      <li><span class="snum">2</span><div><h3>העברת תוכן</h3><p>ייבוא אוטומטי של כל הפרופילים והמאמרים מהאתר הקיים. ניקוי פריטי בדיקה ישנים.</p></div></li>
+      <li><span class="snum">3</span><div><h3>עיצוב ובנייה</h3><p>בניית העמודים: מאגר עם סינון, פרופיל, מאמר, מסלול שבועי, מועדון הטבות.</p></div></li>
+      <li><span class="snum">4</span><div><h3>טפסים ותשלומים</h3><p>חיבור טופס השידוך, הרשמה לקהילה, וקישורי התשלום.</p></div></li>
+      <li><span class="snum">5</span><div><h3>הפניות</h3><p>שמירת כל הכתובות הישנות → חדשות, כדי לא לאבד מיקום בגוגל.</p></div></li>
+      <li><span class="snum">6</span><div><h3>בדיקות</h3><p>נייד, נגישות, סינון, מסירת טפסים, סבב תשלום מלא.</p></div></li>
+      <li><span class="snum">7</span><div><h3>עלייה לאוויר</h3><p>הפניית הדומיין לאתר החדש. האתר הישן נשאר רגע כגיבוי.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 9. COST ============ -->
+<section class="slide wine" id="cost">
+  <div class="wrap narrow">
+    <p class="kicker">העלות החודשית</p>
+    <h2>פחות תשלומים קבועים</h2>
+    <div class="cost-cards">
+      <div class="ccard old">
+        <h3>היום</h3>
+        <p class="cprice">אחסון וורדפרס<br>+ רישיונות תוספים</p>
+        <p class="cnote">תשלום שנתי על Crocoblock ותוספים נוספים, גם כשלא בשימוש.</p>
+      </div>
+      <div class="ccard new">
+        <h3>אחרי</h3>
+        <p class="cprice">‎~₪0–180<span class="cmo"> / חודש</span></p>
+        <p class="cnote">שכבות חינמיות של אחסון ומערכת התוכן מספיקות בהתחלה. עמלת סליקה לפי עסקה בלבד.</p>
+      </div>
+    </div>
+    <p class="aside light-aside">חיסכון אמיתי מגיע גם מהזמן: עריכה עצמאית במקום להזמין שינוי בכל פעם.</p>
+  </div>
+</section>
+
+<!-- ============ 10. QUESTIONS ============ -->
+<section class="slide light" id="questions">
+  <div class="wrap">
+    <p class="kicker">מה שנצטרך מכם</p>
+    <h2>כמה שאלות לפני שמתחילים</h2>
+    <p class="lead">התשובות האלה קובעות את היקף הבנייה. נעבור עליהן יחד בפגישה.</p>
+    <div class="qcols">
+      <div class="qgroup">
+        <h3>על התוכן</h3>
+        <ol class="qlist">
+          <li>“דולות מובחרות” מול “דולות נוספות” — זו הבחנה של תשלום/חברות, או רק תצוגה? למזג או להשאיר נפרד?</li>
+          <li>יש היום תוכן (מאמרים/סדנאות) שפתוח רק לחברות? אם כן — נצטרך מנגנון כניסה קל.</li>
+          <li>מסלול הליווי השבועי (שבוע 13–40) עובד היום כדיוור במייל, כעמודים באתר, או שניהם?</li>
+          <li>עברית בלבד, או שיש תוכן באנגלית שצריך לשמור?</li>
+        </ol>
+      </div>
+      <div class="qgroup">
+        <h3>תפעול וגישה</h3>
+        <ol class="qlist" start="5">
+          <li>איזו מערכת סליקה בשימוש היום (קארדקום / טרנזילה / אחר)? נשמור רציפות בתשלומים.</li>
+          <li>איזו מערכת דיוור מחוברת ל“הסרה מרשימה” ולמתנות החינמיות? לשמור או להחליף?</li>
+          <li>למי תהיה גישת עריכה שוטפת, וכמה אנשים?</li>
+          <li>יש גישה לדומיין ולחשבון האחסון הנוכחי לצורך המעבר?</li>
+        </ol>
+      </div>
+      <div class="qgroup">
+        <h3>מותג וציפיות</h3>
+        <ol class="qlist" start="9">
+          <li>יש קובצי מותג — לוגו, צבעים, גופן — או שנגדיר יחד?</li>
+          <li>יש מדדים/אנליטיקס שחשוב לכם לעקוב אחריהם?</li>
+          <li>מהו לוח הזמנים והתקציב הרצוי לפרויקט?</li>
+          <li>עמודי האירועים הישנים (community) — לארכב או לשמור?</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. NEXT ============ -->
+<section class="slide cover end" id="next">
+  <canvas class="rings rings-end" aria-hidden="true"></canvas>
+  <div class="cover-inner reveal">
+    <p class="eyebrow">הצעד הבא</p>
+    <h2 class="end-title">נסגור את השאלות —<br>ונתחיל לבנות.</h2>
+    <p class="cover-sub">פגישה קצרה לעבור על השאלות, ואז אפשר להתחיל ממבנה התוכן והעברת הנתונים.</p>
+    <div class="contact">
+      <span>keren.eitan.mommy.like.you@gmail.com</span>
+      <span class="sep">·</span>
+      <span>054-2473799</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<style>
+  :root{
+    --ground:#F7EFE8;
+    --paper:#FBF6F1;
+    --wine:#5E2342;
+    --wine-deep:#4A1A33;
+    --brand:#8E3B5F;
+    --gold:#E0A24B;
+    --rose:#D98AA0;
+    --ink:#2B1B26;
+    --muted:#8A7480;
+    --line:#E4D6CD;
+    --serif:'Frank Ruhl Libre','David Libre','Narkisim','Times New Roman',serif;
+    --sans:'Assistant','Heebo','Rubik','Segoe UI','Arial Hebrew',system-ui,sans-serif;
+    --maxw:1080px;
+  }
+
+  *{box-sizing:border-box}
+  .deck{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--ground);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    scroll-snap-type:y proximity;
+    overflow-x:hidden;
+  }
+
+  /* ---------- slides ---------- */
+  .slide{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:6rem clamp(1.25rem,5vw,5rem);
+    scroll-snap-align:start;
+    position:relative;
+  }
+  .slide.light{background:var(--ground)}
+  .slide.paper{background:var(--paper)}
+  .slide.wine{background:var(--wine);color:#F4E4DD}
+  .wrap{width:100%;max-width:var(--maxw);margin-inline:auto}
+  .wrap.narrow{max-width:760px}
+
+  /* ---------- type ---------- */
+  .kicker{
+    font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+    font-weight:700;color:var(--brand);margin:0 0 1rem;
+  }
+  .wine .kicker{color:var(--gold)}
+  h2{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(2rem,5.5vw,3.5rem);
+    line-height:1.08;margin:0 0 1.25rem;
+    text-wrap:balance;letter-spacing:-.01em;
+  }
+  h3{font-size:1.18rem;margin:0 0 .4rem;font-weight:700;letter-spacing:-.01em}
+  .lead{font-size:clamp(1.05rem,2vw,1.3rem);max-width:60ch;color:var(--ink);margin:0 0 2.5rem}
+  .wine .lead,.light-lead{color:#EAD3CC}
+  .aside{
+    margin-top:2.5rem;font-size:.95rem;color:var(--muted);
+    border-inline-start:3px solid var(--gold);padding-inline-start:1rem;max-width:58ch;
+  }
+  .light-aside{color:#D8BDB6}
+
+  /* ---------- cover ---------- */
+  .cover{
+    background:linear-gradient(160deg,#4A1A33 0%,#6E2A4A 55%,#8E3B5F 100%);
+    color:#F7E9E3;overflow:hidden;justify-content:center;text-align:center;
+  }
+  .rings{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+  .cover-inner{position:relative;z-index:2;max-width:780px}
+  .eyebrow{
+    font-size:.8rem;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--gold);font-weight:700;margin:0 0 1.5rem;
+  }
+  .cover-title{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(3rem,11vw,6.5rem);line-height:.98;margin:0 0 1.5rem;
+    letter-spacing:-.02em;text-wrap:balance;
+  }
+  .cover-title em{color:var(--gold);font-style:italic}
+  .cover-sub{font-size:clamp(1.1rem,2.4vw,1.5rem);color:#EAD3CC;max-width:34ch;margin:0 auto;line-height:1.5}
+  .cover-meta,.contact{
+    margin-top:2.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;
+    font-size:.92rem;color:#C9A9A2;letter-spacing:.02em;
+  }
+  .sep{opacity:.5}
+  .scroll-cue{
+    position:absolute;bottom:2rem;inset-inline:0;text-align:center;
+    font-size:.85rem;color:#C9A9A2;z-index:2;animation:bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* ---------- pillars (today) ---------- */
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .pillar{background:var(--paper);padding:1.75rem}
+  .pill-num{font-family:var(--serif);font-size:.95rem;color:var(--gold);font-weight:700}
+  .pillar h3{margin-top:.5rem}
+  .pillar p{margin:0;font-size:.96rem;color:var(--muted)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.5rem;margin-top:2.5rem}
+  .stat{display:flex;flex-direction:column;gap:.2rem}
+  .stat-num{font-family:var(--serif);font-size:2.2rem;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums}
+  .stat-lbl{font-size:.85rem;color:var(--muted)}
+
+  /* ---------- problem ---------- */
+  .probs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem}
+  .prob{background:rgba(255,255,255,.06);border:1px solid rgba(224,162,75,.25);border-radius:12px;padding:1.5rem}
+  .prob h3{color:var(--gold)}
+  .prob p{margin:0;color:#E6CFC8;font-size:.96rem}
+
+  /* ---------- vision ---------- */
+  .vision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+  .vcard{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:2rem 1.75rem;transition:transform .3s ease,box-shadow .3s ease}
+  .vcard:hover{transform:translateY(-4px);box-shadow:0 14px 32px -18px rgba(94,35,66,.5)}
+  .vmark{font-size:2rem;color:var(--brand);margin-bottom:.75rem;line-height:1}
+  .vcard p{margin:0;color:var(--muted);font-size:.98rem}
+
+  /* ---------- keep list ---------- */
+  .keep{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.25rem 2.5rem}
+  .keep li{display:flex;flex-direction:column;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+  .keep strong{font-size:1.05rem}
+  .keep span{color:var(--muted);font-size:.94rem}
+
+  /* ---------- cms mock ---------- */
+  .mock{background:#fff;border-radius:14px;box-shadow:0 24px 60px -28px rgba(0,0,0,.5);overflow:hidden;max-width:560px;color:var(--ink);direction:rtl}
+  .mock-bar{background:#F0E6E0;display:flex;align-items:center;gap:.45rem;padding:.7rem 1rem;border-bottom:1px solid var(--line)}
+  .mb-dot{width:10px;height:10px;border-radius:50%;background:#D9C4BC}
+  .mb-title{margin-inline-start:auto;font-size:.82rem;color:var(--muted);font-weight:600}
+  .mock-body{padding:1.5rem}
+  .field{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:1rem;margin-bottom:.85rem}
+  .field label{font-size:.85rem;color:var(--muted);font-weight:600}
+  .inp{background:#F7F1ED;border:1px solid var(--line);border-radius:8px;padding:.55rem .8rem;font-size:.92rem;min-height:38px;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+  .inp.ghost{color:#B9A69E}
+  .inp.tag{color:var(--brand);font-weight:600}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.15rem .65rem;font-size:.8rem;color:var(--brand)}
+  .mock-save{margin-top:.5rem;background:var(--brand);color:#fff;border:0;border-radius:8px;padding:.6rem 1.4rem;font-family:var(--sans);font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s}
+  .mock-save:hover{background:var(--wine)}
+
+  /* ---------- tech rows ---------- */
+  .tech{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .trow{display:grid;grid-template-columns:160px 1fr;gap:1.5rem;padding:1.25rem 1.5rem;background:var(--paper);border-bottom:1px solid var(--line)}
+  .trow:last-child{border-bottom:0}
+  .tname{font-family:var(--serif);font-weight:700;font-size:1.25rem;color:var(--brand)}
+  .tdesc{color:var(--muted);font-size:.98rem;align-self:center}
+
+  /* ---------- steps ---------- */
+  .steps{list-style:none;counter-reset:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.5rem 2.5rem}
+  .steps li{display:flex;gap:1.1rem;align-items:flex-start}
+  .snum{flex:none;width:38px;height:38px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:1.1rem}
+  .steps h3{margin-bottom:.2rem}
+  .steps p{margin:0;color:var(--muted);font-size:.94rem}
+
+  /* ---------- cost ---------- */
+  .cost-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem}
+  .ccard{border-radius:16px;padding:2rem;border:1px solid}
+  .ccard.old{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18)}
+  .ccard.new{background:var(--gold);color:var(--wine-deep);border-color:var(--gold)}
+  .ccard h3{font-family:var(--serif);font-size:1.4rem}
+  .ccard.old h3{color:#E6CFC8}
+  .cprice{font-size:1.5rem;font-weight:700;line-height:1.3;margin:.5rem 0}
+  .ccard.new .cprice{font-size:2.4rem;font-variant-numeric:tabular-nums}
+  .cmo{font-size:1rem;font-weight:600}
+  .cnote{font-size:.9rem;margin:0}
+  .ccard.old .cnote{color:#D8BDB6}
+  .ccard.new .cnote{color:var(--wine)}
+
+  /* ---------- questions ---------- */
+  .qcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem}
+  .qgroup h3{color:var(--brand);font-family:var(--serif);font-size:1.3rem;padding-bottom:.5rem;border-bottom:2px solid var(--gold);margin-bottom:1rem}
+  .qlist{padding-inline-start:1.2rem;margin:0;display:flex;flex-direction:column;gap:.85rem}
+  .qlist li{font-size:.96rem;color:var(--ink);padding-inline-start:.3rem}
+  .qlist li::marker{color:var(--brand);font-weight:700}
+
+  /* ---------- end ---------- */
+  .end{background:linear-gradient(200deg,#8E3B5F 0%,#5E2342 60%,#4A1A33 100%)}
+  .end-title{font-family:var(--serif);font-size:clamp(2.4rem,7vw,4.5rem);line-height:1.04;margin:0 0 1.5rem;color:#F7E9E3;text-wrap:balance}
+
+  /* ---------- progress rail ---------- */
+  .rail{position:fixed;inset-inline-end:1.1rem;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:.85rem}
+  .dot{width:10px;height:10px;border-radius:50%;background:rgba(142,59,95,.28);position:relative;transition:background .25s,transform .25s}
+  .dot:hover,.dot.active{background:var(--brand);transform:scale(1.35)}
+  .dot::after{content:attr(data-label);position:absolute;inset-inline-end:18px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;font-size:.72rem;padding:.2rem .55rem;border-radius:5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+  .dot:hover::after{opacity:1}
+  @media(max-width:720px){.rail{display:none}}
+
+  /* ---------- reveal ---------- */
+  .reveal,.slide .wrap>*{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .in,.in .wrap>*{opacity:1;transform:none}
+  .slide .wrap>*:nth-child(2){transition-delay:.06s}
+  .slide .wrap>*:nth-child(3){transition-delay:.12s}
+  .slide .wrap>*:nth-child(4){transition-delay:.18s}
+  .slide .wrap>*:nth-child(5){transition-delay:.24s}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .reveal,.slide .wrap>*{opacity:1;transform:none}
+    .deck{scroll-snap-type:none}
+  }
+  @media(max-width:560px){
+    .field{grid-template-columns:1fr}
+    .trow{grid-template-columns:1fr;gap:.4rem}
+  }
+</style>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal on scroll */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.18});
+  document.querySelectorAll('.slide .wrap, .reveal').forEach(function(el){ io.observe(el); });
+
+  /* active dot */
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.rail .dot'));
+  var secs = dots.map(function(d){ return document.querySelector(d.getAttribute('href')); });
+  var sio = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var i = secs.indexOf(e.target);
+        dots.forEach(function(d,j){ d.classList.toggle('active', j===i); });
+      }
+    });
+  },{threshold:.5});
+  secs.forEach(function(s){ if(s) sio.observe(s); });
+
+  /* concentric rings canvas — the "support circle" motif */
+  document.querySelectorAll('canvas.rings').forEach(function(cv){
+    var ctx = cv.getContext('2d'), t=0, raf;
+    function size(){ cv.width = cv.offsetWidth*devicePixelRatio; cv.height = cv.offsetHeight*devicePixelRatio; }
+    size(); window.addEventListener('resize', size);
+    var gold='rgba(224,162,75,', rose='rgba(217,138,160,';
+    function draw(){
+      ctx.clearRect(0,0,cv.width,cv.height);
+      var cx=cv.width*0.5, cy=cv.height*0.5, base=Math.max(cv.width,cv.height);
+      for(var i=0;i<7;i++){
+        var phase = (t*0.0015 + i*0.16) % 1;
+        var r = phase*base*0.62;
+        var a = (1-phase)*0.5;
+        ctx.beginPath();
+        ctx.arc(cx,cy,r,0,Math.PI*2);
+        ctx.strokeStyle = (i%2? rose:gold)+a+')';
+        ctx.lineWidth = 1.4*devicePixelRatio;
+        ctx.stroke();
+      }
+      if(!reduce){ t+=1; raf=requestAnimationFrame(draw); }
+    }
+    if(reduce){ t=380; draw(); } else { draw(); }
+  });
+})();
+</script>
