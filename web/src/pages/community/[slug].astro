@@ -1,0 +1,36 @@
+---
+import LegacyContent from "../../components/LegacyContent.astro";
+import Base from "../../layouts/Base.astro";
+import { getCommunityPage, getCommunityPageSlugs } from "../../lib/queries";
+
+export async function getStaticPaths() {
+	const slugs = await getCommunityPageSlugs();
+	return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const page = await getCommunityPage(slug!);
+---
+<Base title={`${page?.title ?? "קהילה"} — שבט אמהות`} description={page?.excerpt}>
+	<article class="article-shell wrap">
+		{page ? (
+			<>
+				{page.image && <img class="cover" src={page.image} alt={page.title} />}
+				<h1 set:html={page.title}></h1>
+				<div class="tags">
+					{page.presenter && <span class="chip">{page.presenter}</span>}
+					{page.dateText && <span class="chip">{page.dateText}</span>}
+					{page.location && <span class="chip">{page.location}</span>}
+					{page.cost && <span class="chip">{page.cost}</span>}
+				</div>
+				<LegacyContent html={page.sourceHtml} blocks={page.body ?? []} />
+				{page.linkUrl && <a class="btn" href={page.linkUrl} target="_blank" rel="noopener noreferrer">לפרטים ולהרשמה</a>}
+			</>
+		) : (
+			<p class="empty-state">אין עמוד קהילה כזה</p>
+		)}
+	</article>
+	<style>
+		.cover { aspect-ratio: 2 / 1; object-fit: cover; margin-bottom: 1.5rem; }
+	</style>
+</Base>

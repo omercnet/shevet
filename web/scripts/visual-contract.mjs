@@ -31,9 +31,25 @@ assert(base.includes('aria-controls="site-nav"'), "mobile nav toggle must contro
 assert(base.includes('id="site-nav"'), "site nav must expose #site-nav for mobile toggle");
 assert(home.includes("hero-badge"), "home hero must restore a logo badge identity element");
 assert(home.includes("hero-visual"), "home hero must include a visual brand composition");
+for (const marker of [
+	".hero::before",
+	".hero-visual::before",
+	".hero-visual::after",
+	".hero-badge::after",
+	".pillar::before",
+]) {
+	assert(home.includes(marker), `home page must include polish marker ${marker}`);
+}
 
 for (const marker of [
 	"--surface",
+	"--shadow-soft",
+	"--shadow-lift",
+	"body::before",
+	".card::before",
+	".card:focus-within",
+	".btn:active",
+	".filter-panel::before",
 	"filter-panel",
 	"directory-card",
 	"article-card",
@@ -53,9 +69,9 @@ const requiredPageMarkers = new Map([
 	["web/src/pages/doulas/index.astro", ["filter-panel", "directory-card"]],
 	["web/src/pages/professionals/index.astro", ["filter-panel", "directory-card"]],
 	["web/src/pages/articles/index.astro", ["filter-panel", "article-card"]],
-	["web/src/pages/doulas/[slug].astro", ["profile-shell", "media-frame"]],
-	["web/src/pages/professionals/[slug].astro", ["profile-shell", "media-frame"]],
-	["web/src/pages/articles/[slug].astro", ["article-shell", "media-frame"]],
+	["web/src/pages/doulas/[slug].astro", ["profile-shell", "bioBlocks"]],
+	["web/src/pages/professionals/[slug].astro", ["profile-shell", "bioBlocks"]],
+	["web/src/pages/articles/[slug].astro", ["article-shell", "LegacyContent"]],
 	["web/src/pages/benefits/index.astro", ["benefit-card"]],
 	["web/src/pages/community/index.astro", ["community-card"]],
 	["web/src/pages/doulas/join.astro", ["join-flow"]],
