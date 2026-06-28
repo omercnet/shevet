@@ -1,0 +1,55 @@
+<details class="a11y-toolbar" id="a11y-toolbar">
+  <summary class="a11y-summary">נגישות</summary>
+  <div class="a11y-panel" role="group" aria-label="הגדרות נגישות">
+    <button type="button" id="a11y-text" class="a11y-btn">טקסט גדול</button>
+    <button type="button" id="a11y-contrast" class="a11y-btn">ניגודיות גבוהה</button>
+    <button type="button" id="a11y-motion" class="a11y-btn">ללא אנימציה</button>
+    <button type="button" id="a11y-reset" class="a11y-btn a11y-reset-btn">איפוס</button>
+    <a href="/accessibility/" class="a11y-link">הצהרת נגישות</a>
+  </div>
+</details>
+<script is:inline>
+  (function () {
+    var root = document.documentElement;
+    var stored = localStorage.getItem('a11y') || '';
+    if (stored.includes('text')) root.setAttribute('data-a11y-text', '1');
+    if (stored.includes('contrast')) root.setAttribute('data-a11y-contrast', '1');
+    if (stored.includes('motion')) root.setAttribute('data-a11y-motion', '1');
+    function save() {
+      var flags = [];
+      if (root.hasAttribute('data-a11y-text')) flags.push('text');
+      if (root.hasAttribute('data-a11y-contrast')) flags.push('contrast');
+      if (root.hasAttribute('data-a11y-motion')) flags.push('motion');
+      localStorage.setItem('a11y', flags.join(','));
+    }
+    document.getElementById('a11y-text')?.addEventListener('click', function () {
+      root.toggleAttribute('data-a11y-text'); save();
+    });
+    document.getElementById('a11y-contrast')?.addEventListener('click', function () {
+      root.toggleAttribute('data-a11y-contrast'); save();
+    });
+    document.getElementById('a11y-motion')?.addEventListener('click', function () {
+      root.toggleAttribute('data-a11y-motion'); save();
+    });
+    document.getElementById('a11y-reset')?.addEventListener('click', function () {
+      root.removeAttribute('data-a11y-text');
+      root.removeAttribute('data-a11y-contrast');
+      root.removeAttribute('data-a11y-motion');
+      localStorage.removeItem('a11y');
+    });
+  })();
+</script>
+<style>
+  .a11y-toolbar { position:fixed; inset-inline-start:1rem; bottom:1rem; z-index:100; }
+  .a11y-summary { cursor:pointer; background:var(--brand); color:var(--surface); border:none; border-radius:999px; padding:.4rem 1rem; font:inherit; font-size:.85rem; font-weight:700; list-style:none; }
+  .a11y-summary::-webkit-details-marker { display:none; }
+  .a11y-summary:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
+  .a11y-panel { display:flex; flex-direction:column; gap:.4rem; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lift); padding:.7rem; margin-bottom:.4rem; }
+  .a11y-btn { background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.35rem .8rem; font:inherit; font-size:.82rem; cursor:pointer; text-align:start; }
+  .a11y-btn:focus-visible { outline:3px solid var(--peach); outline-offset:2px; }
+  .a11y-reset-btn { border-color:var(--brand); color:var(--brand); }
+  .a11y-link { font-size:.82rem; color:var(--brand); text-decoration:underline; padding:.2rem .4rem; }
+  [data-a11y-text] { font-size:112%; }
+  [data-a11y-contrast] { filter:contrast(1.5); }
+  [data-a11y-motion] * { animation:none !important; transition:none !important; }
+</style>

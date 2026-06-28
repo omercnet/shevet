@@ -1,11 +1,18 @@
 ---
 import Base from '../../layouts/Base.astro'
 import {getProfessionals} from '../../lib/queries'
+import {instagramHref, mailtoHref, telHref, whatsappHref} from '../../lib/contact'
 
-const pros = await getProfessionals()
-const fields = [...new Set(pros.flatMap((p: any) => p.fields || []))].sort()
-const regions = [...new Set(pros.flatMap((p: any) => p.regions || []))].sort()
-const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
+const pros = (await getProfessionals()).map((p) => ({
+  ...p,
+  whatsappUrl: whatsappHref(p.whatsapp, p.phone),
+  phoneUrl: telHref(p.phone),
+  emailUrl: mailtoHref(p.email),
+  instagramUrl: instagramHref(p.instagram),
+}))
+const fields = [...new Set(pros.flatMap((p) => p.fields ?? []))].sort()
+const regions = [...new Set(pros.flatMap((p) => p.regions ?? []))].sort()
+const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
 ---
 <Base title="חיפוש נשות מקצוע — שבט אמהות" description="יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.">
   <section class="wrap">
@@ -32,7 +39,7 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
   <script>
     interface Row {
-      slug: string; name: string; photo?: string; whatsapp?: string;
+      slug: string; name: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
       fields?: string[]; regions?: string[]; languages?: string[];
     }
     const dataEl = document.getElementById("data");
@@ -52,9 +59,12 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
           .map((t) => `<span class="chip">${esc(t)}</span>`)
           .join("");
         const href = `/professionals/${encodeURIComponent(p.slug)}/`;
-        const wa = p.whatsapp
-          ? `<a class="btn btn-wa" href="https://wa.me/${p.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+        const wa = p.whatsappUrl
+          ? `<a class="btn btn-wa" href="${esc(p.whatsappUrl)}">וואטסאפ</a>`
           : "";
+        const phone = p.phoneUrl ? `<a class="more" href="${esc(p.phoneUrl)}">טלפון</a>` : "";
+        const email = p.emailUrl ? `<a class="more" href="${esc(p.emailUrl)}">אימייל</a>` : "";
+        const instagram = p.instagramUrl ? `<a class="more" href="${esc(p.instagramUrl)}" target="_blank" rel="noopener noreferrer">Instagram</a>` : "";
         const media = p.photo
           ? `<a class="card-media" href="${href}"><img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
           : "";
@@ -63,7 +73,8 @@ const langs = [...new Set(pros.flatMap((p: any) => p.languages || []))].sort()
           <div class="card-body">
             <h3><a href="${href}">${name}</a></h3>
             <div class="tags">${tags}</div>
-            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a>${wa}</div>
+            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>
+            <div class="card-actions contact-links">${wa}${phone}${email}${instagram}</div>
           </div>
         </article>`;
       };

@@ -1,10 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro'
 import {getDoulas, getSiteSettings} from '../../lib/queries'
+import {instagramHref, mailtoHref, telHref, whatsappHref} from '../../lib/contact'
 import {SUPPORT_STYLES, BUDGET_BANDS} from '../../../shared/searchOptions'
 
-const doulas = await getDoulas()
-const hospitals = [...new Set(doulas.flatMap((d: any) => d.hospitals || []))].sort()
+const doulas = (await getDoulas()).map((d) => ({
+  ...d,
+  whatsappUrl: whatsappHref(d.whatsapp, d.phone),
+  phoneUrl: telHref(d.phone),
+  emailUrl: mailtoHref(d.email),
+  instagramUrl: instagramHref(d.instagram),
+}))
+const hospitals = [...new Set(doulas.flatMap((d) => d.hospitals ?? []))].sort()
 const settings = await getSiteSettings()
 ---
 <Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה, סגנון ליווי ותקציב.">
@@ -49,7 +56,7 @@ const settings = await getSiteSettings()
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
   <script>
     interface Row {
-      slug: string; name: string; photo?: string; whatsapp?: string;
+      slug: string; name: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
       hospitals?: string[]; supportStyle?: string[]; budget?: string;
     }
     const dataEl = document.getElementById("data");
@@ -69,9 +76,12 @@ const settings = await getSiteSettings()
           .map((t) => `<span class="chip">${esc(t)}</span>`)
           .join("");
         const href = `/doulas/${encodeURIComponent(d.slug)}/`;
-        const wa = d.whatsapp
-          ? `<a class="btn btn-wa" href="https://wa.me/${d.whatsapp.replace(/\D/g, "")}">וואטסאפ</a>`
+        const wa = d.whatsappUrl
+          ? `<a class="btn btn-wa" href="${esc(d.whatsappUrl)}">וואטסאפ</a>`
           : "";
+        const phone = d.phoneUrl ? `<a class="more" href="${esc(d.phoneUrl)}">טלפון</a>` : "";
+        const email = d.emailUrl ? `<a class="more" href="${esc(d.emailUrl)}">אימייל</a>` : "";
+        const instagram = d.instagramUrl ? `<a class="more" href="${esc(d.instagramUrl)}" target="_blank" rel="noopener noreferrer">Instagram</a>` : "";
         const media = d.photo
           ? `<a class="card-media" href="${href}"><img src="${encodeURI(d.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
           : "";
@@ -80,7 +90,8 @@ const settings = await getSiteSettings()
           <div class="card-body">
             <h3><a href="${href}">${name}</a></h3>
             <div class="tags">${tags}</div>
-            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a>${wa}</div>
+            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>
+            <div class="card-actions contact-links">${wa}${phone}${email}${instagram}</div>
           </div>
         </article>`;
       };
