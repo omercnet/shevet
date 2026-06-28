@@ -1,7 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro'
 import LegacyContent from '../../components/LegacyContent.astro'
+import ContactForm from '../../components/ContactForm.astro'
 import {getPremiumDoulaSlugs, getPractitioner} from '../../lib/queries'
+import {whatsappHref, telHref, mailtoHref, instagramHref} from '../../lib/contact'
 
 export async function getStaticPaths() {
   const slugs: string[] = await getPremiumDoulaSlugs()
@@ -11,7 +13,10 @@ export async function getStaticPaths() {
 const {slug} = Astro.params
 const d = await getPractitioner(slug!)
 
-const wa = d?.whatsapp ? `https://wa.me/${String(d.whatsapp).replace(/\D/g, '')}` : null
+const wa = whatsappHref(d?.whatsapp, d?.phone)
+const tel = telHref(d?.phone)
+const mailto = mailtoHref(d?.email)
+const ig = instagramHref(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
 const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
 ---
@@ -29,6 +34,13 @@ const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
       </div>
     </header>
 
+    <div class="contact-links">
+      {wa && <a class="btn btn-wa" href={wa}>וואטסאפ</a>}
+      {tel && <a class="btn btn-outline" href={tel}>טלפון</a>}
+      {mailto && <a class="btn btn-outline" href={mailto}>אימייל</a>}
+      {ig && <a class="btn btn-outline" href={ig} target="_blank" rel="noopener noreferrer">Instagram</a>}
+    </div>
+
     {(d?.testimonials?.length ?? 0) > 0 && (
       <section class="reviews">
         {d?.testimonials?.map((t) => (
@@ -43,13 +55,14 @@ const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
 
     {d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
-    {/* TODO: embed Rav-Messer (Responder) contact form here via siteSettings */}
+    <ContactForm practitionerName={d?.name ?? ''} practitionerSlug={slug} practitionerType="doula" practitionerEmail={d?.email ?? ''} formId="doula-contact" />
   </article>
 
   {wa && <a class="btn btn-wa sticky-cta" href={wa}>פנייה בוואטסאפ</a>}
 
   <style>
     .title { color:var(--muted); margin:.2rem 0; }
+    .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { display:block; margin:1.5rem 1rem; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ position:fixed; inset-inline:auto 2rem; bottom:1rem; z-index:40; margin:0; } }
   </style>

@@ -1,11 +1,13 @@
 ---
 import '../styles/brand.css'
 import ZigZag from '../components/ZigZag.astro'
+import AccessibilityToolbar from '../components/AccessibilityToolbar.astro'
 import { getSiteSettings } from '../lib/queries'
+import {telHref, whatsappHref} from '../lib/contact'
 const {title = 'שבט אמהות', description = ''} = Astro.props
 const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
 const settings = await getSiteSettings()
-const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, '')}` : null
+const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, settings?.phone)
 ---
 <!doctype html>
 <html lang="he" dir="rtl">
@@ -40,10 +42,18 @@ const waLink = settings?.phone ? `https://wa.me/${settings.phone.replace(/\D/g, 
       <span>© שבט אמהות</span>
       <div class="foot-contact">
         {settings?.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}
-        {settings?.phone && <a href={waLink ?? `tel:${settings.phone}`}>{settings.phone}</a>}
+        {settings?.phone && phoneHref && <a href={phoneHref}>{settings.phone}</a>}
         {settings?.instagram && <a href={settings.instagram}>Instagram</a>}
       </div>
+      <nav class="foot-legal" aria-label="קישורים משפטיים">
+        <a href="/welcome/">ברוכות הבאות</a>
+        <a href="/team/">הצוות</a>
+        <a href="/privacy/">פרטיות</a>
+        <a href="/terms/">תנאי שימוש</a>
+        <a href="/accessibility/">נגישות</a>
+      </nav>
     </footer>
+    <AccessibilityToolbar />
     {/* TODO: consent banner gates GTM ({gtm}) per Israeli privacy law */}
     <script>
       const header = document.querySelector('.site-head')

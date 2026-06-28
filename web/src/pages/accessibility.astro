@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro'
+---
+<Base title="הצהרת נגישות — שבט אמהות" description="הצהרת הנגישות של אתר שבט אמהות.">
+  <section class="wrap static-page">
+    <h1>הצהרת נגישות</h1>
+    <p class="updated">עדכון אחרון: ינואר 2025</p>
+
+    <h2>מחויבות לנגישות</h2>
+    <p>שבט אמהות פועלת להנגשת האתר לכלל המשתמשות, לרבות נשים עם מוגבלויות. אנו שואפות לעמוד בדרישות תקן WCAG 2.1 ברמה AA ובהתאם לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות) התשע"ג–2013.</p>
+
+    <h2>רכיב הנגישות</h2>
+    <p>בפינה השמאלית התחתונה של כל עמוד מופיע כפתור הנגישות. ניתן להפעיל:</p>
+    <ul>
+      <li><strong>טקסט גדול</strong> — הגדלת גודל הגופן ב-12%</li>
+      <li><strong>ניגודיות גבוהה</strong> — הגברת הניגודיות הצבעונית</li>
+      <li><strong>ללא אנימציה</strong> — ביטול כל ההנפשות</li>
+      <li><strong>איפוס</strong> — חזרה להגדרות ברירת המחדל</li>
+    </ul>
+    <p>ההגדרות נשמרות בדפדפן ומוחלות אוטומטית בביקורים הבאים.</p>
+
+    <h2>נגישות מבנית</h2>
+    <ul>
+      <li>האתר בנוי בשפה העברית, כיוון RTL</li>
+      <li>כל התמונות כוללות טקסט חלופי (alt)</li>
+      <li>ניתן לנווט באתר באמצעות מקלדת בלבד</li>
+      <li>רכיבי ממשק אינטראקטיביים כוללים מצבי focus ברורים</li>
+      <li>הטפסים כוללים תוויות (labels) לכל שדה</li>
+    </ul>
+
+    <h2>פנייה בנושאי נגישות</h2>
+    <p>נתקלתן בבעיית נגישות? נשמח לשמוע ולתקן. פנו אלינו בדוא"ל: <a href="mailto:hello@shevet-imahot.co.il">hello@shevet-imahot.co.il</a></p>
+    <p>אנו מתחייבות להשיב בתוך 5 ימי עסקים.</p>
+  </section>
+  <style>
+    .static-page { max-width:700px; padding-block:3rem; }
+    .static-page h1 { margin-bottom:.5rem; }
+    .static-page h2 { margin-top:2rem; margin-bottom:.5rem; }
+    .static-page p { line-height:1.75; margin-bottom:.8rem; }
+    .static-page ul { margin:0 0 1rem 1.5rem; line-height:1.9; }
+    .static-page a { color:var(--brand); }
+    .updated { color:var(--muted); font-size:.9rem; margin-bottom:2rem; }
+  </style>
+</Base>

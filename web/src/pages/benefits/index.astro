@@ -59,8 +59,26 @@ const CATEGORIES: { value: string; label: string }[] = [
         return `<article class="card benefit-card">${logo}<h3>${esc(b.partner)}</h3>${discount}${desc}${code}${redeem}</article>`;
       };
       let active = "";
+      const normalizeBenefitCategory = (raw: string | undefined): string => {
+        if (!raw) return "";
+        const map: Record<string, string> = {
+          pregnancy: "pregnancy", "הריון": "pregnancy",
+          postpartum: "postpartum", "לאחר לידה": "postpartum", "אחרי לידה": "postpartum", "post-partum": "postpartum",
+          baby: "baby", "תינוקות": "baby", "תינוק": "baby", newborn: "baby",
+        };
+        return map[raw] ?? map[raw.toLowerCase()] ?? raw;
+      };
+      const inferBenefitCategory = (b: Benefit): string => {
+        const normalized = normalizeBenefitCategory(b.category);
+        if (normalized) return normalized;
+        const text = `${b.partner} ${b.description ?? ""}`;
+        if (/תינוק|בייבי|ילד|baby/i.test(text)) return "baby";
+        if (/הנקה|יולדת|אמהות|אחרי לידה|לאחר לידה|postpartum/i.test(text)) return "postpartum";
+        if (/הריון|הריו|לידה|pregnancy/i.test(text)) return "pregnancy";
+        return "";
+      };
       const apply = (): void => {
-        const res = data.filter((b) => !active || b.category === active);
+        const res = data.filter((b) => !active || inferBenefitCategory(b) === active);
         out.innerHTML = res.map(card).join("");
         empty.hidden = res.length > 0;
       };
