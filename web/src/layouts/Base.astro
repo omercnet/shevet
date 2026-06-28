@@ -1,6 +1,5 @@
 ---
 import '../styles/brand.css'
-import ZigZag from '../components/ZigZag.astro'
 import AccessibilityToolbar from '../components/AccessibilityToolbar.astro'
 import { getSiteSettings } from '../lib/queries'
 import {telHref, whatsappHref} from '../lib/contact'
@@ -24,17 +23,29 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
   </head>
   <body>
     <header class="wrap site-head">
-      <a href="/" class="logo"><img src="/brand/logo.png" alt="שבט אמהות" width="160" height="99" /></a>
-      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false">תפריט</button>
+		<a href="/" class="logo"><img src="/brand/old-logo.png" alt="שבט אמהות" width="300" height="193" /></a>
+      <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="תפריט">
+        <span class="nav-toggle-lines" aria-hidden="true"></span>
+      </button>
       <nav id="site-nav">
-        <a href="/doulas/">דולות</a>
-        <a href="/professionals/">נשות מקצוע</a>
-        <a href="/articles/">מאמרים</a>
-        <a href="/benefits/">הטבות</a>
-        <a href="/community/">קהילה</a>
+        <a href="/doulas/">נבחרת הדולות</a>
+        <a href="/professionals/">נבחרת היועצות והמטפלות</a>
+        <a href="/articles/">מאמרים וסדנאות</a>
+        <a href="/benefits/">קופונים והנחות</a>
+        <a href="/community/">קבוצות הווטסאפ</a>
       </nav>
+      <div class="head-actions" aria-label="קישורים מהירים">
+        <a href={settings?.instagram ?? "https://www.instagram.com/shevet.imahot/"} aria-label="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="4"></rect><circle cx="12" cy="12" r="3"></circle><circle cx="16" cy="8" r="1"></circle></svg>
+        </a>
+        <a href="https://www.facebook.com/shevet.imahot" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v5h3v-5h2.4l.6-3h-3V9c0-.6.4-1 1-1Z"></path></svg>
+        </a>
+        <a href="/welcome/" aria-label="כניסה">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M5 20c1.5-4 12.5-4 14 0"></path></svg>
+        </a>
+      </div>
     </header>
-    <ZigZag />
     <main>
       <slot />
     </main>
@@ -65,22 +76,32 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
       })
     </script>
     <style>
-      .site-head { display:flex; align-items:center; justify-content:space-between; padding-block:1rem; gap:1rem; position:relative; }
+      .site-head { display:flex; align-items:center; justify-content:space-between; padding-block:.25rem; gap:1rem; position:relative; background:var(--surface); }
       .logo { display:inline-flex; }
-      .logo img { height: 52px; width:auto; filter: drop-shadow(0 10px 20px rgba(63, 34, 48, .14)); }
-      .nav-toggle { display:none; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--ink); font:inherit; font-weight:700; padding:.45rem 1rem; box-shadow:var(--shadow-soft); }
+      .logo img { height: 46px; width:auto; }
+      .nav-toggle { display:none; border:0; background:transparent; color:var(--ink); padding:.6rem; }
+      .nav-toggle-lines, .nav-toggle-lines::before, .nav-toggle-lines::after { display:block; width:1.45rem; height:2px; border-radius:999px; background:currentColor; content:""; }
+      .nav-toggle-lines { position:relative; }
+      .nav-toggle-lines::before, .nav-toggle-lines::after { position:absolute; inset-inline-start:0; }
+      .nav-toggle-lines::before { top:-.45rem; }
+      .nav-toggle-lines::after { top:.45rem; }
       .nav-toggle:focus-visible, .site-head nav a:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
-      .site-head nav { display:flex; gap:1.2rem; flex-wrap:wrap; }
-      .site-head nav a { text-decoration:none; color: var(--ink); font-weight:600; transition:color .18s ease, transform .18s ease; }
+      .site-head nav { display:flex; gap:1.1rem; flex-wrap:wrap; }
+      .site-head nav a { text-decoration:none; color: var(--muted); font-size:.95rem; font-weight:500; transition:color .18s ease, transform .18s ease; }
       .site-head nav a:hover { transform:translateY(-1px); }
       .site-head nav a:hover { color:var(--brand); }
+      .head-actions { display:flex; gap:.45rem; align-items:center; }
+      .head-actions a { display:grid; place-items:center; width:1.6rem; height:1.6rem; border:1px solid var(--line); border-radius:50%; color:var(--muted); text-decoration:none; font-size:.78rem; font-weight:700; }
+      .head-actions svg { width:.95rem; height:.95rem; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
       .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; background:linear-gradient(180deg, transparent, rgba(255,255,255,.35)); }
       .foot-contact { display:flex; gap:1.2rem; flex-wrap:wrap; }
       .foot-contact a { color: var(--brand); text-decoration:none; }
       @media (max-width: 700px) {
-        .site-head { padding-block:.7rem; }
-        .logo img { height:46px; }
+        .site-head { justify-content:center; padding-block:.35rem; }
+        .logo img { height:49px; }
         .nav-toggle { display:inline-block; }
+        .nav-toggle { position:absolute; right:1rem; }
+        .head-actions { position:absolute; left:1rem; }
         .site-head nav { display:none; position:absolute; inset-inline:1rem; top:calc(100% + .35rem); z-index:10; background:var(--cream); border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 40px -28px rgba(63, 34, 48, .65); padding:.8rem; }
         .site-head[data-nav-open] nav { display:grid; gap:.35rem; }
         .site-head nav a { padding:.55rem .7rem; border-radius:12px; }

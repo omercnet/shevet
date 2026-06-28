@@ -11,6 +11,7 @@ const designExists = existsSync(join(root, "DESIGN.md"));
 const base = read("web/src/layouts/Base.astro");
 const home = read("web/src/pages/index.astro");
 const brand = read("web/src/styles/brand.css");
+const accessibility = read("web/src/components/AccessibilityToolbar.astro");
 const targetPages = [
 	"web/src/pages/index.astro",
 	"web/src/pages/doulas/index.astro",
@@ -31,6 +32,28 @@ assert(base.includes('aria-controls="site-nav"'), "mobile nav toggle must contro
 assert(base.includes('id="site-nav"'), "site nav must expose #site-nav for mobile toggle");
 assert(home.includes("hero-badge"), "home hero must restore a logo badge identity element");
 assert(home.includes("hero-visual"), "home hero must include a visual brand composition");
+assert(home.includes("/brand/old-home-hero.avif"), "home hero must use the original photo-led hero image");
+assert(home.includes("hero-photo"), "home hero must use the old full-bleed photo layout");
+assert(home.includes('<p class="hero-eyebrow">שבט אמהות</p>'), "home hero must lead with the old-site brand title");
+assert(home.includes("/brand/old-mark.png"), "home hero badge must use the old circular mark asset");
+assert(!home.includes("hero-note"), "home hero must not use pastel note bubbles");
+assert(base.includes("/brand/old-logo.png"), "header logo must use the old WordPress logo asset");
+assert(base.includes("head-actions"), "header must keep the old social/account icon cluster shape");
+assert(base.includes('aria-label="Instagram"'), "header action cluster must use icon links, not placeholder letters");
+assert(base.includes('aria-label="Facebook"'), "header action cluster must include the old Facebook-style icon slot");
+assert(base.includes("right:1rem"), "mobile hamburger must sit on the old physical right side");
+for (const label of ["נבחרת הדולות", "נבחרת היועצות והמטפלות", "קבוצות הווטסאפ"]) {
+	assert(base.includes(label), `header must keep old-site nav label ${label}`);
+}
+assert(!base.includes("<ZigZag />"), "global header must not add a decorative zigzag strip over the old photo hero");
+assert(base.includes("nav-toggle-lines"), "mobile header must use an icon-like menu button, not a text pill");
+assert(home.includes("order: 1"), "old-site hero text must appear above the centered logo badge");
+assert(!home.includes("<br />"), "desktop hero support line should not be forced into redesigned breaks");
+assert(home.includes("max-width: 1320px"), "desktop hero text must have old-site wide line room");
+assert(home.includes("rgba(0, 0, 0, 0.42)"), "hero photo must keep the old darker grey overlay mood");
+assert(accessibility.includes("left:.75rem"), "accessibility trigger should sit on the old physical left edge");
+assert(accessibility.includes("bottom:1rem"), "accessibility trigger should sit near the old lower toolbar position");
+assert(accessibility.includes('content:"♿"'), "accessibility trigger should render as a compact wheelchair tab");
 for (const marker of [
 	".hero::before",
 	".hero-visual::before",
