@@ -13,6 +13,8 @@ export interface DoulaCard {
 	regions?: string[];
 	whatsapp?: string;
 	phone?: string;
+	email?: string;
+	instagram?: string;
 }
 
 export interface ProfessionalCard {
@@ -26,6 +28,8 @@ export interface ProfessionalCard {
 	languages?: string[];
 	whatsapp?: string;
 	phone?: string;
+	email?: string;
+	instagram?: string;
 }
 
 // Doula search index — flat shape consumed by the client-side search island.
@@ -36,7 +40,7 @@ export function getDoulas(): Promise<DoulaCard[]> {
 			"photo": photo.asset->url,
 			"hospitals": hospitals[]->name,
 			"regions": regions[]->name,
-			whatsapp, phone
+			whatsapp, phone, email, instagram
 		}`,
 		{},
 		[],
@@ -51,7 +55,7 @@ export function getProfessionals(): Promise<ProfessionalCard[]> {
 			"photo": photo.asset->url,
 			"fields": fields[]->name,
 			"regions": regions[]->name,
-			languages, whatsapp, phone
+			languages, whatsapp, phone, email, instagram
 		}`,
 		{},
 		[],
@@ -70,6 +74,9 @@ export interface PractitionerDetail {
 	photoUrl?: string;
 	videoUrl?: string;
 	whatsapp?: string;
+	phone?: string;
+	email?: string;
+	instagram?: string;
 	hospitals?: string[];
 	fields?: string[];
 	regions?: string[];

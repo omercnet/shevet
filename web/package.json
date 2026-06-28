@@ -8,6 +8,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"check": "astro check",
+		"validation:contract": "node scripts/validation-contract.mjs",
 		"content:contract": "node scripts/content-contract.mjs",
 		"parity:samples": "node scripts/parity-samples.mjs",
 		"lint": "biome ci .",
