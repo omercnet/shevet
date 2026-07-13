@@ -40,3 +40,13 @@ export function instagramHref(handle: string | undefined): string | null {
 	if (handle.startsWith("http")) return handle;
 	return `https://www.instagram.com/${handle.replace(/^@/, "")}/`;
 }
+
+/**
+ * Display handle ("@name") for a stored Instagram URL or bare handle.
+ */
+export function instagramHandle(handle: string | undefined): string | null {
+	if (!handle) return null;
+	const fromUrl = handle.match(/instagram\.com\/([^/?#]+)/)?.[1];
+	const name = fromUrl ?? handle.replace(/^@/, "");
+	return name ? `@${name}` : null;
+}
