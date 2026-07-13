@@ -74,14 +74,14 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
     <ContactForm practitionerName={d?.name ?? ''} practitionerSlug={slug} practitionerType="doula" practitionerEmail={d?.email ?? ''} formId="doula-contact" />
   </article>
 
-  {wa && <a class="btn btn-wa sticky-cta" href={wa}>פנייה בוואטסאפ</a>}
+  {wa && <a class="btn btn-wa sticky-cta" href={wa}>כתבי ווטאספ עכשיו ל־{d?.name}</a>}
 
   <style>
     .title { color:var(--muted); margin:.2rem 0; }
     .marketing-sentence { color:var(--brand); font-weight:700; margin:.45rem 0; }
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
-    .sticky-cta { display:block; margin:1.5rem 1rem; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
-    @media(min-width:700px){ .sticky-cta{ position:fixed; inset-inline:auto 2rem; bottom:1rem; z-index:40; margin:0; } }
+    .sticky-cta { position:fixed; inset-inline:auto 1rem; bottom:1rem; z-index:40; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
+    @media(min-width:700px){ .sticky-cta{ inset-inline:auto 2rem; } }
 
     .phone-frame {
       position: relative;
