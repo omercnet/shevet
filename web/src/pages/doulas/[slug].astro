@@ -56,8 +56,11 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
     {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
 
     {videoSrc && (
-      <div class="media-frame">
-        <iframe src={videoSrc} title={`סרטון ${d?.name}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      <div class="phone-frame">
+        <span class="phone-notch" aria-hidden="true"></span>
+        <div class="phone-screen">
+          <iframe src={videoSrc} title={`סרטון ${d?.name}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
       </div>
     )}
     {!videoSrc && d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
@@ -72,5 +75,42 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { display:block; margin:1.5rem 1rem; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ position:fixed; inset-inline:auto 2rem; bottom:1rem; z-index:40; margin:0; } }
+
+    .phone-frame {
+      position: relative;
+      width: min(300px, 80vw);
+      aspect-ratio: 9 / 19.5;
+      margin: 1.8rem auto;
+      background: #111;
+      border-radius: 2.6rem;
+      padding: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+    .phone-notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 38%;
+      height: 22px;
+      background: #111;
+      border-radius: 999px;
+      z-index: 2;
+    }
+    .phone-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 2rem;
+      overflow: hidden;
+      background: #000;
+    }
+    .phone-screen iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   </style>
 </Base>
