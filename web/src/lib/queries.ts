@@ -86,7 +86,10 @@ export interface PractitionerDetail {
 	supportStyle?: string[];
 	tagline?: string;
 	bio?: unknown[];
+	meetingInfo?: unknown[];
 	services?: unknown[];
+	duringBirth?: unknown[];
+	afterBirth?: unknown[];
 	credentials?: string[];
 	gallery?: { url?: string }[];
 	testimonials?: Testimonial[];

@@ -216,11 +216,10 @@ function mapPractitioner(item, cfg) {
 			.map((x) => ({ author: x.author || "", quote: x.quote })),
 	);
 
+	const meetingInfo = sectionBlocks([["מה כוללת פגישת ההיכרות", m["introduction-meeting"]]]);
 	const services = sectionBlocks([
-		["מה כוללת פגישת ההיכרות", m["introduction-meeting"]],
 		["מה כולל קורס הכנה ללידה", m["birthing-course"]],
-		["במהלך הלידה", m["during-birth"]],
-		["מה כולל הביקור אחרי הלידה", m["after-birth"]],
+		["מה כולל הליווי", m["birth-support"]],
 	]);
 	const faqText = stripHtml(m.qampa);
 
@@ -247,7 +246,10 @@ function mapPractitioner(item, cfg) {
 		languages: languages.length ? [...new Set(languages)] : undefined,
 		credentials: credentials.length ? credentials : undefined,
 		bio: toBlocks(m["i-believe"]),
+		meetingInfo,
 		services,
+		duringBirth: toBlocks(m["during-birth"] || ""),
+		afterBirth: toBlocks(m["after-birth"] || ""),
 		faq: faqText ? keyed([{ q: "שאלות ותשובות", a: faqText }]) : undefined,
 		testimonials: testimonials.length ? testimonials : undefined,
 		published: text(item["wp:status"]) === "publish",
