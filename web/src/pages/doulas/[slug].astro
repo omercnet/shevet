@@ -4,6 +4,7 @@ import LegacyContent from '../../components/LegacyContent.astro'
 import ContactForm from '../../components/ContactForm.astro'
 import {getPremiumDoulaSlugs, getPractitioner} from '../../lib/queries'
 import {whatsappHref, telHref, mailtoHref, instagramHref} from '../../lib/contact'
+import {videoEmbedSrc} from '../../lib/video'
 
 export async function getStaticPaths() {
   const slugs: string[] = await getPremiumDoulaSlugs()
@@ -19,6 +20,7 @@ const mailto = mailtoHref(d?.email)
 const ig = instagramHref(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
 const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
+const videoSrc = videoEmbedSrc(d?.videoUrl)
 ---
 <Base title={`${d?.name} — דולה | שבט אמהות`} description={d?.title}>
   <article class="profile-shell wrap">
@@ -53,7 +55,12 @@ const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
     {serviceBlocks.length > 0 && <section class="article-body"><h2>מה כולל הליווי</h2><LegacyContent blocks={serviceBlocks} /></section>}
     {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
 
-    {d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
+    {videoSrc && (
+      <div class="media-frame">
+        <iframe src={videoSrc} title={`סרטון ${d?.name}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+      </div>
+    )}
+    {!videoSrc && d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
     <ContactForm practitionerName={d?.name ?? ''} practitionerSlug={slug} practitionerType="doula" practitionerEmail={d?.email ?? ''} formId="doula-contact" />
   </article>
