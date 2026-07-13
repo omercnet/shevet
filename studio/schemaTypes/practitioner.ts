@@ -138,6 +138,13 @@ export default defineType({
 		defineField({ name: "adress", title: "כתובת", type: "string", group: "contact" }),
 
 		// --- content ---
+		defineField({
+			name: "tagline",
+			title: "משפט שיווקי (מעל 'האני מאמין שלי')",
+			type: "string",
+			group: "content",
+			description: "משפט קצר ובולט שיוצג מעל כותרת ה'אני מאמין', בפונט שונה ומודגש",
+		}),
 		defineField({ name: "bio", title: "אודות / האני מאמין", type: "array", group: "content", of: [{ type: "block" }] }),
 		defineField({
 			name: "services",

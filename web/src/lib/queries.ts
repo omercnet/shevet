@@ -84,6 +84,7 @@ export interface PractitionerDetail {
 	fields?: string[];
 	regions?: string[];
 	supportStyle?: string[];
+	tagline?: string;
 	bio?: unknown[];
 	services?: unknown[];
 	credentials?: string[];
