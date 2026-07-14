@@ -139,6 +139,65 @@ function firstInstagramPostUrl(...values) {
 	return undefined;
 }
 
+function serializedString(source, start, byteLength) {
+	let end = start;
+	let bytes = 0;
+	while (end < source.length && bytes < byteLength) {
+		bytes += Buffer.byteLength(source[end]);
+		end++;
+	}
+	return { value: source.slice(start, end), end };
+}
+
+function parseSerialized(source, start = 0) {
+	const type = source[start];
+	if (type === "N") return { value: null, end: start + 2 };
+	const metaStart = start + 2;
+	if (type === "s") {
+		const lenEnd = source.indexOf(":", metaStart);
+		const byteLength = Number(source.slice(metaStart, lenEnd));
+		const { value, end } = serializedString(source, lenEnd + 2, byteLength);
+		return { value, end: end + 2 };
+	}
+	if (type === "i" || type === "b" || type === "d") {
+		const end = source.indexOf(";", metaStart);
+		return { value: source.slice(metaStart, end), end: end + 1 };
+	}
+	if (type === "a") {
+		const lenEnd = source.indexOf(":", metaStart);
+		const count = Number(source.slice(metaStart, lenEnd));
+		const value = {};
+		let pos = lenEnd + 2;
+		for (let i = 0; i < count; i++) {
+			const key = parseSerialized(source, pos);
+			const item = parseSerialized(source, key.end);
+			value[key.value] = item.value;
+			pos = item.end;
+		}
+		return { value, end: pos + 1 };
+	}
+	return { value: null, end: source.length };
+}
+
+function parseFaq(value) {
+	const serialized = String(value ?? "");
+	let pairs = [];
+	if (serialized.startsWith("a:")) {
+		const parsed = parseSerialized(serialized).value;
+		pairs = Object.values(parsed ?? {}).map((item) => ({ q: stripHtml(item?.question), a: stripHtml(item?.answer) }));
+	}
+	if (!pairs.length) {
+		pairs = [...serialized.matchAll(/s:\d+:"question";s:\d+:"((?:\\.|[^"\\])*)";s:\d+:"answer";s:\d+:"((?:\\.|[^"\\])*)"/g)].map(([, q, a]) => ({
+			q: stripHtml(q.replace(/\\"/g, '"')),
+			a: stripHtml(a.replace(/\\"/g, '"')),
+		}));
+	}
+	pairs = pairs.filter((item) => item.q && item.a);
+	if (pairs.length) return keyed(pairs);
+	const fallback = stripHtml(value);
+	return fallback ? keyed([{ q: "שאלות ותשובות", a: fallback }]) : undefined;
+}
+
 function phoneDigits(...values) {
 	for (const value of values) {
 		const digits = String(value ?? "").replace(/\D/g, "");
@@ -221,7 +280,7 @@ function mapPractitioner(item, cfg) {
 		["מה כולל קורס הכנה ללידה", m["birthing-course"]],
 		["מה כולל הליווי", m["birth-support"]],
 	]);
-	const faqText = stripHtml(m.qampa);
+	const faq = parseFaq(m.qampa);
 
 	return {
 		_id: `practitioner.${asciiId(slug)}`,
@@ -250,7 +309,7 @@ function mapPractitioner(item, cfg) {
 		services,
 		duringBirth: toBlocks(m["during-birth"] || ""),
 		afterBirth: toBlocks(m["after-birth"] || ""),
-		faq: faqText ? keyed([{ q: "שאלות ותשובות", a: faqText }]) : undefined,
+		faq,
 		testimonials: testimonials.length ? testimonials : undefined,
 		published: text(item["wp:status"]) === "publish",
 		// NOTE: supportStyle + budget had no equivalent in WP — Keren sets these in Studio.
