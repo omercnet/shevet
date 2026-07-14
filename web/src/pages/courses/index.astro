@@ -1,0 +1,41 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getSalePages } from "../../lib/queries";
+
+const courses = await getSalePages();
+---
+<Base title="קורסים וסדנאות — שבט אמהות" description="קורסים, סדנאות ומפגשי עומק של שבט אמהות.">
+	<section class="wrap">
+		<h1>קורסים וסדנאות</h1>
+		<p>מפגשי עומק, סדנאות וקורסים מבית שבט אמהות.</p>
+
+		{courses.length === 0 && <p class="empty-state">אין קורסים זמינים כרגע.</p>}
+
+		{courses.length > 0 && (
+			<div class="grid courses-grid">
+				{courses.map((course) => (
+					<article class="card sale-card">
+						{course.image && <img src={`${course.image}?w=420&h=260&fit=crop`} alt={course.title} loading="lazy" />}
+						<div class="sale-card-body">
+							<h2><a href={`/courses/${course.slug}/`}>{course.title}</a></h2>
+							<div class="tags">
+								{course.presenter && <span class="chip">{course.presenter}</span>}
+								{course.dateText && <span class="chip">{course.dateText}</span>}
+								{course.cost && <span class="chip">{course.cost}</span>}
+							</div>
+							<a class="more" href={`/courses/${course.slug}/`}>לפרטים נוספים ←</a>
+						</div>
+					</article>
+				))}
+			</div>
+		)}
+	</section>
+
+	<style>
+		.courses-grid { margin-top: 1.5rem; }
+		.sale-card img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:18px 18px 0 0; }
+		.sale-card-body { padding:1.2rem 1.3rem 1.4rem; }
+		.sale-card h2 { font-family:var(--sans); font-size:1.2rem; margin:0 0 .8rem; }
+		.sale-card h2 a, .sale-card .more { color:var(--brand); text-decoration:none; }
+	</style>
+</Base>
