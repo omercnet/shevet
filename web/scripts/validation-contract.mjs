@@ -40,6 +40,10 @@ assert(
 	"WhatsApp helper must preserve WordPress click-to-chat links with opening text",
 );
 assert(
+	whatsappHref("https://example.com/972547756296", "054-775-6296") === "https://wa.me/972547756296",
+	"WhatsApp helper must not preserve non-WhatsApp http links",
+);
+assert(
 	whatsappHref(undefined, "054-775-6296") === "https://wa.me/972547756296",
 	"WhatsApp helper must fall back to normalized phone",
 );

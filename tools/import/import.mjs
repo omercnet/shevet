@@ -64,7 +64,7 @@ const text = (v) => {
 	return String(v);
 };
 const arr = (v) => (Array.isArray(v) ? v : v == null ? [] : [v]);
-const keyed = (items) => items.map((o, i) => ({ _key: `k${i}`, ...o }));
+const keyed = (items) => items.map((o, i) => ({ ...o, _key: `k${i}` }));
 
 function metaMap(item) {
 	const m = {};
