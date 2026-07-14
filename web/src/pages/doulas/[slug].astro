@@ -20,8 +20,18 @@ const mailto = mailtoHref(d?.email)
 const ig = d?.instagramPostUrl ?? instagramHref(d?.instagram)
 const igHandle = instagramHandle(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
-const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
 const videoSrc = videoEmbedSrc(d?.videoUrl)
+
+type LegacyBlock = { _type?: string; style?: string; children?: { text?: string }[] }
+const contentBlocks = (blocks: unknown[] | undefined): LegacyBlock[] =>
+  Array.isArray(blocks) ? blocks.filter((block): block is LegacyBlock => typeof block === 'object' && block !== null && '_type' in block) : []
+
+const accompanimentCards = [
+  {title: 'פגישת היכרות', blocks: contentBlocks(d?.meetingInfo)},
+  {title: 'מה כולל הליווי', blocks: contentBlocks(d?.services)},
+  {title: 'במהלך הלידה', blocks: contentBlocks(d?.duringBirth)},
+  {title: 'אחרי הלידה', blocks: contentBlocks(d?.afterBirth)},
+].filter((c) => c.blocks.length > 0)
 ---
 <Base title={`${d?.name} — דולה | שבט אמהות`} description={d?.title}>
   <article class="profile-shell wrap">
@@ -72,8 +82,22 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       </section>
     )}
 
-    {serviceBlocks.length > 0 && <section class="article-body"><h2>מה כולל הליווי</h2><LegacyContent blocks={serviceBlocks} /></section>}
     {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות ותשובות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
+
+    {accompanimentCards.length > 0 && (
+      <section class="accompaniment">
+        <h2>עם כל הליווי</h2>
+        <div class="grid accompaniment-grid">
+          {accompanimentCards.map((c) => (
+            <div class="card accompaniment-card">
+              <h3>{c.title}</h3>
+              <LegacyContent blocks={c.blocks} />
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
 
     {videoSrc && (
@@ -105,6 +129,12 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       margin: 1.4rem 0 0;
       line-height: 1.5;
     }
+    .accompaniment { margin: 2rem 0; }
+    .accompaniment h2 { text-align:center; margin-bottom:1.4rem; }
+    .accompaniment-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .accompaniment-card { padding:1.6rem; }
+    .accompaniment-card h3 { margin:0 0 .6rem; font-size:1.2rem; color:var(--brand); }
+    .accompaniment-card :global(.legacy-content) p { margin:0; color:var(--muted); }
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { position:fixed; inset-inline:auto 1rem; bottom:1rem; z-index:40; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ inset-inline:auto 2rem; } }
