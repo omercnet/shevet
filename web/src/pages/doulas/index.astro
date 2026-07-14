@@ -44,23 +44,26 @@ const settings = await getSiteSettings()
 
     <p id="count">{doulas.length} דולות</p>
     <div class="grid" id="results">
-      {doulas.map((d) => (
-        <article class="card directory-card doula-card">
-          {d.photo && <a class="card-media" href={`/doulas/${d.slug}/`}><img src={`${d.photo}?w=480&h=360&fit=crop`} alt={d.name} loading="lazy" /></a>}
-          <div class="card-body">
-            <h3><a href={`/doulas/${d.slug}/`}>{d.name}</a></h3>
-            {d.title && <p class="card-title">{d.title}</p>}
-            <div class="tags">{[...(d.hospitals ?? []), ...(d.supportStyle ?? [])].slice(0, 3).map((t) => <span class="chip">{t}</span>)}</div>
-            <div class="card-actions"><a class="more" href={`/doulas/${d.slug}/`}>לפרטים נוספים ←</a></div>
-            <div class="card-actions contact-links">
-              {d.whatsappUrl && <a class="btn btn-wa" href={d.whatsappUrl}>וואטסאפ</a>}
-              {d.phoneUrl && <a class="more" href={d.phoneUrl}>טלפון</a>}
-              {d.emailUrl && <a class="more" href={d.emailUrl}>אימייל</a>}
-              {d.instagramUrl && <a class="more" href={d.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>}
+      {doulas.map((d) => {
+        const detailHref = d.tier === 'premium' ? `/doulas/${d.slug}/` : undefined
+        return (
+          <article class="card directory-card doula-card">
+            {d.photo && (detailHref ? <a class="card-media" href={detailHref}><img src={`${d.photo}?w=480&h=360&fit=crop`} alt={d.name} loading="lazy" /></a> : <div class="card-media"><img src={`${d.photo}?w=480&h=360&fit=crop`} alt={d.name} loading="lazy" /></div>)}
+            <div class="card-body">
+              <h3>{detailHref ? <a href={detailHref}>{d.name}</a> : d.name}</h3>
+              {d.title && <p class="card-title">{d.title}</p>}
+              <div class="tags">{[...(d.hospitals ?? []), ...(d.supportStyle ?? [])].slice(0, 3).map((t) => <span class="chip">{t}</span>)}</div>
+              {detailHref && <div class="card-actions"><a class="more" href={detailHref}>לפרטים נוספים ←</a></div>}
+              <div class="card-actions contact-links">
+                {d.whatsappUrl && <a class="btn btn-wa" href={d.whatsappUrl}>וואטסאפ</a>}
+                {d.phoneUrl && <a class="more" href={d.phoneUrl}>טלפון</a>}
+                {d.emailUrl && <a class="more" href={d.emailUrl}>אימייל</a>}
+                {d.instagramUrl && <a class="more" href={d.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>}
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        )
+      })}
     </div>
 
     {settings?.matchmakingFormEmbed && (
@@ -75,7 +78,7 @@ const settings = await getSiteSettings()
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
   <script>
     interface Row {
-      slug: string; name: string; title?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
+      slug: string; name: string; title?: string; tier?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
       hospitals?: string[]; supportStyle?: string[]; budget?: string;
     }
     const dataEl = document.getElementById("data");
@@ -94,24 +97,25 @@ const settings = await getSiteSettings()
           .slice(0, 3)
           .map((t) => `<span class="chip">${esc(t)}</span>`)
           .join("");
-        const href = `/doulas/${encodeURIComponent(d.slug)}/`;
+        const href = d.tier === "premium" ? `/doulas/${encodeURIComponent(d.slug)}/` : "";
         const wa = d.whatsappUrl
           ? `<a class="btn btn-wa" href="${esc(d.whatsappUrl)}">וואטסאפ</a>`
           : "";
         const phone = d.phoneUrl ? `<a class="more" href="${esc(d.phoneUrl)}">טלפון</a>` : "";
         const email = d.emailUrl ? `<a class="more" href="${esc(d.emailUrl)}">אימייל</a>` : "";
         const instagram = d.instagramUrl ? `<a class="more" href="${esc(d.instagramUrl)}" target="_blank" rel="noopener noreferrer">Instagram</a>` : "";
-        const media = d.photo
-          ? `<a class="card-media" href="${href}"><img src="${encodeURI(d.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
-          : "";
+        const image = d.photo ? `<img src="${encodeURI(d.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy">` : "";
+        const media = image ? (href ? `<a class="card-media" href="${href}">${image}</a>` : `<div class="card-media">${image}</div>`) : "";
         const title = d.title ? `<p class="card-title">${esc(d.title)}</p>` : "";
+        const heading = href ? `<a href="${href}">${name}</a>` : name;
+        const details = href ? `<div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>` : "";
         return `<article class="card directory-card doula-card">
           ${media}
           <div class="card-body">
-            <h3><a href="${href}">${name}</a></h3>
+            <h3>${heading}</h3>
             ${title}
             <div class="tags">${tags}</div>
-            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>
+            ${details}
             <div class="card-actions contact-links">${wa}${phone}${email}${instagram}</div>
           </div>
         </article>`;
