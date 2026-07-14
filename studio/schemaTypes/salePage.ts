@@ -18,6 +18,7 @@ export default defineType({
 		defineField({ name: "formEmbedHtml", title: "קישור / הטמעת טופס", type: "text", rows: 4 }),
 		defineField({ name: "ctaLabel", title: "טקסט הכפתור", type: "string", initialValue: "לרכישה" }),
 		defineField({ name: "meshulamUrl", title: "קישור לעמוד משולם", type: "url" }),
+		defineField({ name: "published", title: "מפורסם", type: "boolean", initialValue: true }),
 	],
 	preview: { select: { title: "title", media: "image" } },
 });
