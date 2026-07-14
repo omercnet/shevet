@@ -22,6 +22,7 @@ const text = (v) => {
 const assert = (condition, message) => {
 	if (!condition) throw new Error(message);
 };
+assert(!importer.includes('replace(/\\/$/, "/")'), "importer must not replace a trailing slash with itself");
 const metaMap = (item) => {
 	const out = {};
 	for (const pm of arr(item["wp:postmeta"])) out[text(pm["wp:meta_key"])] = text(pm["wp:meta_value"]);
@@ -42,6 +43,14 @@ const requireMeta = (slug, key) => {
 };
 
 for (const slug of ["avira-neima", "chooseadoula", "whatdoesadoulado", "accompany"]) requireMeta(slug, "_content");
+for (const slug of ["keren-eitan", "irit-angel"]) {
+	requireMeta(slug, "_description");
+	requireMeta(slug, "introduction-meeting");
+	requireMeta(slug, "birthing-course");
+	requireMeta(slug, "during-birth");
+	requireMeta(slug, "after-birth");
+	requireMeta(slug, "qampa");
+}
 for (const slug of ["head-to-toe", "deedoo", "stella", "urban-baby-wrap"]) {
 	const found = bySlug.get(slug);
 	assert(found, `missing benefit ${slug}`);
@@ -55,7 +64,7 @@ for (const type of ["pregnancy-blog", "benefits", "community", "courses", "doula
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "whatsapp_copy", "image-gallery", "video-cover", "3_copy", "qampa"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
 

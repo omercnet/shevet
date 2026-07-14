@@ -71,12 +71,15 @@ export interface Testimonial {
 export interface PractitionerDetail {
 	name: string;
 	title?: string;
+	marketingSentence?: string;
 	photoUrl?: string;
 	videoUrl?: string;
+	videoCoverUrl?: string;
 	whatsapp?: string;
 	phone?: string;
 	email?: string;
 	instagram?: string;
+	instagramPostUrl?: string;
 	hospitals?: string[];
 	fields?: string[];
 	regions?: string[];
@@ -84,14 +87,16 @@ export interface PractitionerDetail {
 	bio?: unknown[];
 	services?: unknown[];
 	credentials?: string[];
-	gallery?: { asset?: { url?: string } }[];
+	gallery?: { url?: string }[];
 	testimonials?: Testimonial[];
+	faq?: { q?: string; a?: string }[];
 }
 
 export function getPractitioner(slug: string): Promise<PractitionerDetail | null> {
 	return sanityFetch<PractitionerDetail | null>(
 		`*[_type == "practitioner" && slug.current == $slug][0]{
-			..., "photoUrl": photo.asset->url,
+			..., "photoUrl": photo.asset->url, "videoCoverUrl": videoCover.asset->url,
+			"gallery": gallery[]{"url": asset->url},
 			"hospitals": hospitals[]->name, "fields": fields[]->name, "regions": regions[]->name
 		}`,
 		{ slug },

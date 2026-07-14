@@ -31,7 +31,15 @@ export default defineType({
 			validation: (r) => r.required(),
 		}),
 		defineField({ name: "title", title: "תיאור תפקיד", type: "string", group: "main" }),
+		defineField({ name: "marketingSentence", title: "משפט שיווקי", type: "string", group: "main" }),
 		defineField({ name: "photo", title: "תמונה", type: "image", group: "main", options: { hotspot: true } }),
+		defineField({
+			name: "videoCover",
+			title: "תמונה לכיסוי וידאו",
+			type: "image",
+			group: "main",
+			options: { hotspot: true },
+		}),
 		defineField({
 			name: "videoUrl",
 			title: "קישור וידאו (יוטיוב/וימאו)",
@@ -126,6 +134,7 @@ export default defineType({
 		}),
 		defineField({ name: "email", title: "אימייל", type: "string", group: "contact" }),
 		defineField({ name: "instagram", title: "אינסטגרם", type: "url", group: "contact" }),
+		defineField({ name: "instagramPostUrl", title: "פוסט / רילס אינסטגרם", type: "url", group: "contact" }),
 		defineField({ name: "adress", title: "כתובת", type: "string", group: "contact" }),
 
 		// --- content ---

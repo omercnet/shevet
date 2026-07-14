@@ -1,69 +1,98 @@
-# Project Instructions for AI Agents
+# Shevet Imahot agent guide
 
-This file provides instructions and context for AI coding agents working on this project.
+Read this first, then `README.md`, `ARCHITECTURE.md`, and `WEBSITE_SPEC.md` when scope matters. `AGENTS.md` is a symlink to this file so all agents get one source of truth.
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
-## Beads Issue Tracker
+## What this repo is
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
+Rebuild of `shevet-imahot.co.il` from WordPress to a low-ops static stack:
 
-### Quick Reference
+- `web/` - Astro static site. Public routes, search/filter UI, contact links, brand CSS.
+- `studio/` - Sanity Studio schemas/content model.
+- `tools/import/` - WordPress WXR to Sanity importer. WXR exports are not committed because they can contain practitioner PII.
+- `pitch/` - Hebrew client pitch deck.
+- `netlify.toml` - Netlify build (`base = "web"`, publish `dist`) plus legacy redirects.
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
-```
+Core product decisions from Keren are locked in `ARCHITECTURE.md`: keep Oron Yad + raspberry/peach/cream visual identity, make doula/professional search central, build converting doula pages, drop weekly track/courses catalog/WooCommerce/members-only content, embed Responder forms, link Meshulam sale pages, keep WhatsApp community flow.
 
-### Rules
+## Stack and commands
 
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+Use Node 22. Install per package, not from repo root.
 
-## Session Completion
-
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
-
-**MANDATORY WORKFLOW:**
-
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd dolt push
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
-
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
-<!-- END BEADS INTEGRATION -->
-
-
-## Build & Test
-
-_Add your build and test commands here_
+For fresh Paseo worktrees, run `node .paseo/setup.mjs`; the Claude `SessionStart` hook also installs missing `node_modules` for `web/`, `studio/`, and `tools/import/`.
 
 ```bash
-# Example:
-# npm install
-# npm test
+cd web
+npm install
+npm run dev       # Astro at http://localhost:4321
+npm run check
+npm run build
+npm run lint
+npm run validation:contract
+npm run content:contract
+npm run parity:samples
+
+cd ../studio
+npm install
+npm run dev       # Sanity Studio at http://localhost:3333
+npm run typecheck
+npm run build
+npm run lint
+
+cd ../tools/import
+npm install
+npm run contract -- --dir /tmp/shevetbackup  # or another WXR directory
+npm run dry-run -- --dir /path/to/wxr
+npm run import -- --dir /path/to/wxr
 ```
 
-## Architecture Overview
+Environment:
 
-_Add a brief overview of your project architecture_
+- Web/Netlify: `SANITY_PROJECT_ID=cuxqs66c`, `SANITY_DATASET=production`, `SANITY_TOKEN` read token for private dataset. Without token, build may still pass with empty content.
+- Studio: `SANITY_STUDIO_PROJECT_ID` and `SANITY_STUDIO_DATASET`; defaults match production.
+- Importer: `SANITY_PROJECT_ID`, `SANITY_DATASET`, `SANITY_TOKEN` write token. Import is idempotent via deterministic IDs/createOrReplace.
 
-## Conventions & Patterns
+## Source map
 
-_Add your project-specific conventions here_
+- `web/src/pages/` - Astro routes: home, doulas, professionals, articles, benefits, community, legal/static pages.
+- `web/src/lib/sanity.ts` - Sanity client/data access.
+- `web/src/lib/queries.ts` - GROQ queries and content shaping.
+- `web/src/lib/contact.ts` - normalized phone/WhatsApp/tel/mail/social links. Reuse this; do not hand-roll contact URLs.
+- `web/src/lib/video.ts` - video URL/embed helpers.
+- `web/src/components/ContactForm.astro`, `AccessibilityToolbar.astro`, `LegacyContent.astro`, `ZigZag.astro` - shared UI.
+- `web/src/styles/brand.css` - brand tokens and global styling. Preserve RTL/Hebrew-first design.
+- `web/scripts/*-contract.mjs` - cheap behavioral checks for redirects, content shape, visual/source contracts, and parity samples.
+- `studio/schemaTypes/` - Sanity schemas for practitioners, taxonomies, articles, benefits, WhatsApp groups, sale pages, site settings, community pages.
+- `tools/import/import.mjs` - WXR parser/importer; keep dry-run safe and write mode token-gated.
+
+## Implementation rules
+
+- Prefer small static Astro changes over new client JS. Interactive JS should stay limited to search/filtering and small helpers already present.
+- Search is client-side over build-time Sanity data; do not add a search service.
+- Payments stay off-site through Meshulam links. Do not add cart/account/checkout plumbing.
+- Forms stay embedded/linked through Responder. Do not store lead submissions unless explicitly requested.
+- Keep practitioner contact data private in Sanity; never commit WXR exports, `.env`, tokens, or scraped PII.
+- For contact links, use `web/src/lib/contact.ts` helpers.
+- For legacy URL changes, update `netlify.toml` redirects and run `npm run validation:contract` in `web/`.
+- For content model changes, update matching Studio schema, GROQ query, importer mapping, and contract script together.
+- Preserve Hebrew/RTL, accessibility, mobile conversion flow, and Oron Yad branding.
+
+## Beads workflow
+
+This repo uses `bd` for issue tracking.
+
+```bash
+bd prime
+bd ready
+bd show <id>
+bd update <id> --claim
+bd close <id>
+bd dolt push
+```
+
+Use `bd` for task tracking and `bd remember` for durable repo knowledge. Do not create markdown TODO ledgers.
+
+Before ending a session with code changes: run relevant quality gates, update/close beads issues, `git pull --rebase`, `bd dolt push`, `git push`, then confirm `git status` is clean/up to date.
+
+## Open decisions
+
+Still need Keren to confirm: doula `supportStyle` values, budget bands, due-date matching rule, GTM container ID/metrics, and final timeline/budget. Until then, avoid inventing permanent taxonomy values.
