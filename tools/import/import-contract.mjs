@@ -41,6 +41,11 @@ const requireMeta = (slug, key) => {
 	assert(found, `missing WXR sample ${slug}`);
 	assert((found.meta[key] ?? "").trim().length > 20, `${slug} must have ${key} content`);
 };
+const requireMetaValue = (slug, key) => {
+	const found = bySlug.get(slug);
+	assert(found, `missing WXR sample ${slug}`);
+	assert((found.meta[key] ?? "").trim().length > 0, `${slug} must have ${key} value`);
+};
 
 for (const slug of ["avira-neima", "chooseadoula", "whatdoesadoulado", "accompany"]) requireMeta(slug, "_content");
 for (const slug of ["keren-eitan", "irit-angel"]) {
@@ -52,6 +57,10 @@ for (const slug of ["keren-eitan", "irit-angel"]) {
 	requireMeta(slug, "qampa");
 }
 for (const key of ["introduction-meeting", "birthing-course", "during-birth", "after-birth", "qampa"]) requireMeta("adi-e", key);
+for (const key of ["--", "banner", "birth-support_photo", "whatsapp-gallary"]) requireMetaValue("emily-maaravi", key);
+for (const key of ["solving-issues"]) requireMetaValue("dana-m", key);
+for (const key of ["video-support"]) requireMetaValue("eynat-r", key);
+for (const key of ["mail-image"]) requireMetaValue("keren-eitan", key);
 for (const slug of ["head-to-toe", "deedoo", "stella", "urban-baby-wrap"]) {
 	const found = bySlug.get(slug);
 	assert(found, `missing benefit ${slug}`);
@@ -61,12 +70,14 @@ for (const slug of ["26-1", "digitalmarketing", "march", "july"]) requireMeta(sl
 for (const slug of ["dao-shir-barash", "bio", "seminar", "henigold"]) requireMeta(slug, "_content");
 
 const postTypes = new Set(items.map(({ item }) => text(item["wp:post_type"])));
-for (const type of ["pregnancy-blog", "benefits", "community", "courses", "doulas-premium", "therapist-premium"]) {
+for (const type of ["post", "pregnancy-blog", "benefits", "community", "courses", "doulas-premium", "therapist-premium"]) {
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "MEDIA_FIELDS"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "published: text(item[\"wp:status\"]) === \"publish\"", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "m[\"--\"]", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "bannerImages", "birthSupportImages", "whatsappGallery", "jet-review-items", "articleTypes", "audiences", "MEDIA_FIELDS"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
+const publishedMappings = importer.match(/published: text\(item\["wp:status"\]\) === "publish"/g) ?? [];
+assert(publishedMappings.length >= 5, "importer must map published status for every public content type");
 
 process.stdout.write("import contract passed\n");
