@@ -147,6 +147,20 @@ export default defineType({
 		}),
 		defineField({ name: "bio", title: "אודות / האני מאמין", type: "array", group: "content", of: [{ type: "block" }] }),
 		defineField({
+			name: "birthTools",
+			title: "כלים נוספים בחדר לידה",
+			type: "array",
+			group: "content",
+			of: [{ type: "string" }],
+		}),
+		defineField({
+			name: "additionalServices",
+			title: "שירותים נוספים שאני מציעה",
+			type: "array",
+			group: "content",
+			of: [{ type: "string" }],
+		}),
+		defineField({
 			name: "meetingInfo",
 			title: "פגישת היכרות",
 			description: "מה קורה בפגישת ההיכרות — מוצג כריבוע ראשון בעמוד הדולה",
