@@ -37,6 +37,8 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       </div>
     </header>
 
+    {bioBlocks.length > 0 && <section class="article-body"><h2>האני מאמין שלי</h2><LegacyContent blocks={bioBlocks} /></section>}
+
     <div class="contact-links">
       {wa && <a class="btn btn-wa" href={wa}>וואטסאפ</a>}
       {tel && <a class="btn btn-outline" href={tel}>טלפון</a>}
@@ -52,7 +54,6 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       </section>
     )}
 
-    {bioBlocks.length > 0 && <section class="article-body"><h2>נעים להכיר</h2><LegacyContent blocks={bioBlocks} /></section>}
     {serviceBlocks.length > 0 && <section class="article-body"><h2>מה כולל הליווי</h2><LegacyContent blocks={serviceBlocks} /></section>}
     {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות ותשובות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
     {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
