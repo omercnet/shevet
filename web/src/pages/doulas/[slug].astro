@@ -37,6 +37,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       </div>
     </header>
 
+    {d?.tagline && <p class="tagline">{d.tagline}</p>}
     {bioBlocks.length > 0 && <section class="article-body"><h2>האני מאמין שלי</h2><LegacyContent blocks={bioBlocks} /></section>}
 
     <div class="contact-links">
@@ -80,6 +81,14 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
   <style>
     .title { color:var(--muted); margin:.2rem 0; }
     .marketing-sentence { color:var(--brand); font-weight:700; margin:.45rem 0; }
+    .tagline {
+      font-family: var(--sans);
+      font-weight: 800;
+      font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+      color: var(--brand-deep);
+      margin: 1.4rem 0 0;
+      line-height: 1.5;
+    }
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { position:fixed; inset-inline:auto 1rem; bottom:1rem; z-index:40; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ inset-inline:auto 2rem; } }
