@@ -6,6 +6,10 @@ const opt = (name, def) => {
 };
 const source = opt("--source", "https://shevet-imahot.co.il").replace(/\/$/, "");
 const target = opt("--target", "http://localhost:4321").replace(/\/$/, "");
+if (!process.env.SANITY_PROJECT_ID || !process.env.SANITY_TOKEN) {
+	process.stdout.write("parity samples skipped: SANITY_PROJECT_ID and SANITY_TOKEN are required for detail routes\n");
+	process.exit(0);
+}
 const samples = [
 	["article", "/pregnancy-blog/avira-neima/", "/articles/avira-neima/"],
 	["article", "/pregnancy-blog/chooseadoula/", "/articles/chooseadoula/"],

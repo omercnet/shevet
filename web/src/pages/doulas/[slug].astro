@@ -65,9 +65,10 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
         </div>
       </div>
     )}
+    {d?.videoCoverUrl && d?.videoUrl && <a href={d.videoUrl} target="_blank" rel="noopener noreferrer"><img class="video-cover" src={`${d.videoCoverUrl}?w=760&fit=max`} alt={`סרטון ${d?.name}`} /></a>}
     {!videoSrc && d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
-    {(d?.gallery?.length ?? 0) > 0 && <section class="gallery"><h2>גלריית תמונות</h2>{d?.gallery?.map((image) => image.url && <img src={`${image.url}?w=520&fit=max`} alt="" loading="lazy" />)}</section>}
+    {(d?.gallery?.length ?? 0) > 0 && <section class="gallery"><h2>גלריית תמונות</h2>{d?.gallery?.map((image) => image.url && <img src={`${image.url}?w=520&fit=max`} alt={`${d?.name ?? 'שבט אמהות'} - תמונת גלריה`} loading="lazy" />)}</section>}
 
     <ContactForm practitionerName={d?.name ?? ''} practitionerSlug={slug} practitionerType="doula" practitionerEmail={d?.email ?? ''} formId="doula-contact" />
   </article>
@@ -119,6 +120,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
     }
     details { border:1px solid rgba(146,0,59,.14); border-radius:1rem; padding:1rem; margin:.8rem 0; background:#fff; }
     summary { cursor:pointer; font-weight:700; color:var(--brand); }
+    .video-cover { width:min(100%, 760px); border-radius:1.4rem; box-shadow:var(--shadow-soft); margin:1.5rem 0; }
     .gallery { margin:2rem 0; }
     .gallery img { width:min(100%, 520px); border-radius:1rem; box-shadow:var(--shadow-soft); margin:.6rem; }
   </style>
