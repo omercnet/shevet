@@ -64,7 +64,7 @@ for (const type of ["pregnancy-blog", "benefits", "community", "courses", "doula
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "whatsapp_copy", "image-gallery", "video-cover", "3_copy", "qampa"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "flatMap", "3_copy", "qampa"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
 

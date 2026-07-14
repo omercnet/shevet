@@ -139,6 +139,22 @@ function firstInstagramPostUrl(...values) {
 	return undefined;
 }
 
+function phoneDigits(...values) {
+	for (const value of values) {
+		const digits = String(value ?? "").replace(/\D/g, "");
+		if (digits) return digits;
+	}
+	return "";
+}
+
+function defaultWhatsappLink(...values) {
+	const digits = phoneDigits(...values);
+	if (!digits) return undefined;
+	const phone = digits.startsWith("972") ? digits : digits.startsWith("0") ? `972${digits.slice(1)}` : digits;
+	const message = encodeURIComponent("הי! הגעתי אליך דרך האתר של שבט אמהות ואשמח לקבל פרטים");
+	return `https://wa.me/${phone}?text=${message}`;
+}
+
 const slugify = (s) =>
 	String(s)
 		.toLowerCase()
@@ -219,8 +235,8 @@ function mapPractitioner(item, cfg) {
 		isProfessional: !!cfg.isProfessional || fields.length > 0,
 		videoUrl: m.video || undefined,
 		marketingSentence: stripHtml(m["marketing-description"]) || undefined,
-		phone: m.phone || undefined,
-		whatsapp: m.whatsapp || m.whatsapp_copy || undefined,
+		phone: m.phone || m.doula_tel || m.whatsapp_copy || undefined,
+		whatsapp: m.whatsapp || defaultWhatsappLink(m.whatsapp_copy, m.phone, m.doula_tel),
 		email: m.email || undefined,
 		instagram: m.instagram || undefined,
 		instagramPostUrl: firstInstagramPostUrl(m["insta-1"], m["insta-2"]),
@@ -340,14 +356,15 @@ function attachmentUrls(items) {
 
 // ---------- main ----------
 const files = readdirSync(WXR_DIR).filter((f) => f.endsWith(".xml"));
+const parsedFiles = files.map((file) => ({
+	file,
+	items: arr(parser.parse(readFileSync(join(WXR_DIR, file), "utf8"))?.rss?.channel?.item),
+}));
+const atts = attachmentUrls(parsedFiles.flatMap(({ items }) => items));
 const docs = [];
 const imageJobs = []; // {doc, url, field, append}
 
-for (const file of files) {
-	const xml = parser.parse(readFileSync(join(WXR_DIR, file), "utf8"));
-	const items = arr(xml?.rss?.channel?.item);
-	const atts = attachmentUrls(items);
-
+for (const { items } of parsedFiles) {
 	for (const item of items) {
 		const ptype = text(item["wp:post_type"]);
 		if (ptype === "attachment" || ptype === "nav_menu_item" || ptype === "revision") continue;
