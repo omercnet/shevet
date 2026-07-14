@@ -51,6 +51,7 @@ for (const slug of ["keren-eitan", "irit-angel"]) {
 	requireMeta(slug, "after-birth");
 	requireMeta(slug, "qampa");
 }
+for (const key of ["introduction-meeting", "birthing-course", "during-birth", "after-birth", "qampa"]) requireMeta("adi-e", key);
 for (const slug of ["head-to-toe", "deedoo", "stella", "urban-baby-wrap"]) {
 	const found = bySlug.get(slug);
 	assert(found, `missing benefit ${slug}`);
@@ -64,7 +65,7 @@ for (const type of ["pregnancy-blog", "benefits", "community", "courses", "doula
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "flatMap", "parseFaq", "3_copy", "qampa"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "MEDIA_FIELDS"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
 

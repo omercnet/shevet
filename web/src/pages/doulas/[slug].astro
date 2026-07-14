@@ -32,6 +32,13 @@ const accompanimentCards = [
   {title: 'במהלך הלידה', blocks: contentBlocks(d?.duringBirth)},
   {title: 'אחרי הלידה', blocks: contentBlocks(d?.afterBirth)},
 ].filter((c) => c.blocks.length > 0)
+
+const profileFacts = [
+  {title: 'בתי החולים אליהם אני מגיעה', items: d?.hospitals},
+  {title: 'כלים נוספים בחדר לידה', items: d?.birthTools},
+  {title: 'שירותים נוספים שאני מציעה', items: d?.additionalServices},
+  {title: 'מיקום', items: d?.regions},
+].filter((section) => (section.items?.length ?? 0) > 0)
 ---
 <Base title={`${d?.name} — דולה | שבט אמהות`} description={d?.title}>
   <article class="profile-shell wrap">
@@ -73,6 +80,21 @@ const accompanimentCards = [
       </a>
     )}
 
+    {profileFacts.length > 0 && (
+      <section class="profile-facts">
+        <div class="grid profile-facts-grid">
+          {profileFacts.map((section) => (
+            <div class="card profile-fact-card">
+              <h2>{section.title}</h2>
+              <ul class="profile-fact-list">
+                {section.items?.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {(d?.testimonials?.length ?? 0) > 0 && (
       <section class="reviews">
         <h2>ביקורות מאומתות ע"י שבט אמהות</h2>
@@ -82,7 +104,7 @@ const accompanimentCards = [
       </section>
     )}
 
-    {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות ותשובות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
+    {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות נפוצות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
 
     {accompanimentCards.length > 0 && (
       <section class="accompaniment">
@@ -138,6 +160,13 @@ const accompanimentCards = [
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { position:fixed; inset-inline:auto 1rem; bottom:1rem; z-index:40; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ inset-inline:auto 2rem; } }
+
+    .profile-facts { margin:1.6rem 0 2rem; }
+    .profile-facts-grid { grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); }
+    .profile-fact-card { padding:1.2rem; }
+    .profile-fact-card h2 { margin:0 0 .8rem; font-size:1.15rem; color:var(--brand); }
+    .profile-fact-list { display:flex; flex-wrap:wrap; gap:.5rem; margin:0; padding:0; list-style:none; }
+    .profile-fact-list li { border:1px solid var(--line); border-radius:999px; padding:.25rem .65rem; background:var(--peach-soft); font-size:.92rem; }
 
     .ig-embed {
       display: flex;

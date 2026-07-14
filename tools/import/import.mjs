@@ -38,6 +38,14 @@ const POST_TYPE_KIND = {
 	"courses": { type: "salePage" },
 };
 
+const MEDIA_FIELDS = {
+	article: ["cover"],
+	benefit: ["logo"],
+	communityPage: ["image"],
+	practitioner: ["photo", "videoCover", "gallery"],
+	salePage: ["image"],
+};
+
 // Hebrew language terms seen in the `additional-tools` taxonomy.
 const LANG_HINTS = [
 	["אנגלית", "אנגלית"],
@@ -257,13 +265,15 @@ function mapPractitioner(item, cfg) {
 
 	const languages = [];
 	const credentials = [];
+	const birthTools = [];
 	for (const tool of t["additional-tools"] ?? []) {
 		const lang = LANG_HINTS.find(([h]) => tool.includes(h));
 		if (lang) languages.push(lang[1]);
-		else credentials.push(tool);
+		else birthTools.push(tool);
 	}
 	for (const tr of t["additional-trainings"] ?? []) credentials.push(tr);
 
+	const additionalServices = t["birth-preperation"] ?? [];
 	const fields = [...(t.area_68 ?? []), ...(t["birth-preperation"] ?? [])].map((n) => termRef("field", n));
 	const hospitals = (t.hospitals ?? []).map((n) => termRef("hospital", n));
 	const regions = (t.area ?? []).map((n) => termRef("region", n));
@@ -277,7 +287,7 @@ function mapPractitioner(item, cfg) {
 
 	const meetingInfo = sectionBlocks([["מה כוללת פגישת ההיכרות", m["introduction-meeting"]]]);
 	const services = sectionBlocks([
-		["מה כולל קורס הכנה ללידה", m["birthing-course"]],
+		["קורס הכנה ללידה", m["birthing-course"]],
 		["מה כולל הליווי", m["birth-support"]],
 	]);
 	const faq = parseFaq(m.qampa);
@@ -302,6 +312,8 @@ function mapPractitioner(item, cfg) {
 		hospitals: hospitals.length ? hospitals : undefined,
 		regions: regions.length ? regions : undefined,
 		fields: fields.length ? fields : undefined,
+		birthTools: birthTools.length ? birthTools : undefined,
+		additionalServices: additionalServices.length ? additionalServices : undefined,
 		languages: languages.length ? [...new Set(languages)] : undefined,
 		credentials: credentials.length ? credentials : undefined,
 		bio: toBlocks(m["i-believe"]),
@@ -509,6 +521,23 @@ if (WITH_IMAGES) {
 		}
 	}
 	console.warn(`Processed ${imageJobs.length} images.`);
+} else {
+	const mediaDocs = docs.filter((doc) => MEDIA_FIELDS[doc._type]);
+	for (let i = 0; i < mediaDocs.length; i += 50) {
+		const batch = mediaDocs.slice(i, i + 50);
+		const existingDocs = await client.fetch('*[_id in $ids]{_id, photo, videoCover, gallery, cover, logo, image}', {
+			ids: batch.map((doc) => doc._id),
+		});
+		const existingById = new Map(existingDocs.map((doc) => [doc._id, doc]));
+		for (const doc of batch) {
+			const existing = existingById.get(doc._id);
+			if (!existing) continue;
+			for (const field of MEDIA_FIELDS[doc._type] ?? []) {
+				if (doc[field] === undefined && existing[field] !== undefined) doc[field] = existing[field];
+			}
+		}
+	}
+	console.warn("Preserved existing media fields (--no-images).");
 }
 
 // 3) content docs in batches

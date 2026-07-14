@@ -1,5 +1,7 @@
 import { sanityFetch } from "./sanity";
 
+const notDraft = '!(_id in path("drafts.**"))';
+
 export interface DoulaCard {
 	slug: string;
 	name: string;
@@ -35,7 +37,7 @@ export interface ProfessionalCard {
 // Doula search index — flat shape consumed by the client-side search island.
 export function getDoulas(): Promise<DoulaCard[]> {
 	return sanityFetch<DoulaCard[]>(
-		`*[_type == "practitioner" && isDoula == true && published == true]{
+		`*[_type == "practitioner" && ${notDraft} && isDoula == true && published == true]{
 			"slug": slug.current, name, title, tier, videoUrl, budget, supportStyle,
 			"photo": photo.asset->url,
 			"hospitals": hospitals[]->name,
@@ -50,7 +52,7 @@ export function getDoulas(): Promise<DoulaCard[]> {
 // Professional search index — location-first.
 export function getProfessionals(): Promise<ProfessionalCard[]> {
 	return sanityFetch<ProfessionalCard[]>(
-		`*[_type == "practitioner" && isProfessional == true && published == true]{
+		`*[_type == "practitioner" && ${notDraft} && isProfessional == true && published == true]{
 			"slug": slug.current, name, title, tier,
 			"photo": photo.asset->url,
 			"fields": fields[]->name,
@@ -84,6 +86,8 @@ export interface PractitionerDetail {
 	fields?: string[];
 	regions?: string[];
 	supportStyle?: string[];
+	birthTools?: string[];
+	additionalServices?: string[];
 	tagline?: string;
 	bio?: unknown[];
 	meetingInfo?: unknown[];
@@ -98,7 +102,7 @@ export interface PractitionerDetail {
 
 export function getPractitioner(slug: string): Promise<PractitionerDetail | null> {
 	return sanityFetch<PractitionerDetail | null>(
-		`*[_type == "practitioner" && slug.current == $slug][0]{
+		`*[_type == "practitioner" && ${notDraft} && slug.current == $slug][0]{
 			..., "photoUrl": photo.asset->url, "videoCoverUrl": videoCover.asset->url,
 			"gallery": gallery[]{"url": asset->url},
 			"hospitals": hospitals[]->name, "fields": fields[]->name, "regions": regions[]->name
@@ -110,7 +114,7 @@ export function getPractitioner(slug: string): Promise<PractitionerDetail | null
 
 export function getPremiumDoulaSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(
-		`*[_type == "practitioner" && isDoula == true && tier == "premium" && published == true].slug.current`,
+		`*[_type == "practitioner" && ${notDraft} && isDoula == true && tier == "premium" && published == true].slug.current`,
 		{},
 		[],
 	);
@@ -127,7 +131,7 @@ export interface SiteSettings {
 }
 
 export function getSiteSettings(): Promise<SiteSettings | null> {
-	return sanityFetch<SiteSettings | null>(`*[_type == "siteSettings"][0]`, {}, null);
+	return sanityFetch<SiteSettings | null>(`*[_type == "siteSettings" && ${notDraft}][0]`, {}, null);
 }
 
 // ---------- Articles ----------
@@ -149,7 +153,7 @@ export interface ArticleDetail extends ArticleCard {
 
 export function getArticles(): Promise<ArticleCard[]> {
 	return sanityFetch<ArticleCard[]>(
-		`*[_type == "article"] | order(publishedAt desc){
+		`*[_type == "article" && ${notDraft}] | order(publishedAt desc){
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url
 		}`,
 		{},
@@ -159,7 +163,7 @@ export function getArticles(): Promise<ArticleCard[]> {
 
 export function getArticle(slug: string): Promise<ArticleDetail | null> {
 	return sanityFetch<ArticleDetail | null>(
-		`*[_type == "article" && slug.current == $slug][0]{
+		`*[_type == "article" && ${notDraft} && slug.current == $slug][0]{
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
 			videoUrl, body, sourceHtml, publishedAt
 		}`,
@@ -169,7 +173,7 @@ export function getArticle(slug: string): Promise<ArticleDetail | null> {
 }
 
 export function getArticleSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`*[_type == "article" && defined(slug.current)].slug.current`, {}, []);
+	return sanityFetch<string[]>(`*[_type == "article" && ${notDraft} && defined(slug.current)].slug.current`, {}, []);
 }
 
 // ---------- Benefits ----------
@@ -191,7 +195,7 @@ export interface BenefitDetail extends BenefitCard {
 
 export function getBenefits(): Promise<BenefitCard[]> {
 	return sanityFetch<BenefitCard[]>(
-		`*[_type == "benefit"] | order(partner asc){
+		`*[_type == "benefit" && ${notDraft}] | order(partner asc){
 			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl
 		}`,
 		{},
@@ -201,7 +205,7 @@ export function getBenefits(): Promise<BenefitCard[]> {
 
 export function getBenefit(slug: string): Promise<BenefitDetail | null> {
 	return sanityFetch<BenefitDetail | null>(
-		`*[_type == "benefit" && slug.current == $slug][0]{
+		`*[_type == "benefit" && ${notDraft} && slug.current == $slug][0]{
 			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl, body, sourceHtml
 		}`,
 		{ slug },
@@ -210,7 +214,11 @@ export function getBenefit(slug: string): Promise<BenefitDetail | null> {
 }
 
 export function getBenefitSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`array::unique(*[_type == "benefit" && defined(slug.current)].slug.current)`, {}, []);
+	return sanityFetch<string[]>(
+		`array::unique(*[_type == "benefit" && ${notDraft} && defined(slug.current)].slug.current)`,
+		{},
+		[],
+	);
 }
 
 // ---------- Community (WhatsApp groups) ----------
@@ -224,7 +232,7 @@ export interface WhatsappGroup {
 
 export function getWhatsappGroups(): Promise<WhatsappGroup[]> {
 	return sanityFetch<WhatsappGroup[]>(
-		`*[_type == "whatsappGroup"]{ name, cohort, inviteUrl, moderator, guidelines }`,
+		`*[_type == "whatsappGroup" && ${notDraft}]{ name, cohort, inviteUrl, moderator, guidelines }`,
 		{},
 		[],
 	);
@@ -246,7 +254,7 @@ export interface CommunityPage {
 
 export function getCommunityPages(): Promise<CommunityPage[]> {
 	return sanityFetch<CommunityPage[]>(
-		`*[_type == "communityPage"] | order(publishedAt desc){
+		`*[_type == "communityPage" && ${notDraft}] | order(publishedAt desc){
 			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl
 		}`,
 		{},
@@ -256,7 +264,7 @@ export function getCommunityPages(): Promise<CommunityPage[]> {
 
 export function getCommunityPage(slug: string): Promise<CommunityPage | null> {
 	return sanityFetch<CommunityPage | null>(
-		`*[_type == "communityPage" && slug.current == $slug][0]{
+		`*[_type == "communityPage" && ${notDraft} && slug.current == $slug][0]{
 			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl, body, sourceHtml
 		}`,
 		{ slug },
@@ -265,13 +273,17 @@ export function getCommunityPage(slug: string): Promise<CommunityPage | null> {
 }
 
 export function getCommunityPageSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`*[_type == "communityPage" && defined(slug.current)].slug.current`, {}, []);
+	return sanityFetch<string[]>(
+		`*[_type == "communityPage" && ${notDraft} && defined(slug.current)].slug.current`,
+		{},
+		[],
+	);
 }
 
 // ---------- Professionals (profile detail reuses getPractitioner) ----------
 export function getProfessionalSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(
-		`*[_type == "practitioner" && isProfessional == true && tier == "premium" && published == true].slug.current`,
+		`*[_type == "practitioner" && ${notDraft} && isProfessional == true && tier == "premium" && published == true].slug.current`,
 		{},
 		[],
 	);
@@ -295,7 +307,7 @@ export interface SalePage {
 
 export function getSalePages(): Promise<SalePage[]> {
 	return sanityFetch<SalePage[]>(
-		`*[_type == "salePage"]{ "slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl }`,
+		`*[_type == "salePage" && ${notDraft}]{ "slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl }`,
 		{},
 		[],
 	);
@@ -303,7 +315,7 @@ export function getSalePages(): Promise<SalePage[]> {
 
 export function getSalePage(slug: string): Promise<SalePage | null> {
 	return sanityFetch<SalePage | null>(
-		`*[_type == "salePage" && slug.current == $slug][0]{
+		`*[_type == "salePage" && ${notDraft} && slug.current == $slug][0]{
 			"slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl
 		}`,
 		{ slug },
@@ -312,5 +324,5 @@ export function getSalePage(slug: string): Promise<SalePage | null> {
 }
 
 export function getSalePageSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`*[_type == "salePage" && defined(slug.current)].slug.current`, {}, []);
+	return sanityFetch<string[]>(`*[_type == "salePage" && ${notDraft} && defined(slug.current)].slug.current`, {}, []);
 }
