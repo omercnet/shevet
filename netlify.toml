@@ -16,22 +16,22 @@
 
 # Legacy WordPress URL redirects
 [[redirects]]
-  from = "/pregnancy-blog/מזל-טוב-הפכתם-להורים-ומה-עם-הזוגיות/"
+  from = "/pregnancy-blog/%D7%9E%D7%96%D7%9C-%D7%98%D7%95%D7%91-%D7%94%D7%A4%D7%9B%D7%AA%D7%9D-%D7%9C%D7%94%D7%95%D7%A8%D7%99%D7%9D-%D7%95%D7%9E%D7%94-%D7%A2%D7%9D-%D7%94%D7%96%D7%95%D7%92%D7%99%D7%95%D7%AA/"
   to = "/articles/d7-9e-d7-96-d7-9c--d7-98-d7-95-d7-91--d7-94-d7-a4-d7-9b-d7-aa-d7-9d--d7-9c-d7-94-d7-95-d7-/"
   status = 301
 
 [[redirects]]
-  from = "/pregnancy-blog/רשימת-הציוד-המלאה-לחופשה-עם-תינוק-של/"
+  from = "/pregnancy-blog/%D7%A8%D7%A9%D7%99%D7%9E%D7%AA-%D7%94%D7%A6%D7%99%D7%95%D7%93-%D7%94%D7%9E%D7%9C%D7%90%D7%94-%D7%9C%D7%97%D7%95%D7%A4%D7%A9%D7%94-%D7%A2%D7%9D-%D7%AA%D7%99%D7%A0%D7%95%D7%A7-%D7%A9%D7%9C/"
   to = "/articles/d7-a8-d7-a9-d7-99-d7-9e-d7-aa--d7-94-d7-a6-d7-99-d7-95-d7-93--d7-94-d7-9e-d7-9c-d7-90-d7-9/"
   status = 301
 
 [[redirects]]
-  from = "/pregnancy-blog/ליווי-דולה-בלידה-ראשונה-מול-לידה-שנייה/"
+  from = "/pregnancy-blog/%D7%9C%D7%99%D7%95%D7%95%D7%99-%D7%93%D7%95%D7%9C%D7%94-%D7%91%D7%9C%D7%99%D7%93%D7%94-%D7%A8%D7%90%D7%A9%D7%95%D7%A0%D7%94-%D7%9E%D7%95%D7%9C-%D7%9C%D7%99%D7%93%D7%94-%D7%A9%D7%A0%D7%99%D7%99%D7%94/"
   to = "/articles/d7-9c-d7-99-d7-95-d7-95-d7-99--d7-93-d7-95-d7-9c-d7-94--d7-91-d7-9c-d7-99-d7-93-d7-94--d7-/"
   status = 301
 
 [[redirects]]
-  from = "/pregnancy-blog/12-1-26-מפגש-קהילה-חוכמת-השבט/"
+  from = "/pregnancy-blog/12-1-26-%D7%9E%D7%A4%D7%92%D7%A9-%D7%A7%D7%94%D7%99%D7%9C%D7%94-%D7%97%D7%95%D7%9B%D7%9E%D7%AA-%D7%94%D7%A9%D7%91%D7%98/"
   to = "/articles/12-1-26--d7-9e-d7-a4-d7-92-d7-a9--d7-a7-d7-94-d7-99-d7-9c-d7-94--d7-97-d7-95-d7-9b-d7-9e-d/"
   status = 301
 
@@ -41,47 +41,47 @@
   status = 301
 
 [[redirects]]
-  from = "/benefits/מוצרי-הריון-ולידה-של-מילגה/"
+  from = "/benefits/%D7%9E%D7%95%D7%A6%D7%A8%D7%99-%D7%94%D7%A8%D7%99%D7%95%D7%9F-%D7%95%D7%9C%D7%99%D7%93%D7%94-%D7%A9%D7%9C-%D7%9E%D7%99%D7%9C%D7%92%D7%94/"
   to = "/benefits/d7-9e-d7-95-d7-a6-d7-a8-d7-99--d7-94-d7-a8-d7-99-d7-95-d7-9f--d7-95-d7-9c-d7-99-d7-93-d7-9/"
   status = 301
 
 [[redirects]]
-  from = "/benefits/טנס-ללידה-של-חברת-צירים/"
+  from = "/benefits/%D7%98%D7%A0%D7%A1-%D7%9C%D7%9C%D7%99%D7%93%D7%94-%D7%A9%D7%9C-%D7%97%D7%91%D7%A8%D7%AA-%D7%A6%D7%99%D7%A8%D7%99%D7%9D/"
   to = "/benefits/d7-98-d7-a0-d7-a1--d7-9c-d7-9c-d7-99-d7-93-d7-94--d7-a9-d7-9c--d7-97-d7-91-d7-a8-d7-aa--d7/"
   status = 301
 
 [[redirects]]
-  from = "/benefits/מתפתחים-ביחד-שלומית-שוסטר/"
+  from = "/benefits/%D7%9E%D7%AA%D7%A4%D7%AA%D7%97%D7%99%D7%9D-%D7%91%D7%99%D7%97%D7%93-%D7%A9%D7%9C%D7%95%D7%9E%D7%99%D7%AA-%D7%A9%D7%95%D7%A1%D7%98%D7%A8/"
   to = "/benefits/d7-9e-d7-aa-d7-a4-d7-aa-d7-97-d7-99-d7-9d--d7-91-d7-99-d7-97-d7-93--d7-a9-d7-9c-d7-95-d7-9/"
   status = 301
 
 [[redirects]]
-  from = "/benefits/טיפול-רגשי-באמצעות-פרחי-באך-שרון-אזולא/"
+  from = "/benefits/%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%A8%D7%92%D7%A9%D7%99-%D7%91%D7%90%D7%9E%D7%A6%D7%A2%D7%95%D7%AA-%D7%A4%D7%A8%D7%97%D7%99-%D7%91%D7%90%D7%9A-%D7%A9%D7%A8%D7%95%D7%9F-%D7%90%D7%96%D7%95%D7%9C%D7%90/"
   to = "/benefits/d7-98-d7-99-d7-a4-d7-95-d7-9c--d7-a8-d7-92-d7-a9-d7-99--d7-91-d7-90-d7-9e-d7-a6-d7-a2-d7-9/"
   status = 301
 
 [[redirects]]
-  from = "/benefits/שני-ברנס/"
+  from = "/benefits/%D7%A9%D7%A0%D7%99-%D7%91%D7%A8%D7%A0%D7%A1/"
   to = "/benefits/"
   status = 301
 
 [[redirects]]
-  from = "/community/מפגש-קהילה-מאי-למה-שיבחרו-דווקא-בי/"
+  from = "/community/%D7%9E%D7%A4%D7%92%D7%A9-%D7%A7%D7%94%D7%99%D7%9C%D7%94-%D7%9E%D7%90%D7%99-%D7%9C%D7%9E%D7%94-%D7%A9%D7%99%D7%91%D7%97%D7%A8%D7%95-%D7%93%D7%95%D7%95%D7%A7%D7%90-%D7%91%D7%99/"
   to = "/community/d7-9e-d7-a4-d7-92-d7-a9--d7-a7-d7-94-d7-99-d7-9c-d7-94--d7-9e-d7-90-d7-99--d7-9c-d7-9e-d7-/"
   status = 301
 
 [[redirects]]
-  from = "/community/מפגש-קהילה-נובמבר-סדנת-צילום-ועריכה/"
+  from = "/community/%D7%9E%D7%A4%D7%92%D7%A9-%D7%A7%D7%94%D7%99%D7%9C%D7%94-%D7%A0%D7%95%D7%91%D7%9E%D7%91%D7%A8-%D7%A1%D7%93%D7%A0%D7%AA-%D7%A6%D7%99%D7%9C%D7%95%D7%9D-%D7%95%D7%A2%D7%A8%D7%99%D7%9B%D7%94/"
   to = "/community/d7-9e-d7-a4-d7-92-d7-a9--d7-a7-d7-94-d7-99-d7-9c-d7-94--d7-a0-d7-95-d7-91-d7-9e-d7-91-d7-a/"
   status = 301
 
 [[redirects]]
-  from = "/community/מפגש-קהילה-נובמבר-כנס-מומחיות-חגיגי-בת/"
+  from = "/community/%D7%9E%D7%A4%D7%92%D7%A9-%D7%A7%D7%94%D7%99%D7%9C%D7%94-%D7%A0%D7%95%D7%91%D7%9E%D7%91%D7%A8-%D7%9B%D7%A0%D7%A1-%D7%9E%D7%95%D7%9E%D7%97%D7%99%D7%95%D7%AA-%D7%97%D7%92%D7%99%D7%92%D7%99-%D7%91%D7%AA/"
   to = "/community/"
   status = 301
 
 [[redirects]]
-  from = "/community/מפגש-קהילה-ספטמבר-סדנת-לוח-חזון-לעסק-של/"
+  from = "/community/%D7%9E%D7%A4%D7%92%D7%A9-%D7%A7%D7%94%D7%99%D7%9C%D7%94-%D7%A1%D7%A4%D7%98%D7%9E%D7%91%D7%A8-%D7%A1%D7%93%D7%A0%D7%AA-%D7%9C%D7%95%D7%97-%D7%97%D7%96%D7%95%D7%9F-%D7%9C%D7%A2%D7%A1%D7%A7-%D7%A9%D7%9C/"
   to = "/community/"
   status = 301
 
