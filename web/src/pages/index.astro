@@ -1,6 +1,21 @@
 ---
 import ZigZag from "../components/ZigZag.astro";
 import Base from "../layouts/Base.astro";
+import { getArticles, getBenefits, getDoulas, getProfessionals } from "../lib/queries";
+
+const [doulas, professionals, articles, benefits] = await Promise.all([
+	getDoulas(),
+	getProfessionals(),
+	getArticles(),
+	getBenefits(),
+]);
+
+const featuredPeople = [
+	...doulas.filter((d) => d.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/doulas" })),
+	...professionals.filter((p) => p.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/professionals" })),
+];
+const featuredArticles = articles.slice(0, 3);
+const featuredBenefits = benefits.slice(0, 3);
 
 const pillars = [
 	{ href: "/doulas/", title: "מאגר דולות", body: "חיפוש מדויק לפי בית חולים, סגנון ליווי ותקציב.", tint: "peach" },
@@ -27,6 +42,7 @@ const pillars = [
 		<div class="section-head">
 			<p class="eyebrow">כל מה שצריך במקום אחד</p>
 			<h2>הכול בשבט</h2>
+			<p>ברוכה הבאה לבית של הדולות, היועצות, הידע וההטבות של שבט אמהות.</p>
 		</div>
 		<div class="grid pillars">
 			{
@@ -39,6 +55,55 @@ const pillars = [
 				))
 			}
 		</div>
+	</section>
+
+	<section class="section wrap highlight-section">
+		<div class="section-head">
+			<p class="eyebrow">הבית של הדולות הטובות בישראל</p>
+			<h2>נבחרת דולות ונשות מקצוע</h2>
+			<p>הכירי את הדולות והיועצות של השבט, לפי תחום, אזור ובית חולים.</p>
+		</div>
+		<div class="grid mini-grid">
+			{featuredPeople.slice(0, 6).map((p) => (
+				<a class="card mini-card" href={`${p.basePath}/${p.slug}/`}>
+					{p.photo && <img src={`${p.photo}?w=360&h=260&fit=crop`} alt={p.name} loading="lazy" />}
+					<h3>{p.name}</h3>
+					{p.title && <p>{p.title}</p>}
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="section wrap highlight-section">
+		<div class="section-head">
+			<p class="eyebrow">ידע והטבות</p>
+			<h2>תוכן שימושי להריון, לידה ואחרי</h2>
+		</div>
+		<div class="grid mini-grid">
+			{featuredArticles.map((a) => (
+				<a class="card mini-card" href={`/articles/${a.slug}/`}>
+					{a.cover && <img src={`${a.cover}?w=360&h=220&fit=crop`} alt={a.title} loading="lazy" />}
+					<h3>{a.title}</h3>
+					{a.excerpt && <p>{a.excerpt}</p>}
+				</a>
+			))}
+			{featuredBenefits.map((b) => (
+				<a class="card mini-card" href={b.slug ? `/benefits/${b.slug}/` : "/benefits/"}>
+					{b.logo && <img src={`${b.logo}?w=220&h=120&fit=max`} alt={b.partner} loading="lazy" />}
+					<h3>{b.partner}</h3>
+					{b.discount && <p>{b.discount}</p>}
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="section wrap join-section">
+		<div class="section-head">
+			<p class="eyebrow">את אשת מקצוע בתחום ההריון ההורות והלידה?</p>
+			<h2>בואי להצטרף לשבט</h2>
+			<p>אם את דולה או אשת מקצוע ורוצה להופיע במאגר, התחילי כאן.</p>
+		</div>
+		<a class="btn" href="/doulas/join/">להצטרפות לנבחרת</a>
 	</section>
 
 	<style>
@@ -193,5 +258,11 @@ const pillars = [
 			color: var(--brand);
 			font-weight: 700;
 		}
+		.highlight-section { padding-top: 0; }
+		.mini-card { display:block; text-decoration:none; color:var(--text); padding:1rem; }
+		.mini-card img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:18px; margin-bottom:.85rem; }
+		.mini-card h3 { margin:.2rem 0 .45rem; }
+		.mini-card p { margin:0; color:var(--muted); }
+		.join-section { text-align:center; }
 	</style>
 </Base>

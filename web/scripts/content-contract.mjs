@@ -28,6 +28,27 @@ assert(
 	"article detail route must render legacy content",
 );
 assert(read("web/src/pages/doulas/[slug].astro").includes("bioBlocks"), "profile pages must render imported bio");
+for (const path of [
+	"web/src/pages/doulas/index.astro",
+	"web/src/pages/professionals/index.astro",
+	"web/src/pages/articles/index.astro",
+	"web/src/pages/benefits/index.astro",
+]) {
+	const source = read(path);
+	assert(source.includes(".map(("), `${path} must server-render initial cards, not only client JS`);
+	assert(
+		!source.includes('<div class="grid" id="results"></div>'),
+		`${path} must not ship an empty initial results grid`,
+	);
+}
+assert(
+	read("web/src/pages/index.astro").includes("featuredPeople"),
+	"home page must surface imported directory content",
+);
+assert(
+	read("web/src/pages/community/index.astro").includes("getCommunityPages"),
+	"community index must surface imported community pages",
+);
 assert(
 	read("web/src/pages/courses/[slug].astro").includes("LegacyContent"),
 	"course pages must render imported legacy content",

@@ -22,8 +22,19 @@ const CATEGORIES: { value: string; label: string }[] = [
       ))}
     </div>
 
-    <div class="grid" id="results"></div>
-    <p class="empty" id="empty" hidden>אין הטבות עדיין</p>
+    <div class="grid" id="results">
+      {benefits.map((b) => (
+        <article class="card benefit-card">
+          {b.logo && <img class="logo" src={`${b.logo}?w=160&h=80&fit=max`} alt={b.partner} loading="lazy" />}
+          <h3>{b.partner}</h3>
+          {b.discount && <p class="discount">{b.discount}</p>}
+          {b.description && <p class="desc">{b.description}</p>}
+          {b.couponCode && <p class="code">קוד קופון: <span>{b.couponCode}</span></p>}
+          {b.redeemUrl && <a class="btn" href={b.redeemUrl} target="_blank" rel="noopener">למימוש</a>}
+        </article>
+      ))}
+    </div>
+    <p class="empty" id="empty" hidden={benefits.length > 0}>אין הטבות עדיין</p>
   </section>
 
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(benefits)}></script>

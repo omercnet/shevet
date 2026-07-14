@@ -1,10 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro'
-import {getSiteSettings, getWhatsappGroups} from '../../lib/queries'
-import type {WhatsappGroup} from '../../lib/queries'
+import {getCommunityPages, getSiteSettings, getWhatsappGroups} from '../../lib/queries'
+import type {CommunityPage, WhatsappGroup} from '../../lib/queries'
 import {whatsappHref} from '../../lib/contact'
 
 const groups = await getWhatsappGroups()
+const pages = await getCommunityPages()
 const settings = await getSiteSettings()
 const teamPhone = settings?.phone ?? '0542473799'
 const teamWhatsapp = whatsappHref(teamPhone, teamPhone)
@@ -48,6 +49,22 @@ const hasGroups = groups.length > 0
       )}
   </section>
 
+  {pages.length > 0 && (
+    <section class="wrap community-pages">
+      <h2>מפגשי קהילה וסדנאות</h2>
+      <div class="grid">
+        {pages.map((page: CommunityPage) => (
+          <article class="card community-card">
+            {page.image && <img src={`${page.image}?w=420&h=260&fit=crop`} alt={page.title} loading="lazy" />}
+            <h3><a href={`/community/${page.slug}/`}>{page.title}</a></h3>
+            {page.excerpt && <p>{page.excerpt}</p>}
+            <a class="more" href={`/community/${page.slug}/`}>לפרטים נוספים ←</a>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
   <section class="community-signup wrap">
     <h2>הצטרפות לקהילה</h2>
     <p>לא מצאתן קבוצה מתאימה? השאירו פרטים ונחבר אתכן. <span class="note">נשים בלבד</span></p>
@@ -88,6 +105,8 @@ const hasGroups = groups.length > 0
     .section h2 { margin-bottom:1rem; }
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
     .community-signup { margin-top:3rem; padding-top:2rem; border-top:1px solid var(--line); }
+    .community-pages { margin-top:3rem; }
+    .community-card img { width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:18px; margin-bottom:.8rem; }
     .netlify-form { display:flex; flex-direction:column; gap:.9rem; max-width:460px; margin-top:1.2rem; }
     .form-row { display:flex; flex-direction:column; gap:.3rem; }
     .form-row label { font-weight:600; font-size:.9rem; }

@@ -32,8 +32,17 @@ const CATEGORIES = [
           <button type="button" id="reset">ניקוי</button>
         </form>
 
-        <p id="count"></p>
-        <div class="grid" id="results"></div>
+        <p id="count">{articles.length} מאמרים</p>
+        <div class="grid" id="results">
+          {articles.map((a) => (
+            <article class="card article-card">
+              {a.cover && <img src={`${a.cover}?w=320&h=200&fit=crop`} alt={a.title} loading="lazy" />}
+              <div class="tags">{CATEGORIES.find((c) => c.value === a.category)?.label && <span class="chip">{CATEGORIES.find((c) => c.value === a.category)?.label}</span>}</div>
+              <h3><a href={`/articles/${a.slug}/`}>{a.title}</a></h3>
+              {a.excerpt && <p class="excerpt">{a.excerpt}</p>}
+            </article>
+          ))}
+        </div>
       </>
     )}
   </section>
