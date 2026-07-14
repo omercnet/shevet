@@ -14,6 +14,7 @@ function normalizePhone(raw: string): string | null {
  * Returns null when neither yields a valid number.
  */
 export function whatsappHref(whatsapp: string | undefined, phone: string | undefined): string | null {
+	if (whatsapp?.startsWith("http")) return whatsapp;
 	const normalized = normalizePhone(whatsapp ?? "") ?? normalizePhone(phone ?? "");
 	return normalized ? `https://wa.me/${normalized}` : null;
 }

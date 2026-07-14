@@ -17,7 +17,7 @@ const d = await getPractitioner(slug!)
 const wa = whatsappHref(d?.whatsapp, d?.phone)
 const tel = telHref(d?.phone)
 const mailto = mailtoHref(d?.email)
-const ig = instagramHref(d?.instagram)
+const ig = d?.instagramPostUrl ?? instagramHref(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
 const serviceBlocks = Array.isArray(d?.services) ? d!.services : []
 const videoSrc = videoEmbedSrc(d?.videoUrl)
@@ -29,6 +29,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       <div>
         <h1>{d?.name}</h1>
         <p class="title">{d?.title}</p>
+        {d?.marketingSentence && <p class="marketing-sentence">{d.marketingSentence}</p>}
         <div class="tags">
           {(d?.hospitals || []).map((h: string) => <span class="chip">{h}</span>)}
           {(d?.supportStyle || []).map((s: string) => <span class="chip">{s}</span>)}
@@ -53,6 +54,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
 
     {bioBlocks.length > 0 && <section class="article-body"><h2>נעים להכיר</h2><LegacyContent blocks={bioBlocks} /></section>}
     {serviceBlocks.length > 0 && <section class="article-body"><h2>מה כולל הליווי</h2><LegacyContent blocks={serviceBlocks} /></section>}
+    {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות ותשובות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
     {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
 
     {videoSrc && (
@@ -65,6 +67,8 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
     )}
     {!videoSrc && d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
+    {(d?.gallery?.length ?? 0) > 0 && <section class="gallery"><h2>גלריית תמונות</h2>{d?.gallery?.map((image) => image.url && <img src={`${image.url}?w=520&fit=max`} alt="" loading="lazy" />)}</section>}
+
     <ContactForm practitionerName={d?.name ?? ''} practitionerSlug={slug} practitionerType="doula" practitionerEmail={d?.email ?? ''} formId="doula-contact" />
   </article>
 
@@ -72,6 +76,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
 
   <style>
     .title { color:var(--muted); margin:.2rem 0; }
+    .marketing-sentence { color:var(--brand); font-weight:700; margin:.45rem 0; }
     .contact-links { display:flex; gap:.7rem; flex-wrap:wrap; margin:1.2rem 0; }
     .sticky-cta { display:block; margin:1.5rem 1rem; text-align:center; box-shadow:0 8px 24px -8px rgba(0,0,0,.4); }
     @media(min-width:700px){ .sticky-cta{ position:fixed; inset-inline:auto 2rem; bottom:1rem; z-index:40; margin:0; } }
@@ -112,5 +117,9 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
       height: 100%;
       border: 0;
     }
+    details { border:1px solid rgba(146,0,59,.14); border-radius:1rem; padding:1rem; margin:.8rem 0; background:#fff; }
+    summary { cursor:pointer; font-weight:700; color:var(--brand); }
+    .gallery { margin:2rem 0; }
+    .gallery img { width:min(100%, 520px); border-radius:1rem; box-shadow:var(--shadow-soft); margin:.6rem; }
   </style>
 </Base>

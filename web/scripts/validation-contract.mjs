@@ -36,8 +36,8 @@ for (const marker of ["whatsappHref", "telHref", "mailtoHref", "instagramHref", 
 }
 const { whatsappHref } = await import("../src/lib/contact.ts");
 assert(
-	whatsappHref("972547756296%D7%94%D7%99%D7%99", "0547756296") === "https://wa.me/972547756296",
-	"WhatsApp helper must drop encoded message digits from path",
+	whatsappHref("https://wa.me/972547756296?text=hello", "0547756296") === "https://wa.me/972547756296?text=hello",
+	"WhatsApp helper must preserve WordPress click-to-chat links with opening text",
 );
 assert(
 	whatsappHref(undefined, "054-775-6296") === "https://wa.me/972547756296",
