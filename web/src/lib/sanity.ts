@@ -23,10 +23,23 @@ export const client: SanityClient | null = isConfigured
 		})
 	: null;
 
+const productionFetches = new Map<string, Promise<unknown>>();
+
 // Fetch helper that returns a fallback when Sanity is not configured.
 export async function sanityFetch<T>(query: string, params: Record<string, unknown>, fallback: T): Promise<T> {
 	if (!client) return fallback;
-	return client.fetch<T>(query, params);
+	if (!import.meta.env.PROD) return client.fetch<T>(query, params);
+
+	const key = JSON.stringify([query, params]);
+	const cached = productionFetches.get(key);
+	if (cached) return cached as Promise<T>;
+
+	const request = client.fetch<T>(query, params).catch((error: unknown) => {
+		productionFetches.delete(key);
+		throw error;
+	});
+	productionFetches.set(key, request);
+	return request;
 }
 
 const builder = client ? createImageUrlBuilder(client) : null;
