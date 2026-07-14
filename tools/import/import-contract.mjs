@@ -22,6 +22,7 @@ const text = (v) => {
 const assert = (condition, message) => {
 	if (!condition) throw new Error(message);
 };
+assert(!importer.includes('replace(/\\/$/, "/")'), "importer must not replace a trailing slash with itself");
 const metaMap = (item) => {
 	const out = {};
 	for (const pm of arr(item["wp:postmeta"])) out[text(pm["wp:meta_key"])] = text(pm["wp:meta_value"]);

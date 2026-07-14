@@ -134,7 +134,7 @@ function sectionBlocks(sections) {
 function firstInstagramPostUrl(...values) {
 	for (const value of values) {
 		const found = String(value ?? "").match(/https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel)\/[^\s"'<>]+/i)?.[0];
-		if (found) return found.replace(/\/$/, "/");
+		if (found) return found;
 	}
 	return undefined;
 }
