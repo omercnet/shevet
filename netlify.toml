@@ -2,6 +2,9 @@
 [build]
   base = "web"
   command = "npm run build"
+  # Skip Git-triggered deploys that cannot affect the public site. Sanity build
+  # hooks still run because they set INCOMING_HOOK_TITLE.
+  ignore = "test -z \"$INCOMING_HOOK_TITLE\" && git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../netlify.toml"
   publish = "dist"
 
 [build.environment]
