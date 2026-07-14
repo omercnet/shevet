@@ -48,6 +48,7 @@ const videoSrc = videoEmbedSrc(d?.videoUrl)
 
     {(d?.testimonials?.length ?? 0) > 0 && (
       <section class="reviews">
+        <h2>ביקורות מאומתות ע"י שבט אמהות</h2>
         {d?.testimonials?.map((t) => (
           <blockquote>“{t.quote}” <cite>— {t.author}</cite></blockquote>
         ))}
