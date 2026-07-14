@@ -16,8 +16,8 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
 ---
 <Base title="חיפוש נשות מקצוע — שבט אמהות" description="יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.">
   <section class="wrap">
-    <h1>חיפוש נשות מקצוע</h1>
-    <p>למשל רפלקסולוגית באזורך — סינון לפי תחום ומיקום.</p>
+    <h1>נבחרת היועצות של שבט אמהות</h1>
+    <p>יועצות הנקה, מטפלות, מדריכות ונשות מקצוע — סינון לפי תחום ומיקום.</p>
 
     <form class="filter-panel" id="pro-filters">
       <label>תחום טיפול
@@ -32,14 +32,32 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
       <button type="button" id="reset">ניקוי</button>
     </form>
 
-    <p id="count"></p>
-    <div class="grid" id="results"></div>
+    <p id="count">{pros.length} נשות מקצוע</p>
+    <div class="grid" id="results">
+      {pros.map((p) => (
+        <article class="card directory-card doula-card">
+          {p.photo && <a class="card-media" href={`/professionals/${p.slug}/`}><img src={`${p.photo}?w=480&h=360&fit=crop`} alt={p.name} loading="lazy" /></a>}
+          <div class="card-body">
+            <h3><a href={`/professionals/${p.slug}/`}>{p.name}</a></h3>
+            {p.title && <p class="card-title">{p.title}</p>}
+            <div class="tags">{[...(p.fields ?? []), ...(p.regions ?? [])].slice(0, 3).map((t) => <span class="chip">{t}</span>)}</div>
+            <div class="card-actions"><a class="more" href={`/professionals/${p.slug}/`}>לפרטים נוספים ←</a></div>
+            <div class="card-actions contact-links">
+              {p.whatsappUrl && <a class="btn btn-wa" href={p.whatsappUrl}>וואטסאפ</a>}
+              {p.phoneUrl && <a class="more" href={p.phoneUrl}>טלפון</a>}
+              {p.emailUrl && <a class="more" href={p.emailUrl}>אימייל</a>}
+              {p.instagramUrl && <a class="more" href={p.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
   </section>
 
   <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
   <script>
     interface Row {
-      slug: string; name: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
+      slug: string; name: string; title?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
       fields?: string[]; regions?: string[]; languages?: string[];
     }
     const dataEl = document.getElementById("data");
@@ -68,10 +86,12 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
         const media = p.photo
           ? `<a class="card-media" href="${href}"><img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
           : "";
+        const title = p.title ? `<p class="card-title">${esc(p.title)}</p>` : "";
         return `<article class="card directory-card doula-card">
           ${media}
           <div class="card-body">
             <h3><a href="${href}">${name}</a></h3>
+            ${title}
             <div class="tags">${tags}</div>
             <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>
             <div class="card-actions contact-links">${wa}${phone}${email}${instagram}</div>
