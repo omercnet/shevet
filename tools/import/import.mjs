@@ -116,6 +116,29 @@ const stripHtml = (html) =>
 		.replace(/\s+/g, " ")
 		.trim();
 
+function sectionBlocks(sections) {
+	const blocks = [];
+	for (const [title, html] of sections) {
+		if (!stripHtml(html)) continue;
+		blocks.push({
+			_type: "block",
+			style: "h3",
+			markDefs: [],
+			children: [{ _type: "span", text: title, marks: [] }],
+		});
+		blocks.push(...(toBlocks(html) ?? []));
+	}
+	return blocks.length ? keyed(blocks) : undefined;
+}
+
+function firstInstagramPostUrl(...values) {
+	for (const value of values) {
+		const found = String(value ?? "").match(/https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel)\/[^\s"'<>]+/i)?.[0];
+		if (found) return found.replace(/\/$/, "/");
+	}
+	return undefined;
+}
+
 const slugify = (s) =>
 	String(s)
 		.toLowerCase()
@@ -171,41 +194,51 @@ function mapPractitioner(item, cfg) {
 	const regions = (t.area ?? []).map((n) => termRef("region", n));
 
 	const testimonials = keyed(
-		[1, 2, 3]
+		["1", "2", "3", "3_copy", "4"]
 			.map((i) => ({ quote: m[`recommandation-${i}`], author: m[`recommandation-name-${i}`] }))
 			.filter((x) => x.quote)
 			.map((x) => ({ author: x.author || "", quote: x.quote })),
 	);
 
-	const bioHtml = [m["i-believe"], m["marketing-description"]].filter(Boolean).join("\n\n");
-	const servicesHtml = [m["during-birth"], m["after-birth"], m["birth-support"]].filter(Boolean).join("\n\n");
+	const services = sectionBlocks([
+		["מה כוללת פגישת ההיכרות", m["introduction-meeting"]],
+		["מה כולל קורס הכנה ללידה", m["birthing-course"]],
+		["במהלך הלידה", m["during-birth"]],
+		["מה כולל הביקור אחרי הלידה", m["after-birth"]],
+	]);
+	const faqText = stripHtml(m.qampa);
 
 	return {
 		_id: `practitioner.${asciiId(slug)}`,
 		_type: "practitioner",
 		name,
 		slug: { _type: "slug", current: slug },
-		title: m.position || undefined,
+		title: stripHtml(m._description) || m.position || undefined,
 		tier: cfg.tier ?? "index",
 		isDoula: !!cfg.isDoula,
 		isProfessional: !!cfg.isProfessional || fields.length > 0,
 		videoUrl: m.video || undefined,
+		marketingSentence: stripHtml(m["marketing-description"]) || undefined,
 		phone: m.phone || undefined,
-		whatsapp: m.whatsapp || undefined,
+		whatsapp: m.whatsapp || m.whatsapp_copy || undefined,
 		email: m.email || undefined,
 		instagram: m.instagram || undefined,
+		instagramPostUrl: firstInstagramPostUrl(m["insta-1"], m["insta-2"]),
 		adress: m.adress || undefined,
 		hospitals: hospitals.length ? hospitals : undefined,
 		regions: regions.length ? regions : undefined,
 		fields: fields.length ? fields : undefined,
 		languages: languages.length ? [...new Set(languages)] : undefined,
 		credentials: credentials.length ? credentials : undefined,
-		bio: toBlocks(bioHtml),
-		services: toBlocks(servicesHtml),
+		bio: toBlocks(m["i-believe"]),
+		services,
+		faq: faqText ? keyed([{ q: "שאלות ותשובות", a: faqText }]) : undefined,
 		testimonials: testimonials.length ? testimonials : undefined,
 		published: text(item["wp:status"]) === "publish",
 		// NOTE: supportStyle + budget had no equivalent in WP — Keren sets these in Studio.
 		_thumbId: m._thumbnail_id || undefined,
+		_videoCoverId: m["video-cover"] || undefined,
+		_galleryIds: m["image-gallery"] || undefined,
 	};
 }
 
@@ -308,7 +341,7 @@ function attachmentUrls(items) {
 // ---------- main ----------
 const files = readdirSync(WXR_DIR).filter((f) => f.endsWith(".xml"));
 const docs = [];
-const thumbJobs = []; // {doc, url}
+const imageJobs = []; // {doc, url, field, append}
 
 for (const file of files) {
 	const xml = parser.parse(readFileSync(join(WXR_DIR, file), "utf8"));
@@ -330,15 +363,24 @@ for (const file of files) {
 		if (!doc) continue;
 
 		const thumbUrl = doc._thumbId && atts.get(doc._thumbId);
+		const videoCoverUrl = doc._videoCoverId && atts.get(doc._videoCoverId);
+		const galleryUrls = String(doc._galleryIds ?? "")
+			.split(",")
+			.map((id) => atts.get(id.trim()))
+			.filter(Boolean);
 		delete doc._thumbId;
-		if (thumbUrl) thumbJobs.push({ doc, url: thumbUrl });
+		delete doc._videoCoverId;
+		delete doc._galleryIds;
+		if (thumbUrl) imageJobs.push({ doc, url: thumbUrl, field: "photo" });
+		if (videoCoverUrl) imageJobs.push({ doc, url: videoCoverUrl, field: "videoCover" });
+		for (const url of galleryUrls) imageJobs.push({ doc, url, field: "gallery", append: true });
 		docs.push(doc);
 	}
 }
 
 const summary = docs.reduce((a, d) => ((a[d._type] = (a[d._type] || 0) + 1), a), {});
 console.warn(`Parsed ${docs.length} docs:`, summary);
-console.warn(`Term docs: ${termDocs.size} | image candidates: ${thumbJobs.length}`);
+console.warn(`Term docs: ${termDocs.size} | image candidates: ${imageJobs.length}`);
 
 if (DRY) {
 	console.warn("\n--dry-run: nothing written. Sample doc:");
@@ -368,22 +410,27 @@ console.warn(`Imported ${termDocs.size} term docs.`);
 
 // 2) optional images (best-effort)
 if (WITH_IMAGES) {
-	for (const { doc, url } of thumbJobs) {
+	const assetRefs = new Map();
+	for (const { doc, url, field, append } of imageJobs) {
 		try {
-			const res = await fetch(url);
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
-			const buf = Buffer.from(await res.arrayBuffer());
-			const asset = await client.assets.upload("image", buf, { filename: basename(url) });
-			const ref = { _type: "image", asset: { _type: "reference", _ref: asset._id } };
-			if (doc._type === "benefit") doc.logo = ref;
-			else if (doc._type === "article") doc.cover = ref;
-			else if (doc._type === "communityPage" || doc._type === "salePage") doc.image = ref;
-			else doc.photo = ref;
+			if (!assetRefs.has(url)) {
+				const res = await fetch(url);
+				if (!res.ok) throw new Error(`HTTP ${res.status}`);
+				const buf = Buffer.from(await res.arrayBuffer());
+				const asset = await client.assets.upload("image", buf, { filename: basename(url) });
+				assetRefs.set(url, { _type: "image", asset: { _type: "reference", _ref: asset._id } });
+			}
+			const ref = assetRefs.get(url);
+			if (append) doc[field] = [...(doc[field] ?? []), { ...ref, _key: asciiId(url) }];
+			else if (field === "photo" && doc._type === "benefit") doc.logo = ref;
+			else if (field === "photo" && doc._type === "article") doc.cover = ref;
+			else if (field === "photo" && (doc._type === "communityPage" || doc._type === "salePage")) doc.image = ref;
+			else doc[field] = ref;
 		} catch (e) {
 			console.warn(`  image skip (${url}): ${e.message}`);
 		}
 	}
-	console.warn(`Processed ${thumbJobs.length} images.`);
+	console.warn(`Processed ${imageJobs.length} images.`);
 }
 
 // 3) content docs in batches
