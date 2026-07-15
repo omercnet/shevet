@@ -153,7 +153,7 @@ export interface ArticleDetail extends ArticleCard {
 
 export function getArticles(): Promise<ArticleCard[]> {
 	return sanityFetch<ArticleCard[]>(
-		`*[_type == "article" && ${notDraft}] | order(publishedAt desc){
+		`*[_type == "article" && ${notDraft} && published != false] | order(publishedAt desc){
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url
 		}`,
 		{},
@@ -163,7 +163,7 @@ export function getArticles(): Promise<ArticleCard[]> {
 
 export function getArticle(slug: string): Promise<ArticleDetail | null> {
 	return sanityFetch<ArticleDetail | null>(
-		`*[_type == "article" && ${notDraft} && slug.current == $slug][0]{
+		`*[_type == "article" && ${notDraft} && published != false && slug.current == $slug][0]{
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
 			videoUrl, body, sourceHtml, publishedAt
 		}`,
@@ -173,7 +173,11 @@ export function getArticle(slug: string): Promise<ArticleDetail | null> {
 }
 
 export function getArticleSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`*[_type == "article" && ${notDraft} && defined(slug.current)].slug.current`, {}, []);
+	return sanityFetch<string[]>(
+		`*[_type == "article" && ${notDraft} && published != false && defined(slug.current)].slug.current`,
+		{},
+		[],
+	);
 }
 
 // ---------- Benefits ----------
@@ -195,7 +199,7 @@ export interface BenefitDetail extends BenefitCard {
 
 export function getBenefits(): Promise<BenefitCard[]> {
 	return sanityFetch<BenefitCard[]>(
-		`*[_type == "benefit" && ${notDraft}] | order(partner asc){
+		`*[_type == "benefit" && ${notDraft} && published != false] | order(partner asc){
 			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl
 		}`,
 		{},
@@ -205,7 +209,7 @@ export function getBenefits(): Promise<BenefitCard[]> {
 
 export function getBenefit(slug: string): Promise<BenefitDetail | null> {
 	return sanityFetch<BenefitDetail | null>(
-		`*[_type == "benefit" && ${notDraft} && slug.current == $slug][0]{
+		`*[_type == "benefit" && ${notDraft} && published != false && slug.current == $slug][0]{
 			"slug": slug.current, partner, "logo": logo.asset->url, category, discount, description, couponCode, redeemUrl, body, sourceHtml
 		}`,
 		{ slug },
@@ -215,7 +219,7 @@ export function getBenefit(slug: string): Promise<BenefitDetail | null> {
 
 export function getBenefitSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(
-		`array::unique(*[_type == "benefit" && ${notDraft} && defined(slug.current)].slug.current)`,
+		`array::unique(*[_type == "benefit" && ${notDraft} && published != false && defined(slug.current)].slug.current)`,
 		{},
 		[],
 	);
@@ -254,7 +258,7 @@ export interface CommunityPage {
 
 export function getCommunityPages(): Promise<CommunityPage[]> {
 	return sanityFetch<CommunityPage[]>(
-		`*[_type == "communityPage" && ${notDraft}] | order(publishedAt desc){
+		`*[_type == "communityPage" && ${notDraft} && published != false] | order(publishedAt desc){
 			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl
 		}`,
 		{},
@@ -264,7 +268,7 @@ export function getCommunityPages(): Promise<CommunityPage[]> {
 
 export function getCommunityPage(slug: string): Promise<CommunityPage | null> {
 	return sanityFetch<CommunityPage | null>(
-		`*[_type == "communityPage" && ${notDraft} && slug.current == $slug][0]{
+		`*[_type == "communityPage" && ${notDraft} && published != false && slug.current == $slug][0]{
 			"slug": slug.current, title, "image": image.asset->url, excerpt, presenter, dateText, location, cost, linkUrl, body, sourceHtml
 		}`,
 		{ slug },
@@ -274,7 +278,7 @@ export function getCommunityPage(slug: string): Promise<CommunityPage | null> {
 
 export function getCommunityPageSlugs(): Promise<string[]> {
 	return sanityFetch<string[]>(
-		`*[_type == "communityPage" && ${notDraft} && defined(slug.current)].slug.current`,
+		`*[_type == "communityPage" && ${notDraft} && published != false && defined(slug.current)].slug.current`,
 		{},
 		[],
 	);
@@ -307,7 +311,7 @@ export interface SalePage {
 
 export function getSalePages(): Promise<SalePage[]> {
 	return sanityFetch<SalePage[]>(
-		`*[_type == "salePage" && ${notDraft}]{ "slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl }`,
+		`*[_type == "salePage" && ${notDraft} && published != false]{ "slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl }`,
 		{},
 		[],
 	);
@@ -315,7 +319,7 @@ export function getSalePages(): Promise<SalePage[]> {
 
 export function getSalePage(slug: string): Promise<SalePage | null> {
 	return sanityFetch<SalePage | null>(
-		`*[_type == "salePage" && ${notDraft} && slug.current == $slug][0]{
+		`*[_type == "salePage" && ${notDraft} && published != false && slug.current == $slug][0]{
 			"slug": slug.current, title, "image": image.asset->url, blurb, sourceHtml, presenter, dateText, location, cost, formEmbedHtml, ctaLabel, meshulamUrl
 		}`,
 		{ slug },
@@ -324,5 +328,9 @@ export function getSalePage(slug: string): Promise<SalePage | null> {
 }
 
 export function getSalePageSlugs(): Promise<string[]> {
-	return sanityFetch<string[]>(`*[_type == "salePage" && ${notDraft} && defined(slug.current)].slug.current`, {}, []);
+	return sanityFetch<string[]>(
+		`*[_type == "salePage" && ${notDraft} && published != false && defined(slug.current)].slug.current`,
+		{},
+		[],
+	);
 }

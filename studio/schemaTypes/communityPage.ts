@@ -17,6 +17,7 @@ export default defineType({
 		defineField({ name: "body", title: "תוכן", type: "array", of: [{ type: "block" }] }),
 		defineField({ name: "sourceHtml", title: "HTML מהאתר הישן", type: "text", rows: 8 }),
 		defineField({ name: "publishedAt", title: "פורסם", type: "datetime" }),
+		defineField({ name: "published", title: "מפורסם", type: "boolean", initialValue: true }),
 	],
 	preview: { select: { title: "title", subtitle: "dateText", media: "image" } },
 });

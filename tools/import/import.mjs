@@ -32,6 +32,7 @@ const POST_TYPE_KIND = {
 	"doulas-premium": { type: "practitioner", tier: "premium", isDoula: true },
 	other_doula: { type: "practitioner", tier: "index", isDoula: true },
 	"therapist-premium": { type: "practitioner", tier: "premium", isProfessional: true },
+	post: { type: "article" },
 	"pregnancy-blog": { type: "article" },
 	benefits: { type: "benefit" },
 	"community": { type: "communityPage" },
@@ -42,7 +43,7 @@ const MEDIA_FIELDS = {
 	article: ["cover"],
 	benefit: ["logo"],
 	communityPage: ["image"],
-	practitioner: ["photo", "videoCover", "gallery"],
+	practitioner: ["photo", "videoCover", "gallery", "bannerImages", "birthSupportImages", "whatsappGallery", "mailImages"],
 	salePage: ["image"],
 };
 
@@ -147,6 +148,16 @@ function firstInstagramPostUrl(...values) {
 	return undefined;
 }
 
+const imageIds = (...values) =>
+	values
+		.flatMap((value) =>
+			String(value ?? "")
+				.split(",")
+				.map((id) => id.trim())
+				.filter(Boolean),
+		)
+		.filter((id, index, ids) => ids.indexOf(id) === index);
+
 function serializedString(source, start, byteLength) {
 	let end = start;
 	let bytes = 0;
@@ -204,6 +215,19 @@ function parseFaq(value) {
 	if (pairs.length) return keyed(pairs);
 	const fallback = stripHtml(value);
 	return fallback ? keyed([{ q: "שאלות ותשובות", a: fallback }]) : undefined;
+}
+
+function parseJetTestimonials(m) {
+	const items = parseSerialized(String(m["jet-review-items"] ?? "")).value;
+	const reviews = Object.values(items ?? {}).map((item) => ({
+		author: stripHtml(item?.author ?? item?.name ?? item?.title ?? m["jet-review-data-name"]),
+		quote: stripHtml(item?.content ?? item?.text ?? item?.desc ?? m["jet-review-data-desc"]),
+		rating: Number(item?.rating ?? item?.rate ?? 0) || undefined,
+	}));
+	if (!reviews.length && (m["jet-review-data-name"] || m["jet-review-data-desc"])) {
+		reviews.push({ author: stripHtml(m["jet-review-data-name"]), quote: stripHtml(m["jet-review-data-desc"]), rating: undefined });
+	}
+	return reviews.filter((review) => review.quote);
 }
 
 function phoneDigits(...values) {
@@ -278,12 +302,13 @@ function mapPractitioner(item, cfg) {
 	const hospitals = (t.hospitals ?? []).map((n) => termRef("hospital", n));
 	const regions = (t.area ?? []).map((n) => termRef("region", n));
 
-	const testimonials = keyed(
-		["1", "2", "3", "3_copy", "4"]
+	const testimonials = keyed([
+		...["1", "2", "3", "3_copy", "4"]
 			.map((i) => ({ quote: m[`recommandation-${i}`], author: m[`recommandation-name-${i}`] }))
 			.filter((x) => x.quote)
 			.map((x) => ({ author: x.author || "", quote: x.quote })),
-	);
+		...parseJetTestimonials(m),
+	]);
 
 	const meetingInfo = sectionBlocks([["מה כוללת פגישת ההיכרות", m["introduction-meeting"]]]);
 	const services = sectionBlocks([
@@ -309,6 +334,15 @@ function mapPractitioner(item, cfg) {
 		instagram: m.instagram || undefined,
 		instagramPostUrl: firstInstagramPostUrl(m["insta-1"], m["insta-2"]),
 		adress: m.adress || undefined,
+		mainDescription: stripHtml(m["main-description"]) || undefined,
+		secondaryDescription: stripHtml(m.secondary) || undefined,
+		solvingIssues: m["solving-issues"]
+			? String(m["solving-issues"])
+					.split(",")
+					.map((item) => item.trim())
+					.filter(Boolean)
+			: undefined,
+		videoSupportUrl: m["video-support"] || undefined,
 		hospitals: hospitals.length ? hospitals : undefined,
 		regions: regions.length ? regions : undefined,
 		fields: fields.length ? fields : undefined,
@@ -326,8 +360,12 @@ function mapPractitioner(item, cfg) {
 		published: text(item["wp:status"]) === "publish",
 		// NOTE: supportStyle + budget had no equivalent in WP — Keren sets these in Studio.
 		_thumbId: m._thumbnail_id || undefined,
-		_videoCoverId: m["video-cover"] || undefined,
+		_videoCoverId: m["video-cover"] || m["--"] || undefined,
 		_galleryIds: m["image-gallery"] || undefined,
+		_bannerIds: imageIds(m.banner),
+		_birthSupportImageIds: imageIds(m["birth-support_photo"]),
+		_whatsappGalleryIds: imageIds(m["whatsapp-gallary"], m["whatsapp-gallery"]),
+		_mailImageIds: imageIds(m["mail-image"], m["mail-image_copy"]),
 	};
 }
 
@@ -335,6 +373,7 @@ function mapArticle(item) {
 	const name = text(item.title);
 	const slug = slugify(text(item["wp:post_name"]) || name);
 	const m = metaMap(item);
+	const t = terms(item);
 	const html = legacyHtml(item, m);
 	return {
 		_id: `article.${asciiId(slug)}`,
@@ -342,10 +381,13 @@ function mapArticle(item) {
 		title: name,
 		slug: { _type: "slug", current: slug },
 		type: "article",
+		ages: t.ages?.length ? t.ages : undefined,
+		articleTypes: t["article-type"]?.length ? t["article-type"] : undefined,
 		excerpt: text(item["excerpt:encoded"]) || undefined,
 		body: toBlocks(html),
 		sourceHtml: html || undefined,
 		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,
+		published: text(item["wp:status"]) === "publish",
 		_thumbId: m._thumbnail_id || undefined,
 	};
 }
@@ -354,6 +396,7 @@ function mapBenefit(item) {
 	const name = text(item.title);
 	const slug = slugify(text(item["wp:post_name"]) || name);
 	const m = metaMap(item);
+	const t = terms(item);
 	const html = m["product-detail"] || legacyHtml(item, m);
 	return {
 		_id: `benefit.${asciiId(slug)}`,
@@ -366,6 +409,8 @@ function mapBenefit(item) {
 		discount: m["the-benefit"] || m.discount || undefined,
 		couponCode: m["benefit-code"] || m.coupon || undefined,
 		redeemUrl: m.url || m.link || undefined,
+		audiences: t["for-who"]?.length ? t["for-who"] : undefined,
+		published: text(item["wp:status"]) === "publish",
 		_thumbId: m._thumbnail_id || undefined,
 	};
 }
@@ -389,6 +434,7 @@ function mapCommunityPage(item) {
 		cost: m.cost || m.price || undefined,
 		linkUrl: m.link || undefined,
 		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,
+		published: text(item["wp:status"]) === "publish",
 		_thumbId: m._thumbnail_id || undefined,
 	};
 }
@@ -412,6 +458,7 @@ function mapSalePage(item) {
 		formEmbedHtml: m.link || undefined,
 		ctaLabel: m.link ? "להרשמה" : "לרכישה",
 		meshulamUrl: m.meshulamUrl || m.url || undefined,
+		published: text(item["wp:status"]) === "publish",
 		_thumbId: m._thumbnail_id || undefined,
 	};
 }
@@ -454,16 +501,25 @@ for (const { items } of parsedFiles) {
 
 		const thumbUrl = doc._thumbId && atts.get(doc._thumbId);
 		const videoCoverUrl = doc._videoCoverId && atts.get(doc._videoCoverId);
-		const galleryUrls = String(doc._galleryIds ?? "")
-			.split(",")
-			.map((id) => atts.get(id.trim()))
-			.filter(Boolean);
+		const galleryUrls = imageIds(doc._galleryIds).map((id) => atts.get(id)).filter(Boolean);
+		const bannerUrls = imageIds(doc._bannerIds).map((id) => atts.get(id)).filter(Boolean);
+		const birthSupportImageUrls = imageIds(doc._birthSupportImageIds).map((id) => atts.get(id)).filter(Boolean);
+		const whatsappGalleryUrls = imageIds(doc._whatsappGalleryIds).map((id) => atts.get(id)).filter(Boolean);
+		const mailImageUrls = imageIds(doc._mailImageIds).map((id) => atts.get(id)).filter(Boolean);
 		delete doc._thumbId;
 		delete doc._videoCoverId;
 		delete doc._galleryIds;
+		delete doc._bannerIds;
+		delete doc._birthSupportImageIds;
+		delete doc._whatsappGalleryIds;
+		delete doc._mailImageIds;
 		if (thumbUrl) imageJobs.push({ doc, url: thumbUrl, field: "photo" });
 		if (videoCoverUrl) imageJobs.push({ doc, url: videoCoverUrl, field: "videoCover" });
 		for (const url of galleryUrls) imageJobs.push({ doc, url, field: "gallery", append: true });
+		for (const url of bannerUrls) imageJobs.push({ doc, url, field: "bannerImages", append: true });
+		for (const url of birthSupportImageUrls) imageJobs.push({ doc, url, field: "birthSupportImages", append: true });
+		for (const url of whatsappGalleryUrls) imageJobs.push({ doc, url, field: "whatsappGallery", append: true });
+		for (const url of mailImageUrls) imageJobs.push({ doc, url, field: "mailImages", append: true });
 		docs.push(doc);
 	}
 }
@@ -492,6 +548,25 @@ const client = createClient({
 	useCdn: false,
 });
 
+async function preserveExistingMediaFields() {
+	const mediaDocs = docs.filter((doc) => MEDIA_FIELDS[doc._type]);
+	for (let i = 0; i < mediaDocs.length; i += 50) {
+		const batch = mediaDocs.slice(i, i + 50);
+		const existingDocs = await client.fetch(
+			'*[_id in $ids]{_id, photo, videoCover, gallery, bannerImages, birthSupportImages, whatsappGallery, mailImages, cover, logo, image}',
+			{ ids: batch.map((doc) => doc._id) },
+		);
+		const existingById = new Map(existingDocs.map((doc) => [doc._id, doc]));
+		for (const doc of batch) {
+			const existing = existingById.get(doc._id);
+			if (!existing) continue;
+			for (const field of MEDIA_FIELDS[doc._type] ?? []) {
+				if (doc[field] === undefined && existing[field] != null) doc[field] = existing[field];
+			}
+		}
+	}
+}
+
 // 1) term docs first (referenced by practitioners)
 let tx = client.transaction();
 for (const t of termDocs.values()) tx = tx.createOrReplace(t);
@@ -499,9 +574,12 @@ await tx.commit();
 console.warn(`Imported ${termDocs.size} term docs.`);
 
 // 2) optional images (best-effort)
+await preserveExistingMediaFields();
 if (WITH_IMAGES) {
 	const assetRefs = new Map();
 	for (const { doc, url, field, append } of imageJobs) {
+		if (append && (doc[field]?.length ?? 0) > 0) continue;
+		if (!append && doc[field] !== undefined) continue;
 		try {
 			if (!assetRefs.has(url)) {
 				const res = await fetch(url);
@@ -522,21 +600,6 @@ if (WITH_IMAGES) {
 	}
 	console.warn(`Processed ${imageJobs.length} images.`);
 } else {
-	const mediaDocs = docs.filter((doc) => MEDIA_FIELDS[doc._type]);
-	for (let i = 0; i < mediaDocs.length; i += 50) {
-		const batch = mediaDocs.slice(i, i + 50);
-		const existingDocs = await client.fetch('*[_id in $ids]{_id, photo, videoCover, gallery, cover, logo, image}', {
-			ids: batch.map((doc) => doc._id),
-		});
-		const existingById = new Map(existingDocs.map((doc) => [doc._id, doc]));
-		for (const doc of batch) {
-			const existing = existingById.get(doc._id);
-			if (!existing) continue;
-			for (const field of MEDIA_FIELDS[doc._type] ?? []) {
-				if (doc[field] === undefined && existing[field] !== undefined) doc[field] = existing[field];
-			}
-		}
-	}
 	console.warn("Preserved existing media fields (--no-images).");
 }
 
