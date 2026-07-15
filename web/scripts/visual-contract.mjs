@@ -101,6 +101,17 @@ const requiredPageMarkers = new Map([
 	["web/src/pages/courses/[slug].astro", ["sale-hero"]],
 ]);
 
+const doulaDetail = page("web/src/pages/doulas/[slug].astro");
+assert(doulaDetail.includes("data-video-cover"), "doula video cover must be an in-frame overlay control");
+assert(
+	doulaDetail.includes("data-video-src"),
+	"doula video iframe must receive its playable src from the overlay control",
+);
+assert(
+	!doulaDetail.includes('<img class="video-cover"'),
+	"doula video cover must not render as a separate image link below the player",
+);
+
 for (const [path, markers] of requiredPageMarkers) {
 	const source = page(path);
 	for (const marker of markers) assert(source.includes(marker), `${path} must use ${marker}`);

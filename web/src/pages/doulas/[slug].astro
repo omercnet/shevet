@@ -126,11 +126,18 @@ const profileFacts = [
       <div class="phone-frame">
         <span class="phone-notch" aria-hidden="true"></span>
         <div class="phone-screen">
-          <iframe src={videoSrc} title={`סרטון ${d?.name}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <iframe src={d?.videoCoverUrl ? undefined : videoSrc} data-video-src={videoSrc} title={`סרטון ${d?.name}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          {d?.videoCoverUrl && (
+            <button class="video-cover-button" type="button" data-video-cover aria-label={`נגן סרטון ${d?.name}`}>
+              <img src={`${d.videoCoverUrl}?w=760&fit=max`} alt={`סרטון ${d?.name}`} loading="lazy" />
+              <span class="video-play-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+            </button>
+          )}
         </div>
       </div>
     )}
-    {d?.videoCoverUrl && d?.videoUrl && <a href={d.videoUrl} target="_blank" rel="noopener noreferrer"><img class="video-cover" src={`${d.videoCoverUrl}?w=760&fit=max`} alt={`סרטון ${d?.name}`} /></a>}
     {!videoSrc && d?.videoUrl && <a class="btn btn-outline" href={d.videoUrl} target="_blank" rel="noopener noreferrer">צפייה בוידאו</a>}
 
     {(d?.gallery?.length ?? 0) > 0 && <section class="gallery"><h2>גלריית תמונות</h2>{d?.gallery?.map((image) => image.url && <img src={`${image.url}?w=520&fit=max`} alt={`${d?.name ?? 'שבט אמהות'} - תמונת גלריה`} loading="lazy" />)}</section>}
@@ -200,7 +207,7 @@ const profileFacts = [
       width: min(300px, 80vw);
       aspect-ratio: 9 / 19.5;
       margin: 1.8rem auto;
-      background: #111;
+      background: var(--ink);
       border-radius: 2.6rem;
       padding: 12px;
       box-shadow: var(--shadow-soft);
@@ -212,7 +219,7 @@ const profileFacts = [
       transform: translateX(-50%);
       width: 38%;
       height: 22px;
-      background: #111;
+      background: var(--ink);
       border-radius: 999px;
       z-index: 2;
     }
@@ -222,7 +229,7 @@ const profileFacts = [
       height: 100%;
       border-radius: 2rem;
       overflow: hidden;
-      background: #000;
+      background: var(--ink);
     }
     .phone-screen iframe {
       position: absolute;
@@ -231,10 +238,37 @@ const profileFacts = [
       height: 100%;
       border: 0;
     }
-    details { border:1px solid rgba(146,0,59,.14); border-radius:1rem; padding:1rem; margin:.8rem 0; background:#fff; }
+    .video-cover-button {
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      width:100%;
+      height:100%;
+      padding:0;
+      border:0;
+      color:var(--surface);
+      background:var(--ink);
+      cursor:pointer;
+    }
+    .video-cover-button img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .video-play-icon { position:relative; z-index:1; display:grid; place-items:center; width:72px; height:72px; border-radius:50%; background:rgba(146,0,59,.86); box-shadow:var(--shadow-soft); }
+    .video-cover-button:focus-visible { outline:3px solid var(--peach); outline-offset:-6px; }
+    details { border:1px solid rgba(146,0,59,.14); border-radius:1rem; padding:1rem; margin:.8rem 0; background:var(--surface); }
     summary { cursor:pointer; font-weight:700; color:var(--brand); }
-    .video-cover { width:min(100%, 760px); border-radius:1.4rem; box-shadow:var(--shadow-soft); margin:1.5rem 0; }
     .gallery { margin:2rem 0; }
     .gallery img { width:min(100%, 520px); border-radius:1rem; box-shadow:var(--shadow-soft); margin:.6rem; }
   </style>
+  <script>
+    document.querySelectorAll<HTMLButtonElement>("[data-video-cover]").forEach((cover) => {
+      cover.addEventListener("click", () => {
+        const iframe = cover.parentElement?.querySelector<HTMLIFrameElement>("iframe[data-video-src]");
+        const src = iframe?.dataset.videoSrc;
+        if (!iframe || !src) return;
+        const separator = src.includes("?") ? "&" : "?";
+        iframe.src = `${src}${separator}autoplay=1`;
+        cover.hidden = true;
+      }, { once: true });
+    });
+  </script>
 </Base>
