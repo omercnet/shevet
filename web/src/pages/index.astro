@@ -65,7 +65,7 @@ const pillars = [
 		</div>
 		<div class="grid mini-grid">
 			{featuredPeople.slice(0, 6).map((p) => (
-				<a class="card mini-card" href={`${p.basePath}/${p.slug}/`}>
+				<a class="card mini-card doula-card" href={`${p.basePath}/${p.slug}/`}>
 					{p.photo && <img src={`${p.photo}?w=360&h=260&fit=crop`} alt={p.name} loading="lazy" />}
 					<h3>{p.name}</h3>
 					{p.title && <p>{p.title}</p>}
@@ -263,6 +263,8 @@ const pillars = [
 		.mini-card img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:18px; margin-bottom:.85rem; }
 		.mini-card h3 { margin:.2rem 0 .45rem; }
 		.mini-card p { margin:0; color:var(--muted); }
+		.mini-card.doula-card { text-align:center; }
+		.mini-card.doula-card img { width:62%; aspect-ratio:1/1; border-radius:50%; margin:0 auto .85rem; }
 		.join-section { text-align:center; }
 	</style>
 </Base>
