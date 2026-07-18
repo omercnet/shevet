@@ -68,6 +68,11 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
 
     if (dataEl && form && out && count) {
       const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const initField = new URLSearchParams(location.search).get("field");
+      if (initField) {
+        const fieldSelect = form.elements.namedItem("field") as HTMLSelectElement | null;
+        if (fieldSelect) fieldSelect.value = initField;
+      }
       const esc = (s: string): string =>
         s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
       const card = (p: Row): string => {

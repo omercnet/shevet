@@ -41,10 +41,13 @@ for (const path of [
 		`${path} must not ship an empty initial results grid`,
 	);
 }
-assert(
-	read("web/src/pages/index.astro").includes("featuredPeople"),
-	"home page must surface imported directory content",
-);
+{
+	const homePage = read("web/src/pages/index.astro");
+	assert(
+		homePage.includes("getDoulas") && homePage.includes("getProfessionals"),
+		"home page must surface imported directory content",
+	);
+}
 assert(
 	read("web/src/pages/community/index.astro").includes("getCommunityPages"),
 	"community index must surface imported community pages",
