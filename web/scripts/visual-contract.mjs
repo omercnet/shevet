@@ -9,6 +9,7 @@ const assert = (condition, message) => {
 
 const designExists = existsSync(join(root, "DESIGN.md"));
 const base = read("web/src/layouts/Base.astro");
+const headerSource = base.match(/<header[\s\S]*?<\/header>/)?.[0] ?? "";
 const home = read("web/src/pages/index.astro");
 const brand = read("web/src/styles/brand.css");
 const accessibility = read("web/src/components/AccessibilityToolbar.astro");
@@ -38,9 +39,10 @@ assert(home.includes('<p class="hero-eyebrow">שבט אמהות</p>'), "home her
 assert(home.includes("/brand/old-mark.png"), "home hero badge must use the old circular mark asset");
 assert(!home.includes("hero-note"), "home hero must not use pastel note bubbles");
 assert(base.includes("/brand/old-logo.png"), "header logo must use the old WordPress logo asset");
-assert(base.includes("head-actions"), "header must keep the old social/account icon cluster shape");
-assert(base.includes('aria-label="Instagram"'), "header action cluster must use icon links, not placeholder letters");
-assert(base.includes('aria-label="Facebook"'), "header action cluster must include the old Facebook-style icon slot");
+assert(!headerSource.includes("head-actions"), "header must omit the removed social/account action cluster");
+assert(!headerSource.includes('aria-label="Instagram"'), "header must omit the removed Instagram action");
+assert(!headerSource.includes('aria-label="Facebook"'), "header must omit the removed Facebook action");
+assert(!headerSource.includes('href="/welcome/"'), "header must omit the removed login action");
 assert(base.includes("right:1rem"), "mobile hamburger must sit on the old physical right side");
 for (const label of ["נבחרת הדולות", "נבחרת היועצות והמטפלות", "קבוצות הווטסאפ"]) {
 	assert(base.includes(label), `header must keep old-site nav label ${label}`);

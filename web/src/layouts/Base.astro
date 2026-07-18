@@ -34,17 +34,6 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
         <a href="/benefits/">קופונים והנחות</a>
         <a href="/community/">קבוצות הווטסאפ</a>
       </nav>
-      <div class="head-actions" aria-label="קישורים מהירים">
-        <a href={settings?.instagram ?? "https://www.instagram.com/shevet.imahot/"} aria-label="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="4"></rect><circle cx="12" cy="12" r="3"></circle><circle cx="16" cy="8" r="1"></circle></svg>
-        </a>
-        <a href="https://www.facebook.com/shevet.imahot" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h2V5h-2c-2.2 0-4 1.8-4 4v2H8v3h2v5h3v-5h2.4l.6-3h-3V9c0-.6.4-1 1-1Z"></path></svg>
-        </a>
-        <a href="/welcome/" aria-label="כניסה">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M5 20c1.5-4 12.5-4 14 0"></path></svg>
-        </a>
-      </div>
     </header>
     <main>
       <slot />
@@ -90,9 +79,6 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
       .site-head nav a { text-decoration:none; color: var(--muted); font-size:.95rem; font-weight:500; transition:color .18s ease, transform .18s ease; }
       .site-head nav a:hover { transform:translateY(-1px); }
       .site-head nav a:hover { color:var(--brand); }
-      .head-actions { display:flex; gap:.45rem; align-items:center; }
-      .head-actions a { display:grid; place-items:center; width:1.6rem; height:1.6rem; border:1px solid var(--line); border-radius:50%; color:var(--muted); text-decoration:none; font-size:.78rem; font-weight:700; }
-      .head-actions svg { width:.95rem; height:.95rem; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
       .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; background:linear-gradient(180deg, transparent, rgba(255,255,255,.35)); }
       .foot-contact { display:flex; gap:1.2rem; flex-wrap:wrap; }
       .foot-contact a { color: var(--brand); text-decoration:none; }
@@ -101,7 +87,6 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
         .logo img { height:49px; }
         .nav-toggle { display:inline-block; }
         .nav-toggle { position:absolute; right:1rem; }
-        .head-actions { position:absolute; left:1rem; }
         .site-head nav { display:none; position:absolute; inset-inline:1rem; top:calc(100% + .35rem); z-index:10; background:var(--cream); border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 40px -28px rgba(63, 34, 48, .65); padding:.8rem; }
         .site-head[data-nav-open] nav { display:grid; gap:.35rem; }
         .site-head nav a { padding:.55rem .7rem; border-radius:12px; }
