@@ -8,7 +8,8 @@ Shevet Imahot feels intimate, warm, and handmade: a trusted pregnancy-and-birth 
 
 | Role | Token | Light | Usage |
 |---|---|---|---|
-| Brand primary | `--brand` | `#92003b` | Headings, primary CTAs, active states |
+| Brand primary | `--brand` | `#92003b` | Primary CTAs, links, accents, active states |
+| Heading | `--heading` | `#3d3d3d` | Headings and linked card titles |
 | Brand deep | `--brand-deep` | `#6e002d` | Deep text accents and shadows |
 | Peach | `--peach` | `#fbcfac` | Warm accents, hero surfaces |
 | Peach soft | `--peach-soft` | `#f8e1ce` | Soft panels and hover states |
