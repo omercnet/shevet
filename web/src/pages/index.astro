@@ -1,20 +1,16 @@
 ---
 import ZigZag from "../components/ZigZag.astro";
 import Base from "../layouts/Base.astro";
-import { getArticles, getBenefits, getDoulas, getProfessionals, getWorkshops } from "../lib/queries";
+import { getArticles, getBenefits, getDoulas, getWorkshops } from "../lib/queries";
 
-const [doulas, professionals, articles, workshops, benefits] = await Promise.all([
+const [doulas, articles, workshops, benefits] = await Promise.all([
 	getDoulas(),
-	getProfessionals(),
 	getArticles(),
 	getWorkshops(),
 	getBenefits(),
 ]);
 
-const featuredPeople = [
-	...doulas.filter((d) => d.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/doulas" })),
-	...professionals.filter((p) => p.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/professionals" })),
-];
+const featuredDoulas = doulas.filter((d) => d.photo).slice(0, 20);
 const featuredArticles = articles.slice(0, 3);
 const featuredWorkshops = workshops.slice(0, 3);
 const featuredBenefits = benefits.slice(0, 3);
@@ -62,17 +58,20 @@ const pillars = [
 	<section class="section wrap highlight-section">
 		<div class="section-head">
 			<p class="eyebrow">הבית של הדולות הטובות בישראל</p>
-			<h2>נבחרת דולות ונשות מקצוע</h2>
-			<p>הכירי את הדולות והיועצות של השבט, לפי תחום, אזור ובית חולים.</p>
+			<h2>נבחרת דולות</h2>
+			<p>הכירי את הדולות של השבט, לפי תחום, אזור ובית חולים.</p>
 		</div>
 		<div class="grid mini-grid">
-			{featuredPeople.slice(0, 6).map((p) => (
-				<a class="card mini-card doula-card" href={`${p.basePath}/${p.slug}/`}>
-					{p.photo && <img src={`${p.photo}?w=360&h=260&fit=crop`} alt={p.name} loading="lazy" />}
-					<h3>{p.name}</h3>
-					{p.title && <p>{p.title}</p>}
+			{featuredDoulas.map((d) => (
+				<a class="card mini-card doula-card" href={`/doulas/${d.slug}/`}>
+					{d.photo && <img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" />}
+					<h3>{d.name}</h3>
+					{d.title && <p>{d.title}</p>}
 				</a>
 			))}
+		</div>
+		<div class="show-more">
+			<a class="btn" href="/doulas/">הצג עוד</a>
 		</div>
 	</section>
 
@@ -291,6 +290,7 @@ const pillars = [
 			font-weight: 700;
 		}
 		.highlight-section { padding-top: 0; }
+		.show-more { display: flex; justify-content: center; margin-top: 1.8rem; }
 		.category-row { margin-top: 2.4rem; }
 		.category-row:first-of-type { margin-top: 1rem; }
 		.category-row-head { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:.6rem; margin-bottom:.4rem; }
