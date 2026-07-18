@@ -10,19 +10,20 @@ const [doulas, professionals, articles, benefits] = await Promise.all([
 	getBenefits(),
 ]);
 
-const featuredPeople = [
-	...doulas.filter((d) => d.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/doulas" })),
-	...professionals.filter((p) => p.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/professionals" })),
-];
-const featuredArticles = articles.slice(0, 3);
-const featuredBenefits = benefits.slice(0, 3);
+const featuredDoulas = doulas.filter((d) => d.photo && d.tier === "premium").slice(0, 4);
 
-const pillars = [
-	{ href: "/doulas/", title: "מאגר דולות", body: "חיפוש מדויק לפי בית חולים, סגנון ליווי ותקציב.", tint: "peach" },
-	{ href: "/professionals/", title: "נשות מקצוע", body: "יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.", tint: "mint" },
-	{ href: "/articles/", title: "מאמרים וסדנאות", body: "ידע מקצועי להריון, ללידה ולתקופה שאחריה.", tint: "sky" },
-	{ href: "/benefits/", title: "מועדון הטבות", body: "קופונים והנחות מעשרות עסקים נבחרים.", tint: "gold" },
-];
+const fieldCounts = new Map<string, number>();
+for (const p of professionals) {
+	for (const field of p.fields ?? []) fieldCounts.set(field, (fieldCounts.get(field) ?? 0) + 1);
+}
+const professionalFields = [...fieldCounts.entries()]
+	.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "he"))
+	.map(([field]) => field)
+	.slice(0, 4);
+
+const featuredWorkshops = articles.filter((a) => a.type === "workshop").slice(0, 4);
+const featuredArticles = articles.filter((a) => a.type !== "workshop").slice(0, 4);
+const featuredBenefits = benefits.slice(0, 4);
 ---
 <Base title="שבט אמהות" description="הקהילה שלך להריון וללידה — דולות, נשות מקצוע, תוכן והטבות.">
 	<section class="hero hero-photo">
@@ -38,46 +39,68 @@ const pillars = [
 	</section>
 	<ZigZag />
 
-	<section class="section wrap">
+	<section class="section wrap category-section">
 		<div class="section-head">
-			<p class="eyebrow">כל מה שצריך במקום אחד</p>
-			<h2>הכול בשבט</h2>
-			<p>ברוכה הבאה לבית של הדולות, היועצות, הידע וההטבות של שבט אמהות.</p>
-		</div>
-		<div class="grid pillars">
-			{
-				pillars.map((p) => (
-					<a class:list={["card", "pillar", `tint-${p.tint}`]} href={p.href}>
-						<h3>{p.title}</h3>
-						<p>{p.body}</p>
-						<span class="pillar-go">לכניסה ←</span>
-					</a>
-				))
-			}
-		</div>
-	</section>
-
-	<section class="section wrap highlight-section">
-		<div class="section-head">
-			<p class="eyebrow">הבית של הדולות הטובות בישראל</p>
-			<h2>נבחרת דולות ונשות מקצוע</h2>
-			<p>הכירי את הדולות והיועצות של השבט, לפי תחום, אזור ובית חולים.</p>
+			<p class="eyebrow">המאגר המוביל בישראל</p>
+			<h2>חיפוש דולות</h2>
+			<p>מצאי דולה לפי בית חולים, סגנון ליווי ותקציב — נבחרת הדולות של שבט אמהות.</p>
+			<a class="section-link" href="/doulas/">לכל הדולות ←</a>
 		</div>
 		<div class="grid mini-grid">
-			{featuredPeople.slice(0, 6).map((p) => (
-				<a class="card mini-card doula-card" href={`${p.basePath}/${p.slug}/`}>
-					{p.photo && <img src={`${p.photo}?w=360&h=260&fit=crop`} alt={p.name} loading="lazy" />}
-					<h3>{p.name}</h3>
-					{p.title && <p>{p.title}</p>}
+			{featuredDoulas.map((d) => (
+				<a class="card mini-card doula-card" href={`/doulas/${d.slug}/`}>
+					{d.photo && <img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" />}
+					<h3>{d.name}</h3>
+					{d.title && <p>{d.title}</p>}
 				</a>
 			))}
 		</div>
 	</section>
 
-	<section class="section wrap highlight-section">
+	<section class="section wrap category-section">
 		<div class="section-head">
-			<p class="eyebrow">ידע והטבות</p>
-			<h2>תוכן שימושי להריון, לידה ואחרי</h2>
+			<p class="eyebrow">יועצות, מטפלות ומדריכות</p>
+			<h2>חיפוש נשות מקצוע</h2>
+			<p>יועצות הנקה, מעסות, רפלקסולוגיות ועוד — לפי תחום ומיקום.</p>
+			<a class="section-link" href="/professionals/">לכל נשות המקצוע ←</a>
+		</div>
+		<div class="grid pillars">
+			{professionalFields.map((field, i) => (
+				<a
+					class:list={["card", "pillar", "field-tile", `tint-${["peach", "mint", "sky", "gold"][i % 4]}`]}
+					href={`/professionals/?field=${encodeURIComponent(field)}`}
+				>
+					<h3>{field}</h3>
+					<span class="pillar-go">לחיפוש ←</span>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="section wrap category-section">
+		<div class="section-head">
+			<p class="eyebrow">ידע בוידאו</p>
+			<h2>ספריית סדנאות</h2>
+			<p>סדנאות מוקלטות מבית שבט אמהות — להריון, ללידה ולתקופה שאחריה.</p>
+			<a class="section-link" href="/articles/?type=workshop">לכל הסדנאות ←</a>
+		</div>
+		<div class="grid mini-grid">
+			{featuredWorkshops.map((a) => (
+				<a class="card mini-card" href={`/articles/${a.slug}/`}>
+					{a.cover && <img src={`${a.cover}?w=360&h=220&fit=crop`} alt={a.title} loading="lazy" />}
+					<h3>{a.title}</h3>
+					{a.excerpt && <p>{a.excerpt}</p>}
+				</a>
+			))}
+		</div>
+	</section>
+
+	<section class="section wrap category-section">
+		<div class="section-head">
+			<p class="eyebrow">ידע מקצועי</p>
+			<h2>מאמרים</h2>
+			<p>תוכן שימושי להריון, ללידה ולתקופה שאחריה.</p>
+			<a class="section-link" href="/articles/?type=article">לכל המאמרים ←</a>
 		</div>
 		<div class="grid mini-grid">
 			{featuredArticles.map((a) => (
@@ -87,6 +110,17 @@ const pillars = [
 					{a.excerpt && <p>{a.excerpt}</p>}
 				</a>
 			))}
+		</div>
+	</section>
+
+	<section class="section wrap category-section">
+		<div class="section-head">
+			<p class="eyebrow">קופונים והנחות</p>
+			<h2>הטבות</h2>
+			<p>הטבות בלעדיות מעשרות עסקים נבחרים לחברות הקהילה.</p>
+			<a class="section-link" href="/benefits/">לכל ההטבות ←</a>
+		</div>
+		<div class="grid mini-grid">
 			{featuredBenefits.map((b) => (
 				<a class="card mini-card" href={b.slug ? `/benefits/${b.slug}/` : "/benefits/"}>
 					{b.logo && <img src={`${b.logo}?w=220&h=120&fit=max`} alt={b.partner} loading="lazy" />}
@@ -256,7 +290,25 @@ const pillars = [
 			color: var(--brand);
 			font-weight: 700;
 		}
-		.highlight-section { padding-top: 0; }
+		.field-tile {
+			align-items: center;
+			gap: 0.6rem;
+			text-align: center;
+		}
+		.field-tile h3 {
+			margin: 0;
+		}
+		.category-section { padding-top: 0; }
+		.section-link {
+			display: inline-block;
+			margin-top: 0.9rem;
+			color: var(--brand);
+			font-weight: 700;
+			text-decoration: none;
+		}
+		.section-link:hover {
+			text-decoration: underline;
+		}
 		.mini-card { display:block; text-decoration:none; color:var(--text); padding:1rem; }
 		.mini-card img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:18px; margin-bottom:.85rem; }
 		.mini-card h3 { margin:.2rem 0 .45rem; }

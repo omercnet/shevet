@@ -14,6 +14,11 @@ const CATEGORIES = [
   {value: 'parenting', label: 'הורות'},
   {value: 'anxiety', label: 'חרדה'},
 ] as const
+
+const TYPES = [
+  {value: 'article', label: 'מאמר'},
+  {value: 'workshop', label: 'סדנה'},
+] as const
 ---
 <Base title="מאמרים — שבט אמהות" description="מאמרים על הריון, לידה, הנקה, תינוקות, הורות ועוד.">
   <section class="wrap">
@@ -27,6 +32,11 @@ const CATEGORIES = [
           <label>קטגוריה
             <select name="category"><option value="">הכול</option>
               {CATEGORIES.map((c) => <option value={c.value}>{c.label}</option>)}
+            </select>
+          </label>
+          <label>סוג
+            <select name="type"><option value="">הכול</option>
+              {TYPES.map((t) => <option value={t.value}>{t.label}</option>)}
             </select>
           </label>
           <button type="button" id="reset">ניקוי</button>
@@ -69,6 +79,17 @@ const CATEGORIES = [
     if (dataEl && labelsEl && form && out && count) {
       const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
       const labels: Category[] = JSON.parse(labelsEl.textContent ?? "[]");
+      const params = new URLSearchParams(location.search);
+      const initCategory = params.get("category");
+      const initType = params.get("type");
+      if (initCategory) {
+        const categorySelect = form.elements.namedItem("category") as HTMLSelectElement | null;
+        if (categorySelect) categorySelect.value = initCategory;
+      }
+      if (initType) {
+        const typeSelect = form.elements.namedItem("type") as HTMLSelectElement | null;
+        if (typeSelect) typeSelect.value = initType;
+      }
       const labelFor = (value?: string): string =>
         labels.find((c) => c.value === value)?.label ?? "";
       const escapeHtml = (s: string): string =>
@@ -85,7 +106,12 @@ const CATEGORIES = [
       const apply = (): void => {
         const f = new FormData(form);
         const category = f.get("category");
-        const res = data.filter((a) => !category || a.category === (category as string));
+        const type = f.get("type");
+        const res = data.filter(
+          (a) =>
+            (!category || a.category === (category as string)) &&
+            (!type || a.type === (type as string)),
+        );
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} מאמרים`;
       };
