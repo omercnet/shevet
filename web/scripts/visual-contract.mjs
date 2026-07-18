@@ -67,6 +67,7 @@ for (const marker of [
 }
 
 for (const marker of [
+	"--heading",
 	"--surface",
 	"--shadow-soft",
 	"--shadow-lift",

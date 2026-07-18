@@ -24,6 +24,7 @@
 	--ink: #3f2230;
 	--text: #565656;
 	--muted: #7a7a7a;
+	--heading: #3d3d3d;
 	--line: #e7d9cb;
 	--shadow-soft: 0 18px 48px -38px rgba(63, 34, 48, 0.55);
 	--shadow-lift: 0 28px 70px -46px rgba(146, 0, 59, 0.62);
@@ -60,7 +61,7 @@ h1,
 h2,
 h3 {
 	font-family: var(--display);
-	color: var(--brand);
+	color: var(--heading);
 	font-weight: 400;
 	line-height: 1.1;
 }
@@ -204,7 +205,7 @@ img {
 /* card internals — global so they also style cards injected by client-side JS
    (Astro scopes per-page <style>, which would not reach innerHTML content). */
 .card h3 a {
-	color: var(--brand);
+	color: var(--heading);
 	text-decoration: none;
 }
 .card h3 a:hover {

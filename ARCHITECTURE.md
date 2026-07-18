@@ -4,7 +4,7 @@
 
 ---
 
-## 0. Brand & design tokens (locked — pulled from the live site)
+## 0. Brand & design tokens (locked — based on the live site and Keren's direction)
 
 Keren: *"keep the design language, colors, and my font Oron Yad."* Extracted from the production CSS:
 
@@ -12,7 +12,8 @@ Keren: *"keep the design language, colors, and my font Oron Yad."* Extracted fro
 |---|---|---|
 | Display font | **Oron Yad** (`OronYad_MFW.woff/.ttf`, on the site since 2020) | Headings, hero |
 | Body font | **Assistant** | Body text, UI |
-| `--brand` | **#92003b** (raspberry/fuchsia) | Headings, primary CTAs |
+| `--brand` | **#92003b** (raspberry/fuchsia) | Primary CTAs, links, accents |
+| `--heading` | **#3d3d3d** (dark gray) | Headings |
 | `--peach` | **#FBCFAC** / `#F3CFAC` | Accents, chips |
 | `--cream` | **#F4ECE1** / `#F4F3F1` | Page grounds |
 | `--beige` | **#CDA88B** | Secondary accent |
