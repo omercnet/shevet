@@ -333,6 +333,25 @@ img {
 	padding: 0.45rem 0.9rem;
 	font-size: 0.9rem;
 }
+.doula-card {
+	text-align: center;
+	box-shadow: 0 24px 50px -30px rgba(20, 16, 18, 0.4);
+}
+.doula-card .card-media {
+	aspect-ratio: 1 / 1;
+	width: 62%;
+	margin: 1.6rem auto 0;
+	border-radius: 50%;
+	overflow: hidden;
+}
+.doula-card .tags,
+.doula-card .card-actions {
+	justify-content: center;
+}
+.doula-card h3,
+.doula-card h3 a {
+	color: var(--text);
+}
 .article-card img,
 .article-shell .cover {
 	border-radius: 16px;
