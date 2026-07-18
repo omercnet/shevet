@@ -42,7 +42,7 @@ for (const path of [
 	);
 }
 assert(
-	read("web/src/pages/index.astro").includes("featuredPeople"),
+	read("web/src/pages/index.astro").includes("featuredDoulas"),
 	"home page must surface imported directory content",
 );
 assert(
