@@ -1,12 +1,13 @@
 ---
 import ZigZag from "../components/ZigZag.astro";
 import Base from "../layouts/Base.astro";
-import { getArticles, getBenefits, getDoulas, getProfessionals } from "../lib/queries";
+import { getArticles, getBenefits, getDoulas, getProfessionals, getWorkshops } from "../lib/queries";
 
-const [doulas, professionals, articles, benefits] = await Promise.all([
+const [doulas, professionals, articles, workshops, benefits] = await Promise.all([
 	getDoulas(),
 	getProfessionals(),
 	getArticles(),
+	getWorkshops(),
 	getBenefits(),
 ]);
 
@@ -15,6 +16,7 @@ const featuredPeople = [
 	...professionals.filter((p) => p.photo).slice(0, 3).map((person) => ({ ...person, basePath: "/professionals" })),
 ];
 const featuredArticles = articles.slice(0, 3);
+const featuredWorkshops = workshops.slice(0, 3);
 const featuredBenefits = benefits.slice(0, 3);
 
 const pillars = [
@@ -79,21 +81,53 @@ const pillars = [
 			<p class="eyebrow">ידע והטבות</p>
 			<h2>תוכן שימושי להריון, לידה ואחרי</h2>
 		</div>
-		<div class="grid mini-grid">
-			{featuredArticles.map((a) => (
-				<a class="card mini-card" href={`/articles/${a.slug}/`}>
-					{a.cover && <img src={`${a.cover}?w=360&h=220&fit=crop`} alt={a.title} loading="lazy" />}
-					<h3>{a.title}</h3>
-					{a.excerpt && <p>{a.excerpt}</p>}
-				</a>
-			))}
-			{featuredBenefits.map((b) => (
-				<a class="card mini-card" href={b.slug ? `/benefits/${b.slug}/` : "/benefits/"}>
-					{b.logo && <img src={`${b.logo}?w=220&h=120&fit=max`} alt={b.partner} loading="lazy" />}
-					<h3>{b.partner}</h3>
-					{b.discount && <p>{b.discount}</p>}
-				</a>
-			))}
+
+		<div class="category-row">
+			<div class="category-row-head">
+				<h3>מאמרים</h3>
+				<a class="more" href="/articles/">כל המאמרים ←</a>
+			</div>
+			<div class="grid mini-grid">
+				{featuredArticles.map((a) => (
+					<a class="card mini-card" href={`/articles/${a.slug}/`}>
+						{a.cover && <img src={`${a.cover}?w=360&h=220&fit=crop`} alt={a.title} loading="lazy" />}
+						<h3>{a.title}</h3>
+						{a.excerpt && <p>{a.excerpt}</p>}
+					</a>
+				))}
+			</div>
+		</div>
+
+		<div class="category-row">
+			<div class="category-row-head">
+				<h3>ספריית סדנאות</h3>
+				<a class="more" href="/workshops/">כל הסדנאות ←</a>
+			</div>
+			<div class="grid mini-grid">
+				{featuredWorkshops.map((w) => (
+					<a class="card mini-card" href={`/articles/${w.slug}/`}>
+						{w.cover && <img src={`${w.cover}?w=360&h=220&fit=crop`} alt={w.title} loading="lazy" />}
+						<h3>{w.title}</h3>
+						{w.excerpt && <p>{w.excerpt}</p>}
+					</a>
+				))}
+			</div>
+		</div>
+
+		<div class="category-row">
+			<div class="category-row-head">
+				<h3>הטבות</h3>
+				<a class="more" href="/benefits/">כל ההטבות ←</a>
+			</div>
+			<div class="grid mini-grid">
+				{featuredBenefits.map((b) => (
+					<a class="card mini-card" href={b.slug ? `/benefits/${b.slug}/` : "/benefits/"}>
+						{b.logo && <img src={`${b.logo}?w=220&h=120&fit=max`} alt={b.partner} loading="lazy" />}
+						<h3>{b.partner}</h3>
+						{b.discount && <p>{b.discount}</p>}
+					</a>
+				))}
+			</div>
 		</div>
 	</section>
 
@@ -257,6 +291,11 @@ const pillars = [
 			font-weight: 700;
 		}
 		.highlight-section { padding-top: 0; }
+		.category-row { margin-top: 2.4rem; }
+		.category-row:first-of-type { margin-top: 1rem; }
+		.category-row-head { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:.6rem; margin-bottom:.4rem; }
+		.category-row-head h3 { margin:0; font-size:1.3rem; }
+		.category-row-head .more { color:var(--brand); text-decoration:none; font-weight:600; white-space:nowrap; }
 		.mini-card { display:block; text-decoration:none; color:var(--text); padding:1rem; }
 		.mini-card img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:18px; margin-bottom:.85rem; }
 		.mini-card h3 { margin:.2rem 0 .45rem; }
