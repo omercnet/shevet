@@ -16,7 +16,8 @@ const d = await getPractitioner(slug!)
 
 const wa = whatsappHref(d?.whatsapp, d?.phone)
 const mailto = mailtoHref(d?.email)
-const ig = d?.instagramPostUrl ?? instagramHref(d?.instagram)
+const igPostUrl = d?.instagramPostUrl
+const igProfileUrl = instagramHref(d?.instagram)
 const igHandle = instagramHandle(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
 const videoSrc = videoEmbedSrc(d?.videoUrl)
@@ -73,8 +74,14 @@ const profileFacts = [
       {mailto && <a class="btn btn-outline" href={mailto}>אימייל</a>}
     </div>
 
-    {ig && (
-      <a class="ig-embed" href={ig} target="_blank" rel="noopener noreferrer" aria-label={`עמוד האינסטגרם של ${d?.name}`}>
+    {igPostUrl ? (
+      <div class="ig-post-embed">
+        <blockquote class="instagram-media" data-instgrm-permalink={igPostUrl} data-instgrm-version="14">
+          <a href={igPostUrl} target="_blank" rel="noopener noreferrer">{`צפו בפוסט של ${d?.name} באינסטגרם`}</a>
+        </blockquote>
+      </div>
+    ) : igProfileUrl && (
+      <a class="ig-embed" href={igProfileUrl} target="_blank" rel="noopener noreferrer" aria-label={`עמוד האינסטגרם של ${d?.name}`}>
         <span class="ig-embed-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
@@ -209,6 +216,9 @@ const profileFacts = [
     .ig-embed-body { display: flex; flex-direction: column; gap: .15rem; }
     .ig-embed-handle { color: var(--muted); font-size: .92rem; }
 
+    .ig-post-embed { display: flex; justify-content: center; margin: 1.2rem 0; }
+    .ig-post-embed :global(iframe) { max-width: 100%; }
+
     .phone-frame {
       position: relative;
       width: min(300px, 80vw);
@@ -270,6 +280,13 @@ const profileFacts = [
     }
   </style>
   <script>
+    if (document.querySelector(".instagram-media")) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = "https://www.instagram.com/embed.js";
+      document.body.appendChild(script);
+    }
+
     document.querySelectorAll<HTMLButtonElement>("[data-video-cover]").forEach((cover) => {
       cover.addEventListener("click", () => {
         const iframe = cover.parentElement?.querySelector<HTMLIFrameElement>("iframe[data-video-src]");
