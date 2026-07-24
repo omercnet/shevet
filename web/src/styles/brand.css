@@ -116,6 +116,11 @@ img {
 	border-color: #25d366;
 	box-shadow: 0 6px 18px -10px rgba(37, 211, 102, 0.7);
 }
+.btn-wa {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
 .chip {
 	display: inline-block;
 	background: color-mix(in srgb, var(--peach-soft) 82%, var(--surface));
