@@ -37,7 +37,7 @@ const accompanimentCards = [
 
 const profileFacts = [
   {title: 'בתי החולים אליהם אני מגיעה', items: d?.hospitals},
-  {title: 'כלים נוספים בחדר לידה', items: d?.birthTools},
+  {title: 'הכשרות נוספות', items: d?.credentials},
   {title: 'שירותים נוספים שאני מציעה', items: d?.additionalServices},
   {title: 'מיקום', items: d?.regions},
 ].filter((section) => (section.items?.length ?? 0) > 0)
@@ -121,8 +121,6 @@ const profileFacts = [
         </div>
       </section>
     )}
-
-    {(d?.credentials?.length ?? 0) > 0 && <section class="article-body"><h2>הכשרות</h2><ul>{d?.credentials?.map((c) => <li>{c}</li>)}</ul></section>}
 
     {videoSrc && (
       <div class="phone-frame">
