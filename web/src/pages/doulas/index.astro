@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro'
 import {getDoulas, getSiteSettings} from '../../lib/queries'
 import {instagramHref, mailtoHref, telHref, whatsappHref} from '../../lib/contact'
-import {SUPPORT_STYLES, BUDGET_BANDS} from '../../../shared/searchOptions'
+import {BUDGET_BANDS} from '../../../shared/searchOptions'
 
 const doulas = (await getDoulas()).map((d) => ({
   ...d,
@@ -14,10 +14,10 @@ const doulas = (await getDoulas()).map((d) => ({
 const hospitals = [...new Set(doulas.flatMap((d) => d.hospitals ?? []))].sort()
 const settings = await getSiteSettings()
 ---
-<Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה, סגנון ליווי ותקציב.">
+<Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה משוערת ותקציב.">
   <section class="wrap">
     <h1>נבחרת הדולות של שבט אמהות</h1>
-    <p>מצאי דולה לפי בית חולים, סגנון ליווי ותקציב. החיפוש מיידי.</p>
+    <p>מצאי דולה לפי בית חולים, תאריך לידה משוערת ותקציב. החיפוש מיידי.</p>
     <p><a class="btn btn-outline" href="/doulas/join/">רוצה להצטרף לנבחרת?</a></p>
 
     <form class="filter-panel" id="doula-filters">
@@ -28,11 +28,6 @@ const settings = await getSiteSettings()
       </label>
       <label>תאריך לידה משוער
         <input type="date" name="dueDate" />
-      </label>
-      <label>סגנון ליווי
-        <select name="style"><option value="">הכול</option>
-          {SUPPORT_STYLES.map((s) => <option value={s}>{s}</option>)}
-        </select>
       </label>
       <label>תקציב
         <select name="budget"><option value="">הכול</option>
@@ -123,12 +118,10 @@ const settings = await getSiteSettings()
       const apply = (): void => {
         const f = new FormData(form);
         const hospital = f.get("hospital");
-        const style = f.get("style");
         const budget = f.get("budget");
         const res = data.filter(
           (d) =>
             (!hospital || (d.hospitals ?? []).includes(hospital as string)) &&
-            (!style || (d.supportStyle ?? []).includes(style as string)) &&
             (!budget || d.budget === budget),
         );
         // dueDate currently informational — matching rule TBD with Keren
