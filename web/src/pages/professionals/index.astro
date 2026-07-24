@@ -73,6 +73,7 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
         const fieldSelect = form.elements.namedItem("field") as HTMLSelectElement | null;
         if (fieldSelect) fieldSelect.value = initField;
       }
+      let presetMatch = new URLSearchParams(location.search).getAll("match");
       const esc = (s: string): string =>
         s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
       const card = (p: Row): string => {
@@ -111,14 +112,19 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
         const res = data.filter(
           (p) =>
             (!fld || (p.fields ?? []).includes(fld as string)) &&
+            (presetMatch.length === 0 || (p.fields ?? []).some((x) => presetMatch.some((m) => x.includes(m)))) &&
             (!reg || (p.regions ?? []).includes(reg as string)) &&
             (!lang || (p.languages ?? []).includes(lang as string)),
         );
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} נשות מקצוע`;
       };
-      form.addEventListener("input", apply);
+      form.addEventListener("input", () => {
+        presetMatch = [];
+        apply();
+      });
       reset?.addEventListener("click", () => {
+        presetMatch = [];
         HTMLFormElement.prototype.reset.call(form);
         apply();
       });
