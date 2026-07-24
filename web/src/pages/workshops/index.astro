@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro'
+import {getWorkshops} from '../../lib/queries'
+
+const workshops = await getWorkshops()
+---
+<Base title="ספריית סדנאות — שבט אמהות" description="סדנאות מוקלטות להריון, לידה, הנקה והורות.">
+  <section class="wrap">
+    <h1>ספריית סדנאות</h1>
+    <p>כל הסדנאות המוקלטות של שבט אמהות — לצפייה בכל זמן.</p>
+
+    {workshops.length === 0 ? (
+      <p class="empty-state">אין סדנאות עדיין</p>
+    ) : (
+      <div class="grid" id="results">
+        {workshops.map((w) => (
+          <article class="card article-card workshop-card">
+            {w.cover && <img src={`${w.cover}?w=320&h=200&fit=crop`} alt={w.title} loading="lazy" />}
+            <h3><a href={`/articles/${w.slug}/`}>{w.title}</a></h3>
+            {w.excerpt && <p class="excerpt">{w.excerpt}</p>}
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <style>
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; margin-top:1.5rem; }
+  </style>
+</Base>

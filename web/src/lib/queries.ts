@@ -153,7 +153,18 @@ export interface ArticleDetail extends ArticleCard {
 
 export function getArticles(): Promise<ArticleCard[]> {
 	return sanityFetch<ArticleCard[]>(
-		`*[_type == "article" && ${notDraft} && published != false] | order(publishedAt desc){
+		`*[_type == "article" && ${notDraft} && published != false && type != "workshop"] | order(publishedAt desc){
+			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url
+		}`,
+		{},
+		[],
+	);
+}
+
+// Recorded workshops (article documents with type == "workshop") — ספריית סדנאות.
+export function getWorkshops(): Promise<ArticleCard[]> {
+	return sanityFetch<ArticleCard[]>(
+		`*[_type == "article" && ${notDraft} && published != false && type == "workshop"] | order(publishedAt desc){
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url
 		}`,
 		{},

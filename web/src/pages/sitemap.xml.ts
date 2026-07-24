@@ -12,6 +12,7 @@ const staticPaths = [
 	"/doulas/",
 	"/professionals/",
 	"/articles/",
+	"/workshops/",
 	"/benefits/",
 	"/community/",
 	"/courses/",
