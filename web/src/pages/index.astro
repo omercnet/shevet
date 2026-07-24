@@ -49,6 +49,11 @@ const featuredBenefits = benefits.slice(0, 4);
 			<p class="eyebrow">המאגר המוביל בישראל</p>
 			<h2>למה לבחור בדולה של שבט אמהות?</h2>
 			<p>מצאי דולה לפי בית חולים, סגנון ליווי ותקציב — נבחרת הדולות של שבט אמהות.</p>
+			<ul class="trust-list">
+				<li>פרופילים מפורטים עם המלצות שפורסמו על ידי יולדות</li>
+				<li>מידע על הכשרות ותעודות הסמכה, כשהוא זמין</li>
+				<li>בדקי זכאות להחזר מול קופת החולים שלך</li>
+			</ul>
 			<a class="section-link" href="/doulas/">לכל הדולות ←</a>
 		</div>
 		<div class="grid mini-grid">
@@ -304,6 +309,25 @@ const featuredBenefits = benefits.slice(0, 4);
 			margin: 0;
 		}
 		.category-section { padding-top: 0; }
+		.trust-list {
+			list-style: none;
+			margin: 1rem 0 0;
+			padding: 0;
+			display: grid;
+			gap: 0.5rem;
+		}
+		.trust-list li {
+			position: relative;
+			padding-inline-end: 1.6rem;
+			color: var(--text);
+		}
+		.trust-list li::before {
+			content: "✓";
+			position: absolute;
+			inset-inline-end: 0;
+			color: var(--brand);
+			font-weight: 700;
+		}
 		.section-link {
 			display: inline-block;
 			margin-top: 0.9rem;
