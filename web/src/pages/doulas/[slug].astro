@@ -26,9 +26,11 @@ type LegacyBlock = { _type?: string; style?: string; children?: { text?: string 
 const contentBlocks = (blocks: unknown[] | undefined): LegacyBlock[] =>
   Array.isArray(blocks) ? blocks.filter((block): block is LegacyBlock => typeof block === 'object' && block !== null && '_type' in block) : []
 
+const stripHeadings = (blocks: LegacyBlock[]): LegacyBlock[] => blocks.filter((block) => !/^h[1-6]$/.test(block.style ?? ''))
+
 const accompanimentCards = [
-  {title: 'פגישת היכרות', blocks: contentBlocks(d?.meetingInfo)},
-  {title: 'מה כולל הליווי', blocks: contentBlocks(d?.services)},
+  {title: 'פגישת היכרות', blocks: stripHeadings(contentBlocks(d?.meetingInfo))},
+  {title: '', blocks: contentBlocks(d?.services)},
   {title: 'במהלך הלידה', blocks: contentBlocks(d?.duringBirth)},
   {title: 'אחרי הלידה', blocks: contentBlocks(d?.afterBirth)},
 ].filter((c) => c.blocks.length > 0)
@@ -112,7 +114,7 @@ const profileFacts = [
         <div class="grid accompaniment-grid">
           {accompanimentCards.map((c) => (
             <div class="card accompaniment-card">
-              <h3>{c.title}</h3>
+              {c.title && <h3>{c.title}</h3>}
               <LegacyContent blocks={c.blocks} />
             </div>
           ))}
