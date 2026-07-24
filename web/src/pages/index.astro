@@ -13,14 +13,18 @@ const [doulas, professionals, articles, workshops, benefits] = await Promise.all
 
 const featuredDoulas = doulas.filter((d) => d.photo && d.tier === "premium").slice(0, 4);
 
-const fieldCounts = new Map<string, number>();
-for (const p of professionals) {
-	for (const field of p.fields ?? []) fieldCounts.set(field, (fieldCounts.get(field) ?? 0) + 1);
-}
-const professionalFields = [...fieldCounts.entries()]
-	.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "he"))
-	.map(([field]) => field)
-	.slice(0, 4);
+const professionalCategoryDefs: { label: string; match: string[] }[] = [
+	{ label: "רפלקסולוגיה/דיקור/שיאצו", match: ["רפלקסולוגיה", "דיקור", "שיאצו"] },
+	{ label: "עיסוי הריון/אקוליבריו", match: ["עיסוי הריון", "אקוליבריו"] },
+	{ label: "הנקה", match: ["הנקה"] },
+	{ label: "קורס הכנה ללידה", match: ["הכנה ללידה"] },
+];
+const professionalCategories = [
+	...professionalCategoryDefs.filter((cat) =>
+		professionals.some((p) => (p.fields ?? []).some((f) => cat.match.some((m) => f.includes(m)))),
+	),
+	...(professionals.length ? [{ label: "כל נשות המקצוע", match: [] as string[] }] : []),
+];
 
 const featuredWorkshops = workshops.slice(0, 4);
 const featuredArticles = articles.slice(0, 4);
@@ -66,12 +70,12 @@ const featuredBenefits = benefits.slice(0, 4);
 			<a class="section-link" href="/professionals/">לכל נשות המקצוע ←</a>
 		</div>
 		<div class="grid pillars">
-			{professionalFields.map((field, i) => (
+			{professionalCategories.map((cat, i) => (
 				<a
 					class:list={["card", "pillar", "field-tile", `tint-${["peach", "mint", "sky", "gold"][i % 4]}`]}
-					href={`/professionals/?field=${encodeURIComponent(field)}`}
+					href={cat.match.length ? `/professionals/?${cat.match.map((m) => `match=${encodeURIComponent(m)}`).join("&")}` : "/professionals/"}
 				>
-					<h3>{field}</h3>
+					<h3>{cat.label}</h3>
 					<span class="pillar-go">לחיפוש ←</span>
 				</a>
 			))}
