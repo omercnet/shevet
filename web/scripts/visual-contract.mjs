@@ -105,6 +105,12 @@ const requiredPageMarkers = new Map([
 ]);
 
 const doulaDetail = page("web/src/pages/doulas/[slug].astro");
+assert(doulaDetail.includes("instagramPostHref"), "doula Instagram embeds must validate stored post URLs");
+assert(doulaDetail.includes("data-instagram-load"), "doula Instagram embeds must require an explicit load action");
+assert(
+	doulaDetail.includes('data-instgrm-version="14" hidden'),
+	"doula Instagram embed markup must remain hidden before consent",
+);
 assert(doulaDetail.includes("data-video-cover"), "doula video cover must be an in-frame overlay control");
 assert(
 	doulaDetail.includes("data-video-src"),

@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro'
 import LegacyContent from '../../components/LegacyContent.astro'
 import ContactForm from '../../components/ContactForm.astro'
 import {getPremiumDoulaSlugs, getPractitioner} from '../../lib/queries'
-import {whatsappHref, mailtoHref, instagramHref, instagramHandle} from '../../lib/contact'
+import {whatsappHref, mailtoHref, instagramHref, instagramHandle, instagramPostHref} from '../../lib/contact'
 import {videoEmbedSrc} from '../../lib/video'
 
 export async function getStaticPaths() {
@@ -16,7 +16,7 @@ const d = await getPractitioner(slug!)
 
 const wa = whatsappHref(d?.whatsapp, d?.phone)
 const mailto = mailtoHref(d?.email)
-const igPostUrl = d?.instagramPostUrl
+const igPostUrl = instagramPostHref(d?.instagramPostUrl)
 const igProfileUrl = instagramHref(d?.instagram)
 const igHandle = instagramHandle(d?.instagram)
 const bioBlocks = Array.isArray(d?.bio) ? d!.bio : []
@@ -76,7 +76,9 @@ const profileFacts = [
 
     {igPostUrl ? (
       <div class="ig-post-embed">
-        <blockquote class="instagram-media" data-instgrm-permalink={igPostUrl} data-instgrm-version="14">
+        <p>התוכן הבא מוצג מאינסטגרם. טעינתו תאפשר לאינסטגרם לקבל מידע על הביקור שלך.</p>
+        <button class="btn btn-outline" type="button" data-instagram-load>טעינת הפוסט מאינסטגרם</button>
+        <blockquote class="instagram-media" data-instgrm-permalink={igPostUrl} data-instgrm-version="14" hidden>
           <a href={igPostUrl} target="_blank" rel="noopener noreferrer">{`צפו בפוסט של ${d?.name} באינסטגרם`}</a>
         </blockquote>
       </div>
@@ -216,7 +218,8 @@ const profileFacts = [
     .ig-embed-body { display: flex; flex-direction: column; gap: .15rem; }
     .ig-embed-handle { color: var(--muted); font-size: .92rem; }
 
-    .ig-post-embed { display: flex; justify-content: center; margin: 1.2rem 0; }
+    .ig-post-embed { display: flex; flex-direction: column; align-items: center; gap: .8rem; margin: 1.2rem 0; padding: 1rem; text-align: center; border: 1px solid var(--line); border-radius: 1rem; background: var(--surface); }
+    .ig-post-embed p { margin: 0; color: var(--muted); }
     .ig-post-embed :global(iframe) { max-width: 100%; }
 
     .phone-frame {
@@ -280,12 +283,25 @@ const profileFacts = [
     }
   </style>
   <script>
-    if (document.querySelector(".instagram-media")) {
-      const script = document.createElement("script");
-      script.async = true;
-      script.src = "https://www.instagram.com/embed.js";
-      document.body.appendChild(script);
-    }
+    document.querySelectorAll<HTMLButtonElement>("[data-instagram-load]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const embed = button.parentElement?.querySelector<HTMLElement>(".instagram-media");
+        if (!embed) return;
+        embed.hidden = false;
+        button.hidden = true;
+
+        const existingScript = document.querySelector<HTMLScriptElement>('script[src="https://www.instagram.com/embed.js"]');
+        if (existingScript) {
+          const instagram = (window as Window & {instgrm?: {Embeds?: {process?: () => void}}}).instgrm;
+          instagram?.Embeds?.process?.();
+          return;
+        }
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "https://www.instagram.com/embed.js";
+        document.body.appendChild(script);
+      }, { once: true });
+    });
 
     document.querySelectorAll<HTMLButtonElement>("[data-video-cover]").forEach((cover) => {
       cover.addEventListener("click", () => {

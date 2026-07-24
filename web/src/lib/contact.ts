@@ -42,6 +42,23 @@ export function instagramHref(handle: string | undefined): string | null {
 }
 
 /**
+ * Validated Instagram post/reel URL for third-party embeds.
+ * Rejects non-HTTPS URLs, lookalike hosts, profile URLs, and unexpected paths.
+ */
+export function instagramPostHref(value: string | undefined): string | null {
+	if (!value) return null;
+	try {
+		const url = new URL(value);
+		const host = url.hostname.toLowerCase();
+		if (url.protocol !== "https:" || (host !== "instagram.com" && host !== "www.instagram.com")) return null;
+		if (!/^\/(?:p|reel)\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)) return null;
+		return `https://www.instagram.com${url.pathname.replace(/\/?$/, "/")}`;
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Display handle ("@name") for a stored Instagram URL or bare handle.
  */
 export function instagramHandle(handle: string | undefined): string | null {
