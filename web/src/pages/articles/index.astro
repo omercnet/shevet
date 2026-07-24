@@ -70,6 +70,12 @@ const CATEGORIES = [
     if (dataEl && labelsEl && form && out && count) {
       const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
       const labels: Category[] = JSON.parse(labelsEl.textContent ?? "[]");
+      const params = new URLSearchParams(location.search);
+      const initCategory = params.get("category");
+      if (initCategory) {
+        const categorySelect = form.elements.namedItem("category") as HTMLSelectElement | null;
+        if (categorySelect) categorySelect.value = initCategory;
+      }
       const labelFor = (value?: string): string =>
         labels.find((c) => c.value === value)?.label ?? "";
       const escapeHtml = (s: string): string =>
