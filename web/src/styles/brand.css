@@ -228,7 +228,7 @@ img {
 	gap: 1rem 1.2rem;
 	flex-wrap: wrap;
 	align-items: end;
-	background: linear-gradient(160deg, var(--peach-soft), var(--peach));
+	background: linear-gradient(160deg, #e4f3e0, var(--mint));
 	padding: 1.5rem;
 	border: 1px solid rgba(146, 0, 59, 0.08);
 	border-radius: 26px;
@@ -348,6 +348,7 @@ img {
 	margin: 1.6rem auto 0;
 	border-radius: 50%;
 	overflow: hidden;
+	border: 1px solid #9a9a9a;
 }
 .doula-card .tags,
 .doula-card .card-actions {
