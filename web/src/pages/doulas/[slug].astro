@@ -45,8 +45,12 @@ const profileFacts = [
 ---
 <Base title={`${d?.name} — דולה | שבט אמהות`} description={d?.title}>
   <article class="profile-shell wrap">
+    {d?.photoUrl && (
+      <div class="profile-photo-wrap">
+        <img class="profile-photo" src={`${d.photoUrl}?w=480&h=480&fit=crop`} alt={d.name} />
+      </div>
+    )}
     <header class="profile-head">
-      {d?.photoUrl && <img class="avatar" src={`${d.photoUrl}?w=160&h=160&fit=crop`} alt={d.name} />}
       <div>
         <h1>{d?.name}</h1>
         <p class="title">{d?.title}</p>
@@ -164,6 +168,15 @@ const profileFacts = [
   {wa && <a class="btn btn-wa sticky-cta" href={wa}>כתבי וואטסאפ עכשיו ל־{d?.name}</a>}
 
   <style>
+    .profile-photo-wrap { display:flex; justify-content:center; margin:0 0 1.4rem; }
+    .profile-photo {
+      width: min(240px, 60vw);
+      height: min(240px, 60vw);
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
     .title { color:var(--muted); margin:.2rem 0; }
     .marketing-sentence { color:var(--brand); font-weight:700; margin:.45rem 0; }
     .tagline {
