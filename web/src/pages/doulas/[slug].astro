@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro'
 import LegacyContent from '../../components/LegacyContent.astro'
 import ContactForm from '../../components/ContactForm.astro'
+import WhatsAppReviews from '../../components/WhatsAppReviews.astro'
 import {getPremiumDoulaSlugs, getPractitioner} from '../../lib/queries'
 import {whatsappHref, mailtoHref, instagramHref, instagramHandle, instagramPostHref} from '../../lib/contact'
 import {videoEmbedSrc} from '../../lib/video'
@@ -112,14 +113,7 @@ const profileFacts = [
       </section>
     )}
 
-    {(d?.testimonials?.length ?? 0) > 0 && (
-      <section class="reviews">
-        <h2>ביקורות מאומתות ע"י שבט אמהות</h2>
-        {d?.testimonials?.map((t) => (
-          <blockquote>“{t.quote}” <cite>— {t.author}</cite></blockquote>
-        ))}
-      </section>
-    )}
+    <WhatsAppReviews testimonials={d?.testimonials} />
 
     {(d?.faq?.length ?? 0) > 0 && <section class="article-body"><h2>שאלות נפוצות</h2>{d?.faq?.map((item) => <details><summary>{item.q}</summary><p>{item.a}</p></details>)}</section>}
 
