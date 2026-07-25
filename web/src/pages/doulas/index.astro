@@ -1,16 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro'
 import {getDoulas, getSiteSettings} from '../../lib/queries'
-import {BUDGET_BANDS} from '../../../shared/searchOptions'
-
 const doulas = await getDoulas()
 const hospitals = [...new Set(doulas.flatMap((d) => d.hospitals ?? []))].sort()
 const settings = await getSiteSettings()
 ---
-<Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים, תאריך לידה משוערת ותקציב.">
+<Base title="חיפוש דולות — שבט אמהות" description="מצאי דולה לפי בית חולים ותאריך לידה משוערת.">
   <section class="wrap">
     <h1>נבחרת הדולות של שבט אמהות</h1>
-    <p>מצאי דולה לפי בית חולים, תאריך לידה משוערת ותקציב. החיפוש מיידי.</p>
+    <p>מצאי דולה לפי בית חולים ותאריך לידה משוערת. החיפוש מיידי.</p>
     <p><a class="btn btn-outline" href="/doulas/join/">רוצה להצטרף לנבחרת?</a></p>
 
     <form class="filter-panel" id="doula-filters">
@@ -21,11 +19,6 @@ const settings = await getSiteSettings()
       </label>
       <label>תאריך לידה משוער
         <input type="date" name="dueDate" />
-      </label>
-      <label>תקציב
-        <select name="budget"><option value="">הכול</option>
-          {BUDGET_BANDS.map((b) => <option value={b.value}>{b.title}</option>)}
-        </select>
       </label>
       <button type="button" id="reset">ניקוי</button>
     </form>
@@ -61,7 +54,7 @@ const settings = await getSiteSettings()
   <script>
     interface Row {
       slug: string; name: string; title?: string; tier?: string; photo?: string;
-      hospitals?: string[]; supportStyle?: string[]; budget?: string;
+      hospitals?: string[]; supportStyle?: string[];
     }
     const dataEl = document.getElementById("data");
     const form = document.getElementById("doula-filters") as HTMLFormElement | null;
@@ -98,11 +91,8 @@ const settings = await getSiteSettings()
       const apply = (): void => {
         const f = new FormData(form);
         const hospital = f.get("hospital");
-        const budget = f.get("budget");
         const res = data.filter(
-          (d) =>
-            (!hospital || (d.hospitals ?? []).includes(hospital as string)) &&
-            (!budget || d.budget === budget),
+          (d) => !hospital || (d.hospitals ?? []).includes(hospital as string),
         );
         // dueDate currently informational — matching rule TBD with Keren
         out.innerHTML = res.map(card).join("");
