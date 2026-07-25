@@ -65,11 +65,14 @@ assert(
 );
 assert(base.includes("/welcome/") && base.includes("/team/"), "footer must link required static pages");
 
-for (const indexPage of ["web/src/pages/doulas/index.astro", "web/src/pages/professionals/index.astro"]) {
-	const source = read(indexPage);
-	for (const marker of ["whatsappHref", "telHref", "mailtoHref", "instagramHref", "contact-links"]) {
-		assert(source.includes(marker), `${indexPage} must render ${marker} for directory cards`);
-	}
+const doulaIndex = read("web/src/pages/doulas/index.astro");
+for (const marker of ["whatsappHref", "telHref", "mailtoHref", "instagramHref", "contact-links"]) {
+	assert(!doulaIndex.includes(marker), `doula directory cards must not expose ${marker}`);
+}
+
+const professionalIndex = read("web/src/pages/professionals/index.astro");
+for (const marker of ["whatsappHref", "telHref", "mailtoHref", "instagramHref", "contact-links"]) {
+	assert(professionalIndex.includes(marker), `professional directory cards must render ${marker}`);
 }
 
 for (const profile of ["web/src/pages/doulas/[slug].astro", "web/src/pages/professionals/[slug].astro"]) {
