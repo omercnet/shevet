@@ -411,19 +411,6 @@ img {
 	border-radius: 50%;
 	object-fit: cover;
 }
-.reviews {
-	margin-top: 2rem;
-	display: grid;
-	gap: 1rem;
-}
-.reviews blockquote {
-	background: var(--surface);
-	border: 1px solid var(--line);
-	border-radius: 16px;
-	padding: 1rem 1.2rem;
-	margin: 0;
-	font-style: italic;
-}
 .article-body,
 .sale-copy {
 	line-height: 1.8;
