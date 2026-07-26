@@ -1,12 +1,23 @@
 ---
 import '../styles/brand.css'
 import AccessibilityToolbar from '../components/AccessibilityToolbar.astro'
+import ZigZag from '../components/ZigZag.astro'
 import { getSiteSettings } from '../lib/queries'
-import {telHref, whatsappHref} from '../lib/contact'
+import {instagramHref, mailtoHref, telHref} from '../lib/contact'
 const {title = 'שבט אמהות', description = ''} = Astro.props
 const gtm = import.meta.env.PUBLIC_GTM_ID // set per environment
 const settings = await getSiteSettings()
-const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, settings?.phone)
+const phoneHref = telHref(settings?.phone)
+const navLinks = [
+  {href: '/doulas/', label: 'נבחרת הדולות'},
+  {href: '/professionals/', label: 'נבחרת היועצות והמטפלות'},
+  {href: '/articles/', label: 'מאמרים'},
+  {href: '/workshops/', label: 'ספריית סדנאות'},
+  {href: '/benefits/', label: 'הטבות'},
+  {href: '/community/', label: 'קבוצות הווטסאפ'},
+]
+const path = Astro.url.pathname
+const isActive = (href: string): boolean => path === href || path.startsWith(href)
 ---
 <!doctype html>
 <html lang="he" dir="rtl">
@@ -16,43 +27,86 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
     <link rel="icon" href="/brand/mark.png" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet" />
     {/* TODO: gate behind cookie consent per Israeli privacy law before loading */}
     {gtm && (
       <script is:inline set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`} />
     )}
   </head>
   <body>
+    <a class="skip-link" href="#main">דילוג לתוכן הראשי</a>
     <header class="wrap site-head">
 		<a href="/" class="logo"><img src="/brand/old-logo.png" alt="שבט אמהות" width="300" height="193" /></a>
       <button class="nav-toggle" type="button" aria-controls="site-nav" aria-expanded="false" aria-label="תפריט">
         <span class="nav-toggle-lines" aria-hidden="true"></span>
       </button>
       <nav id="site-nav">
-        <a href="/doulas/">נבחרת הדולות</a>
-        <a href="/professionals/">נבחרת היועצות והמטפלות</a>
-        <a href="/articles/">מאמרים</a>
-        <a href="/workshops/">ספריית סדנאות</a>
-        <a href="/benefits/">הטבות</a>
-        <a href="/community/">קבוצות הווטסאפ</a>
+        {navLinks.map((l) => (
+          <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
+        ))}
       </nav>
     </header>
-    <main>
+    <main id="main">
       <slot />
     </main>
-    <footer class="wrap site-foot">
-      <span>© שבט אמהות</span>
+    <footer class="site-foot">
       <div class="foot-contact">
-        {settings?.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}
-        {settings?.phone && phoneHref && <a href={phoneHref}>{settings.phone}</a>}
-        {settings?.instagram && <a href={settings.instagram}>Instagram</a>}
+        <div class="wrap">
+          <img class="foot-mark" src="/brand/mark.png" alt="" width="82" />
+          <h2>מוזמנות ליצור איתנו קשר</h2>
+          <div class="foot-tiles">
+            {settings?.email && (
+              <a class="foot-tile" href={mailtoHref(settings.email)}>
+                <span aria-hidden="true">✉</span>
+                <strong>אימייל</strong>
+              </a>
+            )}
+            {settings?.instagram && (
+              <a class="foot-tile" href={instagramHref(settings.instagram)}>
+                <span aria-hidden="true">◎</span>
+                <strong>קרן</strong>
+              </a>
+            )}
+            {settings?.instagramSecondary && (
+              <a class="foot-tile" href={instagramHref(settings.instagramSecondary)}>
+                <span aria-hidden="true">◎</span>
+                <strong>עירית</strong>
+              </a>
+            )}
+          </div>
+          <form
+            class="foot-form"
+            name="site-contact"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+          >
+            <input type="hidden" name="form-name" value="site-contact" />
+            <p hidden><label>אל תמלאי שדה זה: <input name="bot-field" /></label></p>
+            <label>שם<input name="name" type="text" required autocomplete="name" /></label>
+            <label>טלפון<input name="phone" type="tel" autocomplete="tel" /></label>
+            <label class="full">אימייל<input name="email" type="email" required autocomplete="email" /></label>
+            <label class="full">הודעה<textarea name="message" rows="3"></textarea></label>
+            <p class="foot-consent full">בשליחת הטופס אני מסכים/ה שייעשה במידע שלי שימוש לצורך דיוור שיווקי ולמטרות נוספות כמפורט <a href="/privacy/">במדיניות הפרטיות</a> שלנו</p>
+            <button type="submit" class="btn foot-submit">שלחי הודעה</button>
+          </form>
+        </div>
       </div>
-      <nav class="foot-legal" aria-label="קישורים משפטיים">
-        <a href="/welcome/">ברוכות הבאות</a>
-        <a href="/team/">הצוות</a>
-        <a href="/privacy/">פרטיות</a>
-        <a href="/terms/">תנאי שימוש</a>
-        <a href="/accessibility/">נגישות</a>
-      </nav>
+      <ZigZag />
+      <div class="legal-strip">
+        <div class="wrap legal-inner">
+          <span>כל הזכויות שמורות לשבט אמהות{settings?.phone && phoneHref && <> · <a class="legal-phone" href={phoneHref}><bdi>{settings.phone}</bdi></a></>}</span>
+          <nav class="foot-legal" aria-label="קישורים משפטיים">
+            <a href="/welcome/">ברוכות הבאות</a>
+            <a href="/team/">הצוות</a>
+            <a href="/privacy/">מדיניות פרטיות</a>
+            <a href="/terms/">תנאי שימוש</a>
+            <a href="/accessibility/">הצהרת נגישות</a>
+          </nav>
+        </div>
+      </div>
     </footer>
     <AccessibilityToolbar />
     {/* TODO: consent banner gates GTM ({gtm}) per Israeli privacy law */}
@@ -66,6 +120,8 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
       })
     </script>
     <style>
+      .skip-link { position:absolute; inset-inline-start:1rem; top:-4rem; z-index:100; background:var(--surface); color:var(--brand); font-weight:700; padding:.65rem 1.3rem; border-radius:999px; box-shadow:var(--shadow-soft); text-decoration:none; transition:top .18s ease; }
+      .skip-link:focus-visible { top:1rem; outline:3px solid var(--peach); outline-offset:3px; }
       .site-head { display:flex; align-items:center; justify-content:space-between; padding-block:.25rem; gap:1rem; position:relative; background:var(--surface); }
       .logo { display:inline-flex; }
       .logo img { height: 46px; width:auto; }
@@ -77,12 +133,36 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
       .nav-toggle-lines::after { top:.45rem; }
       .nav-toggle:focus-visible, .site-head nav a:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
       .site-head nav { display:flex; gap:1.1rem; flex-wrap:wrap; }
-      .site-head nav a { text-decoration:none; color: var(--muted); font-size:.95rem; font-weight:500; transition:color .18s ease, transform .18s ease; }
+      .site-head nav a { text-decoration:none; color: var(--ink); font-size:.95rem; font-weight:600; transition:color .18s ease, transform .18s ease; }
       .site-head nav a:hover { transform:translateY(-1px); }
       .site-head nav a:hover { color:var(--brand); }
-      .site-foot { padding-block:2rem; color: var(--muted); border-top:1px solid var(--line); margin-top:3rem; display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; background:linear-gradient(180deg, transparent, rgba(255,255,255,.35)); }
-      .foot-contact { display:flex; gap:1.2rem; flex-wrap:wrap; }
-      .foot-contact a { color: var(--brand); text-decoration:none; }
+      .site-head nav a[aria-current="page"] { border-bottom:2px solid var(--brand); padding-bottom:3px; }
+
+      /* shared page ending: contact block → contact form → zigzag → legal strip */
+      .site-foot { margin-top:3rem; }
+      .foot-contact { background:var(--surface); border-top:1px solid var(--line); padding-block:2.6rem 2.4rem; text-align:center; }
+      .foot-mark { width:82px; height:auto; margin:0 auto .8rem; display:block; }
+      .foot-contact h2 { margin:0 0 1.6rem; font-size:clamp(1.8rem, 4vw, 2.15rem); }
+      .foot-tiles { display:flex; justify-content:center; gap:.9rem; flex-wrap:wrap; margin-bottom:1.8rem; }
+      .foot-tile { background:var(--cream); border:1px solid var(--line); border-radius:16px; padding:.9rem 1.4rem; text-decoration:none; text-align:center; min-width:150px; transition:transform .18s ease, background .18s ease; }
+      .foot-tile:hover { transform:translateY(-2px); background:var(--peach-soft); }
+      .foot-tile:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
+      .foot-tile span { display:block; font-size:1.25rem; margin-bottom:.15rem; color:var(--ink); }
+      .foot-tile strong { font-weight:700; color:var(--brand); }
+      .foot-form { max-width:640px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:.9rem; text-align:start; }
+      .foot-form label { display:flex; flex-direction:column; gap:.35rem; font-size:.85rem; font-weight:600; color:var(--ink); }
+      .foot-form input, .foot-form textarea { padding:.7rem .85rem; border:1px solid var(--line); border-radius:12px; font-family:inherit; font-size:.95rem; background:var(--surface); color:var(--text); resize:vertical; }
+      .foot-form input:focus-visible, .foot-form textarea:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
+      .foot-form .full { grid-column:1 / -1; }
+      .foot-consent { margin:0; font-size:.75rem; color:var(--muted); text-wrap:pretty; }
+      .foot-consent a { color:var(--brand); }
+      .foot-submit { grid-column:1 / -1; justify-self:start; }
+      .legal-strip { background:var(--ink); color:rgba(255, 255, 255, 0.78); font-size:.85rem; }
+      .legal-inner { display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; align-items:center; justify-content:space-between; padding-block:1.2rem; }
+      .legal-phone, .foot-legal a { color:var(--peach); text-decoration:none; }
+      .legal-phone:hover, .foot-legal a:hover { text-decoration:underline; }
+      .legal-phone:focus-visible, .foot-legal a:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
+      .foot-legal { display:flex; gap:1rem; flex-wrap:wrap; }
       @media (max-width: 700px) {
         .site-head { justify-content:center; padding-block:.35rem; }
         .logo img { height:49px; }
@@ -92,6 +172,8 @@ const phoneHref = telHref(settings?.phone) ?? whatsappHref(settings?.phone, sett
         .site-head[data-nav-open] nav { display:grid; gap:.35rem; }
         .site-head nav a { padding:.55rem .7rem; border-radius:12px; }
         .site-head nav a:hover { background:var(--peach-soft); }
+        .site-head nav a[aria-current="page"] { border-bottom:0; background:var(--peach-soft); }
+        .foot-form { grid-template-columns:1fr; }
       }
     </style>
   </body>

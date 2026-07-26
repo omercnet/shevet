@@ -8,7 +8,8 @@ export default defineType({
 		defineField({ name: "title", title: "שם האתר", type: "string" }),
 		defineField({ name: "email", title: "אימייל ראשי", type: "string" }),
 		defineField({ name: "phone", title: "טלפון", type: "string" }),
-		defineField({ name: "instagram", title: "אינסטגרם", type: "url" }),
+		defineField({ name: "instagram", title: "אינסטגרם — קרן", type: "url" }),
+		defineField({ name: "instagramSecondary", title: "אינסטגרם — עירית", type: "url" }),
 		defineField({ name: "facebook", title: "פייסבוק", type: "url" }),
 		defineField({ name: "gtmId", title: "מזהה Google Tag Manager", type: "string", description: "GTM-XXXXXXX" }),
 		defineField({

@@ -1,5 +1,7 @@
 # Shevet Imahot Design System
 
+The full visual reference (specimens, screen recreations, drift log) lives at `/design-system/` (`web/src/pages/design-system.astro`). This file stays the quick token/rule summary.
+
 ## 1. Atmosphere & Identity
 
 Shevet Imahot feels intimate, warm, and handmade: a trusted pregnancy-and-birth community rather than a generic marketplace. The signature is the combination of Oron Yad handwriting, raspberry/cream warmth, and the pastel tribal zigzag from the logo.
@@ -34,7 +36,7 @@ Never add a new visual color before adding it here and to `web/src/styles/brand.
 |---|---|---|---|---|
 | Display | `clamp(3rem, 8vw, 5.6rem)` | 400 | 1.05 | Homepage hero |
 | H1/H2 | `clamp(2rem, 5vw, 3rem)` | 400 | 1.1 | Section headings |
-| H3 | `1.5rem` | 400 | 1.2 | Card titles |
+| H3 / card title | `1.3rem` | 700 (`--sans`) | 1.25 | Card titles — Oron Yad never renders below 28px |
 | Body large | `clamp(1.05rem, 2.4vw, 1.35rem)` | 400 | 1.65 | Hero/body lead |
 | Body | `1rem` | 400 | 1.65 | Default copy |
 | Label | `0.78rem` | 700 | 1.4 | Eyebrows, small labels |

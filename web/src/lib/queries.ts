@@ -125,6 +125,7 @@ export interface SiteSettings {
 	email?: string;
 	phone?: string;
 	instagram?: string;
+	instagramSecondary?: string;
 	facebook?: string;
 	gtmId?: string;
 	matchmakingFormEmbed?: string;
