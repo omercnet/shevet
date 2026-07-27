@@ -58,7 +58,7 @@ const featuredBenefits = benefits.slice(0, 4);
 		<div class="grid mini-grid">
 			{featuredDoulas.map((d) => (
 				<a class="card mini-card doula-card" href={`/doulas/${d.slug}/`}>
-					{d.photo && <img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" />}
+					{d.photo && <div class="card-media"><img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" /></div>}
 					<h3>{d.name}</h3>
 					{d.title && <p>{d.title}</p>}
 				</a>
