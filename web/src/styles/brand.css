@@ -181,6 +181,9 @@ img {
 	font-size: 1.1rem;
 	margin: 0;
 }
+.section-head .section-link {
+	margin-top: 1.4rem;
+}
 .eyebrow {
 	font-size: 0.78rem;
 	letter-spacing: 0.18em;
