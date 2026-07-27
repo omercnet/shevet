@@ -76,22 +76,6 @@ const isActive = (href: string): boolean => path === href || path.startsWith(hre
               </a>
             )}
           </div>
-          <form
-            class="foot-form"
-            name="site-contact"
-            method="POST"
-            data-netlify="true"
-            data-netlify-honeypot="bot-field"
-          >
-            <input type="hidden" name="form-name" value="site-contact" />
-            <p hidden><label>אל תמלאי שדה זה: <input name="bot-field" /></label></p>
-            <label>שם<input name="name" type="text" required autocomplete="name" /></label>
-            <label>טלפון<input name="phone" type="tel" autocomplete="tel" /></label>
-            <label class="full">אימייל<input name="email" type="email" required autocomplete="email" /></label>
-            <label class="full">הודעה<textarea name="message" rows="3"></textarea></label>
-            <p class="foot-consent full">בשליחת הטופס אני מסכים/ה שייעשה במידע שלי שימוש לצורך דיוור שיווקי ולמטרות נוספות כמפורט <a href="/privacy/">במדיניות הפרטיות</a> שלנו</p>
-            <button type="submit" class="btn foot-submit">שלחי הודעה</button>
-          </form>
         </div>
       </div>
       <ZigZag />
@@ -138,7 +122,7 @@ const isActive = (href: string): boolean => path === href || path.startsWith(hre
       .site-head nav a:hover { color:var(--brand); }
       .site-head nav a[aria-current="page"] { border-bottom:2px solid var(--brand); padding-bottom:3px; }
 
-      /* shared page ending: contact block → contact form → zigzag → legal strip */
+      /* shared page ending: contact block → zigzag → legal strip */
       .site-foot { margin-top:3rem; }
       .foot-contact { background:var(--surface); border-top:1px solid var(--line); padding-block:2.6rem 2.4rem; text-align:center; }
       .foot-mark { width:82px; height:auto; margin:0 auto .8rem; display:block; }
@@ -149,14 +133,6 @@ const isActive = (href: string): boolean => path === href || path.startsWith(hre
       .foot-tile:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
       .foot-tile span { display:block; font-size:1.25rem; margin-bottom:.15rem; color:var(--ink); }
       .foot-tile strong { font-weight:700; color:var(--brand); }
-      .foot-form { max-width:640px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:.9rem; text-align:start; }
-      .foot-form label { display:flex; flex-direction:column; gap:.35rem; font-size:.85rem; font-weight:600; color:var(--ink); }
-      .foot-form input, .foot-form textarea { padding:.7rem .85rem; border:1px solid var(--line); border-radius:12px; font-family:inherit; font-size:.95rem; background:var(--surface); color:var(--text); resize:vertical; }
-      .foot-form input:focus-visible, .foot-form textarea:focus-visible { outline:3px solid var(--peach); outline-offset:3px; }
-      .foot-form .full { grid-column:1 / -1; }
-      .foot-consent { margin:0; font-size:.75rem; color:var(--muted); text-wrap:pretty; }
-      .foot-consent a { color:var(--brand); }
-      .foot-submit { grid-column:1 / -1; justify-self:start; }
       .legal-strip { background:var(--ink); color:rgba(255, 255, 255, 0.78); font-size:.85rem; }
       .legal-inner { display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; align-items:center; justify-content:space-between; padding-block:1.2rem; }
       .legal-phone, .foot-legal a { color:var(--peach); text-decoration:none; }
@@ -173,7 +149,6 @@ const isActive = (href: string): boolean => path === href || path.startsWith(hre
         .site-head nav a { padding:.55rem .7rem; border-radius:12px; }
         .site-head nav a:hover { background:var(--peach-soft); }
         .site-head nav a[aria-current="page"] { border-bottom:0; background:var(--peach-soft); }
-        .foot-form { grid-template-columns:1fr; }
       }
     </style>
   </body>

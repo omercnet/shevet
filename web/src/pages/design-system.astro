@@ -36,7 +36,7 @@ const patterns = [
   {title: 'Section header', body: 'Centred, max 60ch: Oron Yad heading + one muted sentence. No eyebrow above H2 on content pages — the eyebrow is reserved for the hero.'},
   {title: 'Directory page', body: 'Title → filter panel → results grid (auto-fill, min 230px) → "load more" → matchmaking form. Always that order, doulas and therapists alike.'},
   {title: 'Empty state', body: 'Never a blank grid. Muted line + a reset-filters button + the matchmaking form pulled up. A zero-result search is the best moment to capture a lead.'},
-  {title: 'Every page ends the same', body: "Contact block (email + two Instagram handles) → contact form → legal strip. It is the site's only footer; do not invent per-page variants."},
+  {title: 'Every page ends the same', body: "Contact block (email + two Instagram handles) → legal strip. It is the site's only footer; do not invent per-page variants or submission storage."},
   {title: 'RTL', body: 'Logical properties only — <code>margin-inline</code>, <code>border-inline-start</code>. Latin brand names and phone numbers stay LTR inside <code>&lt;bdi&gt;</code>.'},
   {title: 'Accessibility', body: 'Skip link, visible focus on every control, 44px minimum touch target, the WP accessibility toolbar carried over. Peach on white fails contrast — never text.'},
 ]
@@ -95,7 +95,7 @@ const drift = [
   {tone: 'verify', badge: 'VERIFY', title: 'Body typeface', body: "Assistant is the repo's choice, not a value read off the live theme. Confirm against the WP theme settings before this is locked."},
   {tone: 'verify', badge: 'VERIFY', title: 'Missing taxonomy values', body: 'Support style, budget bands, and the due-date matching rule are still open in <code>ARCHITECTURE.md §9</code>. The filter panel is built to take them; the values are not decided.'},
   {tone: 'kept', badge: 'KEPT', title: 'Accessibility toolbar & skip link', body: 'Legally required and already in use. Carried over verbatim, restyled to the tokens above.'},
-  {tone: 'kept', badge: 'KEPT', title: 'Every page ends in the contact form', body: 'Unusual, but it is how the site converts. Kept exactly as-is.'},
+  {tone: 'kept', badge: 'KEPT', title: 'Responder owns lead capture', body: 'Matchmaking and contact forms stay embedded or linked through Responder. The static site does not store submissions.'},
 ]
 ---
 <!doctype html>
@@ -650,14 +650,6 @@ const drift = [
               <a href="#screens"><span aria-hidden="true">◎</span><strong>קרן</strong></a>
               <a href="#screens"><span aria-hidden="true">◎</span><strong>עירית</strong></a>
             </div>
-            <div class="ds-foot-form">
-              <label class="ds-field ds-field--sm">שם<input /></label>
-              <label class="ds-field ds-field--sm">טלפון<input /></label>
-              <label class="ds-field ds-field--sm ds-field--full">אימייל<input /></label>
-              <label class="ds-field ds-field--sm ds-field--full">הודעה<textarea rows="3"></textarea></label>
-              <p class="ds-consent">בשליחת הטופס אני מסכים/ה שייעשה במידע שלי שימוש לצורך דיוור שיווקי ולמטרות נוספות כמפורט <a href="#screens">במדיניות הפרטיות</a> שלנו</p>
-              <button type="button" class="btn ds-foot-submit">שלחי הודעה</button>
-            </div>
           </div>
           <div class="ds-zig ds-zig--strip" style="--tooth:16px">
             {zig(64).map((c) => <span style={`background:${c}`}></span>)}
@@ -978,9 +970,6 @@ const drift = [
       .ds-foot-links a { background: var(--cream); border: 1px solid var(--line); border-radius: 16px; padding: 14px 22px; text-decoration: none; text-align: center; min-width: 150px; }
       .ds-foot-links span { display: block; font-size: 20px; margin-bottom: 2px; }
       .ds-foot-links strong { font-weight: 700; color: var(--brand); }
-      .ds-foot-form { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-      @media (max-width: 640px) { .ds-foot-form { grid-template-columns: 1fr; } }
-      .ds-foot-submit { grid-column: 1 / -1; justify-self: start; padding: 12px 34px; }
       .ds-legal { background: var(--ink); color: rgba(255, 255, 255, 0.78); padding: 20px 40px; display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; justify-content: space-between; font-size: 13px; }
       .ds-legal-links { display: flex; gap: 16px; }
       .ds-legal a { color: var(--peach); text-decoration: none; }
