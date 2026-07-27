@@ -58,7 +58,7 @@ const featuredBenefits = benefits.slice(0, 4);
 		<div class="grid mini-grid">
 			{featuredDoulas.map((d) => (
 				<a class="card mini-card doula-card" href={`/doulas/${d.slug}/`}>
-					{d.photo && <img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" />}
+					{d.photo && <div class="card-media"><img src={`${d.photo}?w=360&h=260&fit=crop`} alt={d.name} loading="lazy" /></div>}
 					<h3>{d.name}</h3>
 					{d.title && <p>{d.title}</p>}
 				</a>
@@ -339,7 +339,8 @@ const featuredBenefits = benefits.slice(0, 4);
 		.mini-card h3 { margin:.2rem 0 .45rem; font-family:var(--sans); font-weight:700; font-size:1.3rem; line-height:1.25; }
 		.mini-card p { margin:0; color:var(--muted); }
 		.mini-card.doula-card { text-align:center; }
-		.mini-card.doula-card img { width:62%; aspect-ratio:1/1; border-radius:50%; margin:0 auto .85rem; }
+		.mini-card.doula-card .card-media { margin:0 auto .85rem; }
+		.mini-card.doula-card .card-media img { width:100%; height:100%; aspect-ratio:auto; border-radius:0; margin:0; }
 		.join-section { text-align:center; }
 	</style>
 </Base>
