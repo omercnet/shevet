@@ -14,16 +14,16 @@ const [doulas, professionals, articles, workshops, benefits] = await Promise.all
 const featuredDoulas = doulas.filter((d) => d.photo && d.tier === "premium").slice(0, 15);
 
 const professionalCategoryDefs: { label: string; match: string[] }[] = [
-	{ label: "רפלקסולוגיה/דיקור/שיאצו", match: ["רפלקסולוגיה", "דיקור", "שיאצו"] },
-	{ label: "עיסוי הריון/אקוליבריו", match: ["עיסוי הריון", "אקוליבריו"] },
-	{ label: "הנקה", match: ["הנקה"] },
+	{ label: "רפלקסולוגיה/דיקור", match: ["רפלקסולוגיה", "דיקור", "שיאצו"] },
+	{ label: "הנקה/הכנה להנקה", match: ["הנקה"] },
+	{ label: "עיסוי/אקוליבריו", match: ["עיסוי הריון", "אקוליבריו"] },
 	{ label: "קורס הכנה ללידה", match: ["הכנה ללידה"] },
 ];
 const professionalCategories = [
 	...professionalCategoryDefs.filter((cat) =>
 		professionals.some((p) => (p.fields ?? []).some((f) => cat.match.some((m) => f.includes(m)))),
 	),
-	...(professionals.length ? [{ label: "כל נשות המקצוע", match: [] as string[] }] : []),
+	...(professionals.length ? [{ label: "לכל נשות המקצוע בשבט", match: [] as string[] }] : []),
 ];
 
 const featuredWorkshops = workshops.slice(0, 4);
@@ -75,7 +75,13 @@ const featuredBenefits = benefits.slice(0, 4);
 		<div class="grid pillars">
 			{professionalCategories.map((cat, i) => (
 				<a
-					class:list={["card", "pillar", "field-tile", `tint-${["peach", "mint", "sky", "gold"][i % 4]}`]}
+					class:list={[
+						"card",
+						"pillar",
+						"field-tile",
+						`tint-${["peach", "mint", "sky", "gold"][i % 4]}`,
+						!cat.match.length && "pillar-all",
+					]}
 					href={cat.match.length ? `/professionals/?${cat.match.map((m) => `match=${encodeURIComponent(m)}`).join("&")}` : "/professionals/"}
 				>
 					<h3>{cat.label}</h3>
@@ -247,7 +253,20 @@ const featuredBenefits = benefits.slice(0, 4);
 			}
 		}
 		.pillars {
-			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.pillar-all {
+			grid-column: 1 / -1;
+			max-width: 360px;
+			margin-inline: auto;
+		}
+		@media (max-width: 560px) {
+			.pillars {
+				grid-template-columns: 1fr;
+			}
+			.pillar-all {
+				max-width: none;
+			}
 		}
 		.pillar {
 			position: relative;
