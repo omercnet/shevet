@@ -47,7 +47,19 @@ assert(base.includes("right:1rem"), "mobile hamburger must sit on the old physic
 for (const label of ["נבחרת הדולות", "נבחרת היועצות והמטפלות", "קבוצות הווטסאפ"]) {
 	assert(base.includes(label), `header must keep old-site nav label ${label}`);
 }
-assert(!base.includes("<ZigZag />"), "global header must not add a decorative zigzag strip over the old photo hero");
+assert(
+	!headerSource.includes("<ZigZag />"),
+	"global header must not add a decorative zigzag strip over the old photo hero",
+);
+assert(
+	/<footer[\s\S]*<ZigZag \/>[\s\S]*<\/footer>/.test(base),
+	"footer must be capped with the zigzag strip per the design system",
+);
+const footerSource = base.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? "";
+assert(
+	!footerSource.includes("data-netlify"),
+	"footer contact must link to approved channels instead of storing submissions in Netlify",
+);
 assert(base.includes("nav-toggle-lines"), "mobile header must use an icon-like menu button, not a text pill");
 assert(home.includes("order: 1"), "old-site hero text must appear above the centered logo badge");
 assert(!home.includes("<br />"), "desktop hero support line should not be forced into redesigned breaks");
