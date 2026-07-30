@@ -384,6 +384,7 @@ function mapArticle(item) {
 		ages: t.ages?.length ? t.ages : undefined,
 		articleTypes: t["article-type"]?.length ? t["article-type"] : undefined,
 		excerpt: text(item["excerpt:encoded"]) || undefined,
+		videoUrl: m["vimeo-link_copy"] || m["vimeo-link"] || undefined,
 		body: toBlocks(html),
 		sourceHtml: html || undefined,
 		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,

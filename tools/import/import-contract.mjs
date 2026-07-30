@@ -74,7 +74,7 @@ for (const type of ["post", "pregnancy-blog", "benefits", "community", "courses"
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "published: text(item[\"wp:status\"]) === \"publish\"", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "m[\"--\"]", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "bannerImages", "birthSupportImages", "whatsappGallery", "jet-review-items", "articleTypes", "audiences", "MEDIA_FIELDS"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "published: text(item[\"wp:status\"]) === \"publish\"", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "m[\"--\"]", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "bannerImages", "birthSupportImages", "whatsappGallery", "jet-review-items", "articleTypes", "audiences", "MEDIA_FIELDS", "vimeo-link"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
 const publishedMappings = importer.match(/published: text\(item\["wp:status"\]\) === "publish"/g) ?? [];
