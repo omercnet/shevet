@@ -28,6 +28,7 @@ export interface ProfessionalCard {
 	fields?: string[];
 	regions?: string[];
 	languages?: string[];
+	hospitals?: string[];
 	whatsapp?: string;
 	phone?: string;
 	email?: string;
@@ -57,6 +58,7 @@ export function getProfessionals(): Promise<ProfessionalCard[]> {
 			"photo": photo.asset->url,
 			"fields": fields[]->name,
 			"regions": regions[]->name,
+			"hospitals": hospitals[]->name,
 			languages, whatsapp, phone, email, instagram
 		}`,
 		{},
