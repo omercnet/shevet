@@ -9,8 +9,8 @@ const teeth = ['var(--peach)', 'var(--mint)', 'var(--gold)', 'var(--peach-soft)'
 const zig = (count: number) => Array.from({length: count}, (_, i) => teeth[i % teeth.length])
 
 const palette = [
-  {name: 'Brand', code: '--brand · #92003b', use: 'CTAs, links, active states', color: '#92003b'},
-  {name: 'Brand deep', code: '--brand-deep · #6e002d', use: 'Hover, pressed, shadow tint', color: '#6e002d'},
+  {name: 'Brand (espresso)', code: '--brand · #3a2f24', use: 'CTAs, links, active states', color: '#3a2f24'},
+  {name: 'Brand deep', code: '--brand-deep · #241c15', use: 'Hover, pressed, shadow tint', color: '#241c15'},
   {name: 'Peach', code: '--peach · #fbcfac', use: 'Tipi in the logo · hero surfaces', color: '#fbcfac'},
   {name: 'Peach soft', code: '--peach-soft · #f8e1ce', use: 'Chips, soft panels, hovers', color: '#f8e1ce'},
   {name: 'Cream', code: '--cream · #f4ece1', use: 'Page background', color: '#f4ece1'},
@@ -91,7 +91,7 @@ const drift = [
   {tone: 'cleaned', badge: 'CLEANED UP', title: 'Filter round-trips', body: 'WP reloads the page on every filter change. The rebuild filters the already-loaded set client-side; "load more" becomes progressive reveal, not a request.'},
   {tone: 'new', badge: 'NEW', title: 'Sticky WhatsApp CTA on profiles', body: "Not on the WP site. Added because the profile page's only job is starting a conversation."},
   {tone: 'new', badge: 'NEW', title: 'Therapist filters: field · region · language', body: 'The live therapist page has no filtering at all. Same panel component as the doula directory, different fields.'},
-  {tone: 'verify', badge: 'VERIFY', title: 'Raspberry #92003b is not in the logo', body: "The logotype is grey with peach / gold / mint accents. The raspberry comes from the WP theme's link and button colour. It carries the brand well — but it should be a conscious choice with Keren, not an inherited one."},
+  {tone: 'cleaned', badge: 'RESOLVED', title: 'Brand colour: espresso #3a2f24, not raspberry', body: "Raspberry #92003b was inherited from the WP theme's link/button colour, never a conscious brand choice — flagged for Keren's review. Reviewed against the live site 2026-07-30: the real CTAs and buttons read as a dark warm neutral, not fuchsia. <code>--brand</code>/<code>--brand-deep</code> are now espresso #3a2f24 / #241c15, keeping the peach/gold/mint logo accents untouched."},
   {tone: 'verify', badge: 'VERIFY', title: 'Body typeface', body: "Assistant is the repo's choice, not a value read off the live theme. Confirm against the WP theme settings before this is locked."},
   {tone: 'verify', badge: 'VERIFY', title: 'Missing taxonomy values', body: 'Support style, budget bands, and the due-date matching rule are still open in <code>ARCHITECTURE.md §9</code>. The filter panel is built to take them; the values are not decided.'},
   {tone: 'kept', badge: 'KEPT', title: 'Accessibility toolbar & skip link', body: 'Legally required and already in use. Carried over verbatim, restyled to the tokens above.'},
@@ -144,7 +144,7 @@ const drift = [
           <h2>Foundations</h2>
           <span class="ds-sec-num">01</span>
         </div>
-        <p class="ds-lede">Warm, handmade, intimate. The identity comes from three things and nothing else: the <strong>Oron Yad</strong> handwriting, the <strong>raspberry + cream</strong> pairing, and the <strong>pastel tribal zigzag</strong> lifted from the logo. Everything below is a consequence of those three.</p>
+        <p class="ds-lede">Warm, handmade, intimate. The identity comes from three things and nothing else: the <strong>Oron Yad</strong> handwriting, the <strong>espresso + cream</strong> pairing, and the <strong>pastel tribal zigzag</strong> lifted from the logo. Everything below is a consequence of those three.</p>
 
         <h3 class="ds-label">Core palette</h3>
         <div class="ds-swatches">
@@ -247,7 +247,7 @@ const drift = [
               <div style="box-shadow:var(--shadow-soft)">soft</div>
               <div style="box-shadow:var(--shadow-lift)">lift</div>
             </div>
-            <p>Raspberry-tinted, never neutral grey. Tactile, not glossy SaaS.</p>
+            <p>Warm espresso-tinted, never flat black. Tactile, not glossy SaaS.</p>
           </div>
           <div class="ds-tile">
             <div class="ds-tile-title">Motion</div>
@@ -812,7 +812,7 @@ const drift = [
       .ds-benefit-code code { background: var(--peach-soft); padding: 2px 7px; border-radius: 6px; }
       .ds-benefit-card .btn { margin-top: auto; align-self: flex-start; }
 
-      .ds-filter { background: linear-gradient(160deg, #e4f3e0, var(--mint)); border: 1px solid rgba(146, 0, 59, 0.08); border-radius: 26px; padding: 22px; display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
+      .ds-filter { background: linear-gradient(160deg, #e4f3e0, var(--mint)); border: 1px solid rgba(58, 47, 36, 0.08); border-radius: 26px; padding: 22px; display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
       .ds-filter--tight { padding: 20px; margin-bottom: 24px; box-shadow: none; }
       .ds-filter label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 700; color: var(--brand); }
       .ds-filter select, .ds-filter input { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; font-family: inherit; font-size: 14px; min-width: 14ch; color: var(--text); }
@@ -937,7 +937,7 @@ const drift = [
       .ds-article-grid .ds-article-body { padding: 16px 18px 20px; }
       .ds-article-grid h5 { font-size: 18px; }
 
-      .ds-benefit-filter { background: linear-gradient(160deg, #e4f3e0, var(--mint)); border: 1px solid rgba(146, 0, 59, 0.08); border-radius: 26px; padding: 20px; margin-bottom: 24px; }
+      .ds-benefit-filter { background: linear-gradient(160deg, #e4f3e0, var(--mint)); border: 1px solid rgba(58, 47, 36, 0.08); border-radius: 26px; padding: 20px; margin-bottom: 24px; }
       .ds-benefit-filter-label { font-size: 13px; font-weight: 700; color: var(--brand); margin-bottom: 10px; }
       .ds-benefit-filter-label span { font-weight: 400; color: #4a6b57; }
       .ds-benefit-filter-chips { display: flex; gap: 8px; flex-wrap: wrap; }

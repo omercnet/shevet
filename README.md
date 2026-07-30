@@ -63,7 +63,7 @@ Imports practitioners, articles, benefits + hospital/field/region taxonomy terms
 ## What's built
 - **Two search engines** — `/doulas/` (hospital · due date · support style · budget) and `/professionals/` (field · region · language). Client-side, instant.
 - **Converting doula profile** — `/doulas/[slug]` with video embed + sticky WhatsApp CTA + reviews.
-- Brand locked: **Oron Yad** font (`web/public/fonts/`) + raspberry/peach/cream tokens (`src/styles/brand.css`).
+- Brand locked: **Oron Yad** font (`web/public/fonts/`) + espresso/peach/cream tokens (`src/styles/brand.css`).
 
 ## TODO (tracked in ARCHITECTURE.md §9)
 - Confirm with Keren: `supportStyle` values, `budget` bands, due-date matching rule, GTM id.

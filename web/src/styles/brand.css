@@ -8,8 +8,8 @@
 }
 
 :root {
-	--brand: #92003b; /* raspberry / fuchsia */
-	--brand-deep: #6e002d;
+	--brand: #3a2f24; /* espresso — dark warm neutral, matches the WP theme's actual CTA/button colour */
+	--brand-deep: #241c15;
 	--peach: #fbcfac;
 	--peach-soft: #f8e1ce;
 	--cream: #f4ece1;
@@ -27,7 +27,7 @@
 	--heading: #3d3d3d;
 	--line: #e7d9cb;
 	--shadow-soft: 0 18px 48px -38px rgba(63, 34, 48, 0.55);
-	--shadow-lift: 0 28px 70px -46px rgba(146, 0, 59, 0.62);
+	--shadow-lift: 0 28px 70px -46px rgba(58, 47, 36, 0.62);
 
 	--display: "Oron Yad", "Frank Ruhl Libre", serif;
 	--sans: "Assistant", "Heebo", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
@@ -142,7 +142,7 @@ img {
 	font-size: 0.8rem;
 	line-height: 1.35;
 	font-weight: 600;
-	box-shadow: inset 0 0 0 1px rgba(146, 0, 59, 0.08);
+	box-shadow: inset 0 0 0 1px rgba(58, 47, 36, 0.08);
 }
 /* pastel tribal chip tints — rotate across categories */
 .chip.t-peach {
@@ -252,7 +252,7 @@ img {
 	align-items: end;
 	background: linear-gradient(160deg, #e4f3e0, var(--mint));
 	padding: 1.5rem;
-	border: 1px solid rgba(146, 0, 59, 0.08);
+	border: 1px solid rgba(58, 47, 36, 0.08);
 	border-radius: 26px;
 	margin: 1.5rem 0;
 	box-shadow: var(--shadow-soft);

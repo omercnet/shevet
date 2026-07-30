@@ -4,15 +4,15 @@ The full visual reference (specimens, screen recreations, drift log) lives at `/
 
 ## 1. Atmosphere & Identity
 
-Shevet Imahot feels intimate, warm, and handmade: a trusted pregnancy-and-birth community rather than a generic marketplace. The signature is the combination of Oron Yad handwriting, raspberry/cream warmth, and the pastel tribal zigzag from the logo.
+Shevet Imahot feels intimate, warm, and handmade: a trusted pregnancy-and-birth community rather than a generic marketplace. The signature is the combination of Oron Yad handwriting, espresso/cream warmth, and the pastel tribal zigzag from the logo.
 
 ## 2. Color
 
 | Role | Token | Light | Usage |
 |---|---|---|---|
-| Brand primary | `--brand` | `#92003b` | Primary CTAs, links, accents, active states |
+| Brand primary | `--brand` | `#3a2f24` | Primary CTAs, links, accents, active states |
 | Heading | `--heading` | `#3d3d3d` | Headings and linked card titles |
-| Brand deep | `--brand-deep` | `#6e002d` | Deep text accents and shadows |
+| Brand deep | `--brand-deep` | `#241c15` | Deep text accents and shadows |
 | Peach | `--peach` | `#fbcfac` | Warm accents, hero surfaces |
 | Peach soft | `--peach-soft` | `#f8e1ce` | Soft panels and hover states |
 | Cream | `--cream` | `#f4ece1` | Page background |
@@ -77,4 +77,4 @@ Use 180-300ms transitions for hover/toggle states. Animate only `transform`, `op
 
 ## 7. Depth & Surface
 
-Depth strategy is warm tonal layering with restrained raspberry-tinted shadows. Surfaces should feel tactile and handmade, not glossy SaaS.
+Depth strategy is warm tonal layering with restrained espresso-tinted shadows. Surfaces should feel tactile and handmade, not glossy SaaS.
