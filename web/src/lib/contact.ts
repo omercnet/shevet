@@ -42,7 +42,7 @@ export function instagramHref(handle: string | undefined): string | null {
 }
 
 /**
- * Validated Instagram post/reel URL for third-party embeds.
+ * Validated Instagram post/reel/TV URL for third-party embeds.
  * Rejects non-HTTPS URLs, lookalike hosts, profile URLs, and unexpected paths.
  */
 export function instagramPostHref(value: string | undefined): string | null {
@@ -51,7 +51,7 @@ export function instagramPostHref(value: string | undefined): string | null {
 		const url = new URL(value);
 		const host = url.hostname.toLowerCase();
 		if (url.protocol !== "https:" || (host !== "instagram.com" && host !== "www.instagram.com")) return null;
-		if (!/^\/(?:p|reel)\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)) return null;
+		if (!/^\/(?:p|reel|tv)\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)) return null;
 		return `https://www.instagram.com${url.pathname.replace(/\/?$/, "/")}`;
 	} catch {
 		return null;

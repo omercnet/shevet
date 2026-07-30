@@ -142,7 +142,7 @@ function sectionBlocks(sections) {
 
 function firstInstagramPostUrl(...values) {
 	for (const value of values) {
-		const found = String(value ?? "").match(/https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel)\/[^\s"'<>]+/i)?.[0];
+		const found = String(value ?? "").match(/https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/[^\s"'<>]+/i)?.[0];
 		if (found) return found;
 	}
 	return undefined;
@@ -385,6 +385,7 @@ function mapArticle(item) {
 		articleTypes: t["article-type"]?.length ? t["article-type"] : undefined,
 		excerpt: text(item["excerpt:encoded"]) || undefined,
 		videoUrl: m["vimeo-link_copy"] || m["vimeo-link"] || undefined,
+		instagramPostUrl: firstInstagramPostUrl(m.shortcode, m.insta1, m.insta2),
 		body: toBlocks(html),
 		sourceHtml: html || undefined,
 		publishedAt: text(item["wp:post_date_gmt"]) ? `${text(item["wp:post_date_gmt"]).replace(" ", "T")}Z` : undefined,

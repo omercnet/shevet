@@ -37,6 +37,9 @@
 * {
 	box-sizing: border-box;
 }
+html [hidden] {
+	display: none;
+}
 html {
 	font-family: var(--sans);
 	color: var(--text);

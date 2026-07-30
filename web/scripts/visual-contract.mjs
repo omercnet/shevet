@@ -29,6 +29,7 @@ const targetPages = [
 const page = (path) => read(path);
 
 assert(designExists, "DESIGN.md must exist before visual migration code");
+assert(brand.includes("[hidden]"), "global styles must preserve native hidden behavior");
 assert(base.includes('aria-controls="site-nav"'), "mobile nav toggle must control #site-nav");
 assert(base.includes('id="site-nav"'), "site nav must expose #site-nav for mobile toggle");
 assert(home.includes("hero-badge"), "home hero must restore a logo badge identity element");

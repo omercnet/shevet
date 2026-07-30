@@ -9,10 +9,14 @@ const assert = (condition, message) => {
 
 const queries = read("web/src/lib/queries.ts");
 const importScript = read("tools/import/import.mjs");
+const articleDetail = read("web/src/pages/articles/[slug].astro");
 
 assert(importScript.includes('"community"'), "importer must map community post type");
 assert(importScript.includes('"courses"'), "importer must map courses post type");
 assert(importScript.includes("_content"), "importer must read legacy _content HTML");
+assert(queries.includes("instagramPostUrl"), "article detail query must expose imported Instagram videos");
+assert(articleDetail.includes("instagramPostHref"), "article detail must validate imported Instagram URLs");
+assert(articleDetail.includes("data-instagram-load"), "article Instagram embeds must require an explicit load action");
 assert(queries.includes("getBenefitSlugs"), "web must query benefit detail slugs");
 assert(queries.includes("getCommunityPageSlugs"), "web must query community detail slugs");
 assert(
