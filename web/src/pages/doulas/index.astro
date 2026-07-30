@@ -12,6 +12,9 @@ const settings = await getSiteSettings()
     <p><a class="btn btn-outline" href="/doulas/join/">רוצה להצטרף לנבחרת?</a></p>
 
     <form class="filter-panel" id="doula-filters">
+      <label>חיפוש חופשי
+        <input type="search" name="q" placeholder="לדוגמה: רעלת, שם דולה..." />
+      </label>
       <label>בית חולים
         <select name="hospital"><option value="">הכול</option>
           {hospitals.map((h: string) => <option value={h}>{h}</option>)}
@@ -88,11 +91,17 @@ const settings = await getSiteSettings()
           </div>
         </article>`;
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (d: Row): string =>
+        norm([d.name, d.title, ...(d.supportStyle ?? []), ...(d.hospitals ?? [])].filter(Boolean).join(" "));
       const apply = (): void => {
         const f = new FormData(form);
         const hospital = f.get("hospital");
+        const q = norm((f.get("q") as string) ?? "");
         const res = data.filter(
-          (d) => !hospital || (d.hospitals ?? []).includes(hospital as string),
+          (d) =>
+            (!hospital || (d.hospitals ?? []).includes(hospital as string)) &&
+            (!q || haystack(d).includes(q)),
         );
         // dueDate currently informational — matching rule TBD with Keren
         out.innerHTML = res.map(card).join("");

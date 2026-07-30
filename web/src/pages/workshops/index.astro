@@ -12,19 +12,66 @@ const workshops = await getWorkshops()
     {workshops.length === 0 ? (
       <p class="empty-state">אין סדנאות עדיין</p>
     ) : (
-      <div class="grid" id="results">
-        {workshops.map((w) => (
-          <article class="card article-card workshop-card">
-            {w.cover && <img src={`${w.cover}?w=320&h=200&fit=crop`} alt={w.title} loading="lazy" />}
-            <h3><a href={`/articles/${w.slug}/`}>{w.title}</a></h3>
-            {w.excerpt && <p class="excerpt">{w.excerpt}</p>}
-          </article>
-        ))}
-      </div>
+      <>
+        <form class="filter-panel" id="workshop-filters">
+          <label>חיפוש חופשי
+            <input type="search" name="q" placeholder="לדוגמה: רעלת, שם הסדנה..." />
+          </label>
+        </form>
+
+        <p id="count">{workshops.length} סדנאות</p>
+        <div class="grid" id="results">
+          {workshops.map((w) => (
+            <article class="card article-card workshop-card">
+              {w.cover && <img src={`${w.cover}?w=320&h=200&fit=crop`} alt={w.title} loading="lazy" />}
+              <h3><a href={`/articles/${w.slug}/`}>{w.title}</a></h3>
+              {w.excerpt && <p class="excerpt">{w.excerpt}</p>}
+            </article>
+          ))}
+        </div>
+      </>
     )}
   </section>
 
+  {workshops.length > 0 && (
+    <script type="application/json" id="data" is:inline set:html={JSON.stringify(workshops)}></script>
+  )}
+  <script>
+    interface Row {
+      slug: string; title: string; excerpt?: string; cover?: string;
+    }
+    const dataEl = document.getElementById("data");
+    const form = document.getElementById("workshop-filters") as HTMLFormElement | null;
+    const out = document.getElementById("results");
+    const count = document.getElementById("count");
+
+    if (dataEl && form && out && count) {
+      const data: Row[] = JSON.parse(dataEl.textContent ?? "[]");
+      const escapeHtml = (s: string): string =>
+        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      const card = (w: Row): string => {
+        const img = w.cover
+          ? `<img src="${encodeURI(w.cover)}?w=320&h=200&fit=crop" alt="${escapeHtml(w.title)}">`
+          : "";
+        const excerpt = w.excerpt ? `<p class="excerpt">${escapeHtml(w.excerpt)}</p>` : "";
+        return `<article class="card article-card workshop-card">${img}<h3><a href="/articles/${encodeURIComponent(w.slug)}/">${escapeHtml(w.title)}</a></h3>${excerpt}</article>`;
+      };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (w: Row): string => norm([w.title, w.excerpt].filter(Boolean).join(" "));
+      const apply = (): void => {
+        const f = new FormData(form);
+        const q = norm((f.get("q") as string) ?? "");
+        const res = data.filter((w) => !q || haystack(w).includes(q));
+        out.innerHTML = res.map(card).join("");
+        count.textContent = `${res.length} סדנאות`;
+      };
+      form.addEventListener("input", apply);
+      apply();
+    }
+  </script>
+
   <style>
+    #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; margin-top:1.5rem; }
   </style>
 </Base>

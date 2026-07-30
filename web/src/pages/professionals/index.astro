@@ -20,6 +20,9 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
     <p>יועצות הנקה, מטפלות, מדריכות ונשות מקצוע — סינון לפי תחום ומיקום.</p>
 
     <form class="filter-panel" id="pro-filters">
+      <label>חיפוש חופשי
+        <input type="search" name="q" placeholder="לדוגמה: הנקה, שם יועצת..." />
+      </label>
       <label>תחום טיפול
         <select name="field"><option value="">הכול</option>{fields.map((x: string) => <option>{x}</option>)}</select>
       </label>
@@ -104,17 +107,22 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
           </div>
         </article>`;
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (p: Row): string =>
+        norm([p.name, p.title, ...(p.fields ?? []), ...(p.regions ?? []), ...(p.languages ?? [])].filter(Boolean).join(" "));
       const apply = (): void => {
         const f = new FormData(form);
         const fld = f.get("field");
         const reg = f.get("region");
         const lang = f.get("lang");
+        const q = norm((f.get("q") as string) ?? "");
         const res = data.filter(
           (p) =>
             (!fld || (p.fields ?? []).includes(fld as string)) &&
             (presetMatch.length === 0 || (p.fields ?? []).some((x) => presetMatch.some((m) => x.includes(m)))) &&
             (!reg || (p.regions ?? []).includes(reg as string)) &&
-            (!lang || (p.languages ?? []).includes(lang as string)),
+            (!lang || (p.languages ?? []).includes(lang as string)) &&
+            (!q || haystack(p).includes(q)),
         );
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} נשות מקצוע`;

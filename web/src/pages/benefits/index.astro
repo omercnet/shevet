@@ -15,6 +15,12 @@ const CATEGORIES: { value: string; label: string }[] = [
     <h1>מועדון הטבות</h1>
     <p>הטבות וקופונים בלעדיים מהשותפים שלנו. סננו לפי שלב.</p>
 
+    <form class="filter-panel">
+      <label>חיפוש חופשי
+        <input type="search" id="benefit-search" placeholder="לדוגמה: הנקה, שם שותף..." />
+      </label>
+    </form>
+
     <div class="cats" id="cats" role="group" aria-label="סינון לפי קטגוריה">
       <button type="button" class="chip is-active" data-cat="">הכול</button>
       {CATEGORIES.map((c) => (
@@ -56,8 +62,9 @@ const CATEGORIES: { value: string; label: string }[] = [
     const cats = document.getElementById("cats");
     const out = document.getElementById("results");
     const empty = document.getElementById("empty");
+    const search = document.getElementById("benefit-search") as HTMLInputElement | null;
 
-    if (dataEl && cats && out && empty) {
+    if (dataEl && cats && out && empty && search) {
       const data: Benefit[] = JSON.parse(dataEl.textContent ?? "[]");
       const card = (b: Benefit): string => {
         const logo = b.logo ? `<img class="logo" src="${esc(b.logo)}?w=160&h=80&fit=max" alt="${esc(b.partner)}">` : "";
@@ -88,8 +95,14 @@ const CATEGORIES: { value: string; label: string }[] = [
         if (/הריון|הריו|לידה|pregnancy/i.test(text)) return "pregnancy";
         return "";
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (b: Benefit): string =>
+        norm([b.partner, b.description, b.discount, b.couponCode, b.category].filter(Boolean).join(" "));
       const apply = (): void => {
-        const res = data.filter((b) => !active || inferBenefitCategory(b) === active);
+        const q = norm(search.value);
+        const res = data.filter(
+          (b) => (!active || inferBenefitCategory(b) === active) && (!q || haystack(b).includes(q)),
+        );
         out.innerHTML = res.map(card).join("");
         empty.hidden = res.length > 0;
       };
@@ -103,6 +116,7 @@ const CATEGORIES: { value: string; label: string }[] = [
         }
         apply();
       });
+      search.addEventListener("input", apply);
       apply();
     }
   </script>
