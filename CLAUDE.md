@@ -12,7 +12,7 @@ Rebuild of `shevet-imahot.co.il` from WordPress to a low-ops static stack:
 - `pitch/` - Hebrew client pitch deck.
 - `netlify.toml` - Netlify build (`base = "web"`, publish `dist`) plus legacy redirects.
 
-Core product decisions from Keren are locked in `ARCHITECTURE.md`: keep Oron Yad + raspberry/peach/cream visual identity, make doula/professional search central, build converting doula pages, drop weekly track/courses catalog/WooCommerce/members-only content, embed Responder forms, link Meshulam sale pages, keep WhatsApp community flow.
+Core product decisions from Keren are locked in `ARCHITECTURE.md`: keep Oron Yad + espresso/peach/cream visual identity (brand accent revised 2026-07-30 from inherited raspberry to espresso — see `ARCHITECTURE.md` §0), make doula/professional search central, build converting doula pages, drop weekly track/courses catalog/WooCommerce/members-only content, embed Responder forms, link Meshulam sale pages, keep WhatsApp community flow.
 
 ## Stack and commands
 

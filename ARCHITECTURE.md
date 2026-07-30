@@ -8,11 +8,14 @@
 
 Keren: *"keep the design language, colors, and my font Oron Yad."* Extracted from the production CSS:
 
+> **2026-07-30 update:** `--brand`/`--brand-deep` were raspberry `#92003b`/`#6e002d`, inherited from the WP theme's link/button colour and flagged in the design system as needing a conscious call, not an inherited one (see `/design-system/` drift log). Keren reviewed against the live site's actual CTAs/buttons and replaced them with a warm dark neutral ("espresso") that matches the real site better than the inherited raspberry.
+
 | Token | Value | Use |
 |---|---|---|
 | Display font | **Oron Yad** (`OronYad_MFW.woff/.ttf`, on the site since 2020) | Headings, hero |
 | Body font | **Assistant** | Body text, UI |
-| `--brand` | **#92003b** (raspberry/fuchsia) | Primary CTAs, links, accents |
+| `--brand` | **#3a2f24** (espresso) | Primary CTAs, links, accents |
+| `--brand-deep` | **#241c15** (espresso deep) | Hover/pressed states, shadow tint |
 | `--heading` | **#3d3d3d** (dark gray) | Headings |
 | `--peach` | **#FBCFAC** / `#F3CFAC` | Accents, chips |
 | `--cream` | **#F4ECE1** / `#F4F3F1` | Page grounds |
@@ -216,7 +219,7 @@ No cart, no accounts, no `/thank-you` plumbing — Meshulam owns the transaction
 ## 9. Decisions & remaining questions
 
 **Locked with Keren (2026-06-27):**
-- Keep the visual identity — **Oron Yad** font + raspberry/peach/cream palette.
+- Keep the visual identity — **Oron Yad** font + peach/cream palette. (2026-07-30: brand accent revised from inherited raspberry to espresso — see §0.)
 - **Search engine is the priority** — two distinct engines (doulas vs professionals).
 - **Converting doula pages** with video + sticky WhatsApp CTA.
 - **Other doulas** = self-serve form → approve → index listing.

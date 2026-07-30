@@ -8,7 +8,7 @@
 
 | Keep & improve | Drop from scope |
 |---|---|
-| Visual identity: **Oron Yad** font + raspberry `#92003b` / peach / cream palette | Weekly pregnancy track (`lead-to-birth`) — not in use |
+| Visual identity: **Oron Yad** font + peach / cream palette (brand accent revised 2026-07-30: raspberry `#92003b`, inherited from the WP theme's link/button colour, replaced with espresso `#3a2f24` — see `ARCHITECTURE.md` §0) | Weekly pregnancy track (`lead-to-birth`) — not in use |
 | **Two search engines** (priority): doulas (hospital · due date · support style · budget) and professionals (field · location · language) | Courses catalog — only Keren's own course remains (→ Meshulam button) |
 | **Converting doula profiles** — video + sticky WhatsApp CTA + reviews | WooCommerce / cart / checkout — replaced by Meshulam sale-page buttons |
 | **Other doulas** = self-serve form → approve → index listing | Members-only / gated content — none needed |
