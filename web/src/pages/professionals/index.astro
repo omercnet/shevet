@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getProfessionals} from '../../lib/queries'
 import {instagramHref, mailtoHref, telHref, whatsappHref} from '../../lib/contact'
 
@@ -35,7 +36,7 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
       <button type="button" id="reset">ניקוי</button>
     </form>
 
-    <p id="count">{pros.length} נשות מקצוע</p>
+    <p id="count" aria-live="polite">{pros.length} נשות מקצוע</p>
     <div class="grid" id="results">
       {pros.map((p) => (
         <article class="card directory-card doula-card">
@@ -57,7 +58,7 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
     </div>
   </section>
 
-  <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
+  <script type="application/json" id="data" is:inline set:html={serializeInlineJson(pros)}></script>
   <script>
     interface Row {
       slug: string; name: string; title?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
@@ -127,6 +128,10 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} נשות מקצוע`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", () => {
         presetMatch = [];
         apply();

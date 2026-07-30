@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getWorkshops} from '../../lib/queries'
 
 const workshops = await getWorkshops()
@@ -19,7 +20,7 @@ const workshops = await getWorkshops()
           </label>
         </form>
 
-        <p id="count">{workshops.length} סדנאות</p>
+        <p id="count" aria-live="polite">{workshops.length} סדנאות</p>
         <div class="grid" id="results">
           {workshops.map((w) => (
             <article class="card article-card workshop-card">
@@ -34,7 +35,7 @@ const workshops = await getWorkshops()
   </section>
 
   {workshops.length > 0 && (
-    <script type="application/json" id="data" is:inline set:html={JSON.stringify(workshops)}></script>
+    <script type="application/json" id="data" is:inline set:html={serializeInlineJson(workshops)}></script>
   )}
   <script>
     interface Row {
@@ -65,6 +66,10 @@ const workshops = await getWorkshops()
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} סדנאות`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", apply);
       apply();
     }

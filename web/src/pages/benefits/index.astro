@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { serializeInlineJson } from "../../lib/inlineJson";
 import { getBenefits } from "../../lib/queries";
 
 const benefits = await getBenefits();
@@ -40,10 +41,10 @@ const CATEGORIES: { value: string; label: string }[] = [
         </article>
       ))}
     </div>
-    <p class="empty" id="empty" hidden={benefits.length > 0}>אין הטבות עדיין</p>
+    <p class="empty" id="empty" role="status" aria-live="polite" hidden={benefits.length > 0}>אין הטבות מתאימות</p>
   </section>
 
-  <script type="application/json" id="data" is:inline set:html={JSON.stringify(benefits)}></script>
+  <script type="application/json" id="data" is:inline set:html={serializeInlineJson(benefits)}></script>
   <script>
     interface Benefit {
       slug?: string;
@@ -114,6 +115,10 @@ const CATEGORIES: { value: string; label: string }[] = [
         for (const b of cats.querySelectorAll<HTMLButtonElement>("button[data-cat]")) {
           b.classList.toggle("is-active", b === btn);
         }
+        apply();
+      });
+      search.form?.addEventListener("submit", (event) => {
+        event.preventDefault();
         apply();
       });
       search.addEventListener("input", apply);

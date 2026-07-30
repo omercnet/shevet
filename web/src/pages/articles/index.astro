@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getArticles} from '../../lib/queries'
 
 const articles = await getArticles()
@@ -36,7 +37,7 @@ const CATEGORIES = [
           <button type="button" id="reset">ניקוי</button>
         </form>
 
-        <p id="count">{articles.length} מאמרים</p>
+        <p id="count" aria-live="polite">{articles.length} מאמרים</p>
         <div class="grid" id="results">
           {articles.map((a) => (
             <article class="card article-card">
@@ -52,10 +53,10 @@ const CATEGORIES = [
   </section>
 
   {articles.length > 0 && (
-    <script type="application/json" id="data" is:inline set:html={JSON.stringify(articles)}></script>
+    <script type="application/json" id="data" is:inline set:html={serializeInlineJson(articles)}></script>
   )}
   {articles.length > 0 && (
-    <script type="application/json" id="labels" is:inline set:html={JSON.stringify(CATEGORIES)}></script>
+    <script type="application/json" id="labels" is:inline set:html={serializeInlineJson(CATEGORIES)}></script>
   )}
   <script>
     interface Row {
@@ -104,6 +105,10 @@ const CATEGORIES = [
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} מאמרים`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", apply);
       reset?.addEventListener("click", () => {
         HTMLFormElement.prototype.reset.call(form);
