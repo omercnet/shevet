@@ -68,13 +68,22 @@ for (const slug of ["head-to-toe", "deedoo", "stella", "urban-baby-wrap"]) {
 }
 for (const slug of ["26-1", "digitalmarketing", "march", "july"]) requireMeta(slug, "_content");
 for (const slug of ["dao-shir-barash", "bio", "seminar", "henigold"]) requireMeta(slug, "_content");
+requireMeta("symphysis-pubis-dysfunction", "shortcode");
+const spdInstagramUrl = bySlug
+	.get("symphysis-pubis-dysfunction")
+	.meta.shortcode.match(/https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/[^\s"'<>]+/i)?.[0];
+assert(
+	spdInstagramUrl === "https://www.instagram.com/tv/CRwmIDbjjG9/?utm_source=ig_embed&utm_campaign=loading",
+	"SPD article must preserve its legacy Instagram TV URL",
+);
+assert(importer.includes("(?:p|reel|tv)"), "importer must extract legacy Instagram TV URLs");
 
 const postTypes = new Set(items.map(({ item }) => text(item["wp:post_type"])));
 for (const type of ["post", "pregnancy-blog", "benefits", "community", "courses", "doulas-premium", "therapist-premium"]) {
 	assert(postTypes.has(type), `WXR must include ${type}`);
 }
 
-for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "published: text(item[\"wp:status\"]) === \"publish\"", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "m[\"--\"]", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "bannerImages", "birthSupportImages", "whatsappGallery", "jet-review-items", "articleTypes", "audiences", "MEDIA_FIELDS", "vimeo-link"]) {
+for (const marker of ["_content", "community", "courses", "product-detail", "the-benefit", "benefit-code", "communityPage", "salePage", "published: text(item[\"wp:status\"]) === \"publish\"", "_description", "marketing-description", "defaultWhatsappLink", "whatsapp_copy", "image-gallery", "video-cover", "m[\"--\"]", "flatMap", "parseFaq", "3_copy", "qampa", "birthTools", "additionalServices", "bannerImages", "birthSupportImages", "whatsappGallery", "jet-review-items", "articleTypes", "instagramPostUrl", "m.shortcode", "audiences", "MEDIA_FIELDS", "vimeo-link"]) {
 	assert(importer.includes(marker), `importer must map ${marker}`);
 }
 const publishedMappings = importer.match(/published: text\(item\["wp:status"\]\) === "publish"/g) ?? [];
