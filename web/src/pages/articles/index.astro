@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getArticles} from '../../lib/queries'
 
 const articles = await getArticles()
@@ -25,6 +26,9 @@ const CATEGORIES = [
     ) : (
       <>
         <form class="filter-panel" id="article-filters">
+          <label>חיפוש חופשי
+            <input type="search" name="q" placeholder="לדוגמה: רעלת, שם המאמר..." />
+          </label>
           <label>קטגוריה
             <select name="category"><option value="">הכול</option>
               {CATEGORIES.map((c) => <option value={c.value}>{c.label}</option>)}
@@ -33,7 +37,7 @@ const CATEGORIES = [
           <button type="button" id="reset">ניקוי</button>
         </form>
 
-        <p id="count">{articles.length} מאמרים</p>
+        <p id="count" aria-live="polite">{articles.length} מאמרים</p>
         <div class="grid" id="results">
           {articles.map((a) => (
             <article class="card article-card">
@@ -49,10 +53,10 @@ const CATEGORIES = [
   </section>
 
   {articles.length > 0 && (
-    <script type="application/json" id="data" is:inline set:html={JSON.stringify(articles)}></script>
+    <script type="application/json" id="data" is:inline set:html={serializeInlineJson(articles)}></script>
   )}
   {articles.length > 0 && (
-    <script type="application/json" id="labels" is:inline set:html={JSON.stringify(CATEGORIES)}></script>
+    <script type="application/json" id="labels" is:inline set:html={serializeInlineJson(CATEGORIES)}></script>
   )}
   <script>
     interface Row {
@@ -89,13 +93,22 @@ const CATEGORIES = [
         const excerpt = a.excerpt ? `<p class="excerpt">${escapeHtml(a.excerpt)}</p>` : "";
         return `<article class="card article-card">${img}<div class="tags">${chip}</div><h3><a href="/articles/${encodeURIComponent(a.slug)}/">${escapeHtml(a.title)}</a></h3>${excerpt}</article>`;
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (a: Row): string => norm([a.title, a.excerpt, labelFor(a.category)].filter(Boolean).join(" "));
       const apply = (): void => {
         const f = new FormData(form);
         const category = f.get("category");
-        const res = data.filter((a) => !category || a.category === (category as string));
+        const q = norm((f.get("q") as string) ?? "");
+        const res = data.filter(
+          (a) => (!category || a.category === (category as string)) && (!q || haystack(a).includes(q)),
+        );
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} מאמרים`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", apply);
       reset?.addEventListener("click", () => {
         HTMLFormElement.prototype.reset.call(form);

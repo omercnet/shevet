@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getProfessionals} from '../../lib/queries'
 import {instagramHref, mailtoHref, telHref, whatsappHref} from '../../lib/contact'
 
@@ -20,6 +21,9 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
     <p>יועצות הנקה, מטפלות, מדריכות ונשות מקצוע — סינון לפי תחום ומיקום.</p>
 
     <form class="filter-panel" id="pro-filters">
+      <label>חיפוש חופשי
+        <input type="search" name="q" placeholder="לדוגמה: הנקה, שם יועצת..." />
+      </label>
       <label>תחום טיפול
         <select name="field"><option value="">הכול</option>{fields.map((x: string) => <option>{x}</option>)}</select>
       </label>
@@ -32,7 +36,7 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
       <button type="button" id="reset">ניקוי</button>
     </form>
 
-    <p id="count">{pros.length} נשות מקצוע</p>
+    <p id="count" aria-live="polite">{pros.length} נשות מקצוע</p>
     <div class="grid" id="results">
       {pros.map((p) => (
         <article class="card directory-card doula-card">
@@ -54,7 +58,7 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
     </div>
   </section>
 
-  <script type="application/json" id="data" is:inline set:html={JSON.stringify(pros)}></script>
+  <script type="application/json" id="data" is:inline set:html={serializeInlineJson(pros)}></script>
   <script>
     interface Row {
       slug: string; name: string; title?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
@@ -104,21 +108,30 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
           </div>
         </article>`;
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (p: Row): string =>
+        norm([p.name, p.title, ...(p.fields ?? []), ...(p.regions ?? []), ...(p.languages ?? [])].filter(Boolean).join(" "));
       const apply = (): void => {
         const f = new FormData(form);
         const fld = f.get("field");
         const reg = f.get("region");
         const lang = f.get("lang");
+        const q = norm((f.get("q") as string) ?? "");
         const res = data.filter(
           (p) =>
             (!fld || (p.fields ?? []).includes(fld as string)) &&
             (presetMatch.length === 0 || (p.fields ?? []).some((x) => presetMatch.some((m) => x.includes(m)))) &&
             (!reg || (p.regions ?? []).includes(reg as string)) &&
-            (!lang || (p.languages ?? []).includes(lang as string)),
+            (!lang || (p.languages ?? []).includes(lang as string)) &&
+            (!q || haystack(p).includes(q)),
         );
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} נשות מקצוע`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", () => {
         presetMatch = [];
         apply();

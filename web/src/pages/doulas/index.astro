@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro'
+import {serializeInlineJson} from '../../lib/inlineJson'
 import {getDoulas, getSiteSettings} from '../../lib/queries'
 const doulas = await getDoulas()
 const hospitals = [...new Set(doulas.flatMap((d) => d.hospitals ?? []))].sort()
@@ -12,6 +13,9 @@ const settings = await getSiteSettings()
     <p><a class="btn btn-outline" href="/doulas/join/">רוצה להצטרף לנבחרת?</a></p>
 
     <form class="filter-panel" id="doula-filters">
+      <label>חיפוש חופשי
+        <input type="search" name="q" placeholder="לדוגמה: רעלת, שם דולה..." />
+      </label>
       <label>בית חולים
         <select name="hospital"><option value="">הכול</option>
           {hospitals.map((h: string) => <option value={h}>{h}</option>)}
@@ -23,7 +27,7 @@ const settings = await getSiteSettings()
       <button type="button" id="reset">ניקוי</button>
     </form>
 
-    <p id="count">{doulas.length} דולות</p>
+    <p id="count" aria-live="polite">{doulas.length} דולות</p>
     <div class="grid" id="results">
       {doulas.map((d) => {
         const detailHref = d.tier === 'premium' ? `/doulas/${d.slug}/` : undefined
@@ -50,7 +54,7 @@ const settings = await getSiteSettings()
     )}
   </section>
 
-  <script type="application/json" id="data" is:inline set:html={JSON.stringify(doulas)}></script>
+  <script type="application/json" id="data" is:inline set:html={serializeInlineJson(doulas)}></script>
   <script>
     interface Row {
       slug: string; name: string; title?: string; tier?: string; photo?: string;
@@ -88,16 +92,26 @@ const settings = await getSiteSettings()
           </div>
         </article>`;
       };
+      const norm = (s: string): string => s.trim().toLowerCase();
+      const haystack = (d: Row): string =>
+        norm([d.name, d.title, ...(d.supportStyle ?? []), ...(d.hospitals ?? [])].filter(Boolean).join(" "));
       const apply = (): void => {
         const f = new FormData(form);
         const hospital = f.get("hospital");
+        const q = norm((f.get("q") as string) ?? "");
         const res = data.filter(
-          (d) => !hospital || (d.hospitals ?? []).includes(hospital as string),
+          (d) =>
+            (!hospital || (d.hospitals ?? []).includes(hospital as string)) &&
+            (!q || haystack(d).includes(q)),
         );
         // dueDate currently informational — matching rule TBD with Keren
         out.innerHTML = res.map(card).join("");
         count.textContent = `${res.length} דולות`;
       };
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        apply();
+      });
       form.addEventListener("input", apply);
       reset?.addEventListener("click", () => {
         HTMLFormElement.prototype.reset.call(form);
