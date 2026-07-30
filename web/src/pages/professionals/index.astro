@@ -38,31 +38,37 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
 
     <p id="count" aria-live="polite">{pros.length} נשות מקצוע</p>
     <div class="grid" id="results">
-      {pros.map((p) => (
-        <article class="card directory-card doula-card">
-          {p.photo && <a class="card-media" href={`/professionals/${p.slug}/`}><img src={`${p.photo}?w=480&h=360&fit=crop`} alt={p.name} loading="lazy" /></a>}
-          <div class="card-body">
-            <h3><a href={`/professionals/${p.slug}/`}>{p.name}</a></h3>
-            {p.title && <p class="card-title">{p.title}</p>}
-            <div class="tags">{[...(p.fields ?? []), ...(p.regions ?? [])].slice(0, 3).map((t) => <span class="chip">{t}</span>)}</div>
-            <div class="card-actions"><a class="more" href={`/professionals/${p.slug}/`}>לפרטים נוספים ←</a></div>
-            <div class="card-actions contact-links">
-              {p.whatsappUrl && <a class="btn btn-wa" href={p.whatsappUrl}>וואטסאפ</a>}
-              {p.phoneUrl && <a class="more" href={p.phoneUrl}>טלפון</a>}
-              {p.emailUrl && <a class="more" href={p.emailUrl}>אימייל</a>}
-              {p.instagramUrl && <a class="more" href={p.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>}
+      {pros.map((p) => {
+        const detailHref = p.tier === 'premium' ? `/professionals/${p.slug}/` : undefined
+        return (
+          <article class="card directory-card doula-card">
+            {p.photo && (detailHref ? <a class="card-media" href={detailHref}><img src={`${p.photo}?w=480&h=360&fit=crop`} alt={p.name} loading="lazy" /></a> : <div class="card-media"><img src={`${p.photo}?w=480&h=360&fit=crop`} alt={p.name} loading="lazy" /></div>)}
+            <div class="card-body">
+              <h3>{detailHref ? <a href={detailHref}>{p.name}</a> : p.name}</h3>
+              {p.title && <p class="card-title">{p.title}</p>}
+              <div class="tags">{[...(p.fields ?? []), ...(p.regions ?? [])].slice(0, 3).map((t) => <span class="chip">{t}</span>)}</div>
+              {detailHref && <div class="card-actions"><a class="more" href={detailHref}>לפרטים נוספים ←</a></div>}
+              {!detailHref && (p.hospitals ?? []).length > 0 && (
+                <p class="card-hospitals"><strong>בתי חולים:</strong> {(p.hospitals ?? []).join(', ')}</p>
+              )}
+              <div class="card-actions contact-links">
+                {detailHref && p.whatsappUrl && <a class="btn btn-wa" href={p.whatsappUrl}>וואטסאפ</a>}
+                {p.phoneUrl && <a class="more" href={p.phoneUrl}>טלפון</a>}
+                {p.emailUrl && <a class="more" href={p.emailUrl}>אימייל</a>}
+                {detailHref && p.instagramUrl && <a class="more" href={p.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>}
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
+          </article>
+        )
+      })}
     </div>
   </section>
 
   <script type="application/json" id="data" is:inline set:html={serializeInlineJson(pros)}></script>
   <script>
     interface Row {
-      slug: string; name: string; title?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
-      fields?: string[]; regions?: string[]; languages?: string[];
+      slug: string; name: string; title?: string; tier?: string; photo?: string; whatsappUrl?: string; phoneUrl?: string; emailUrl?: string; instagramUrl?: string;
+      fields?: string[]; regions?: string[]; languages?: string[]; hospitals?: string[];
     }
     const dataEl = document.getElementById("data");
     const form = document.getElementById("pro-filters") as HTMLFormElement | null;
@@ -86,24 +92,29 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
           .slice(0, 3)
           .map((t) => `<span class="chip">${esc(t)}</span>`)
           .join("");
-        const href = `/professionals/${encodeURIComponent(p.slug)}/`;
-        const wa = p.whatsappUrl
+        const href = p.tier === "premium" ? `/professionals/${encodeURIComponent(p.slug)}/` : "";
+        const wa = href && p.whatsappUrl
           ? `<a class="btn btn-wa" href="${esc(p.whatsappUrl)}">וואטסאפ</a>`
           : "";
         const phone = p.phoneUrl ? `<a class="more" href="${esc(p.phoneUrl)}">טלפון</a>` : "";
         const email = p.emailUrl ? `<a class="more" href="${esc(p.emailUrl)}">אימייל</a>` : "";
-        const instagram = p.instagramUrl ? `<a class="more" href="${esc(p.instagramUrl)}" target="_blank" rel="noopener noreferrer">Instagram</a>` : "";
-        const media = p.photo
-          ? `<a class="card-media" href="${href}"><img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy"></a>`
-          : "";
+        const instagram = href && p.instagramUrl ? `<a class="more" href="${esc(p.instagramUrl)}" target="_blank" rel="noopener noreferrer">Instagram</a>` : "";
+        const image = p.photo ? `<img src="${encodeURI(p.photo)}?w=480&h=360&fit=crop" alt="${name}" loading="lazy">` : "";
+        const media = image ? (href ? `<a class="card-media" href="${href}">${image}</a>` : `<div class="card-media">${image}</div>`) : "";
         const title = p.title ? `<p class="card-title">${esc(p.title)}</p>` : "";
+        const heading = href ? `<a href="${href}">${name}</a>` : name;
+        const details = href ? `<div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>` : "";
+        const hospitals = !href && (p.hospitals ?? []).length > 0
+          ? `<p class="card-hospitals"><strong>בתי חולים:</strong> ${(p.hospitals ?? []).map(esc).join(", ")}</p>`
+          : "";
         return `<article class="card directory-card doula-card">
           ${media}
           <div class="card-body">
-            <h3><a href="${href}">${name}</a></h3>
+            <h3>${heading}</h3>
             ${title}
             <div class="tags">${tags}</div>
-            <div class="card-actions"><a class="more" href="${href}">לפרטים נוספים ←</a></div>
+            ${details}
+            ${hospitals}
             <div class="card-actions contact-links">${wa}${phone}${email}${instagram}</div>
           </div>
         </article>`;
@@ -147,5 +158,6 @@ const langs = [...new Set(pros.flatMap((p) => p.languages ?? []))].sort()
 
   <style>
     #count { color:var(--muted); font-weight:600; margin:.5rem 0 1.2rem; }
+    .card-hospitals { font-size:.9rem; color:var(--muted); margin:0 0 .8rem; }
   </style>
 </Base>

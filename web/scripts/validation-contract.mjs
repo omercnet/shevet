@@ -74,6 +74,17 @@ const professionalIndex = read("web/src/pages/professionals/index.astro");
 for (const marker of ["whatsappHref", "telHref", "mailtoHref", "instagramHref", "contact-links"]) {
 	assert(professionalIndex.includes(marker), `professional directory cards must render ${marker}`);
 }
+assert(
+	professionalIndex.includes("p.tier === 'premium'") && professionalIndex.includes('p.tier === "premium"'),
+	"professional directory links must stay premium-only in server and client rendering",
+);
+for (const marker of ["p.hospitals", "card-hospitals"]) {
+	assert(professionalIndex.includes(marker), `index-tier professional cards must render ${marker}`);
+}
+assert(
+	read("web/src/lib/queries.ts").includes('"hospitals": hospitals[]->name'),
+	"professional directory query must include hospital affiliations",
+);
 
 for (const profile of ["web/src/pages/doulas/[slug].astro", "web/src/pages/professionals/[slug].astro"]) {
 	const source = read(profile);
