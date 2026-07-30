@@ -147,6 +147,7 @@ export interface ArticleCard {
 
 export interface ArticleDetail extends ArticleCard {
 	videoUrl?: string;
+	instagramPostUrl?: string;
 	body?: unknown[];
 	sourceHtml?: string;
 	publishedAt?: string;
@@ -177,7 +178,7 @@ export function getArticle(slug: string): Promise<ArticleDetail | null> {
 	return sanityFetch<ArticleDetail | null>(
 		`*[_type == "article" && ${notDraft} && published != false && slug.current == $slug][0]{
 			"slug": slug.current, title, type, category, excerpt, "cover": cover.asset->url,
-			videoUrl, body, sourceHtml, publishedAt
+			videoUrl, instagramPostUrl, body, sourceHtml, publishedAt
 		}`,
 		{ slug },
 		null,
